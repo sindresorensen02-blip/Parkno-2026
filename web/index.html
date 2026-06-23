@@ -1,0 +1,1927 @@
+﻿<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Parkno — Innkjørselen din, tjener stille.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lei ut parkeringsplassen din i Bergen når du ikke bruker den. Parkno gir verifiserte sjåfører, automatiske utbetalinger og enkel administrasjon.">
+  <meta name="theme-color" content="#F8FAF7">
+  <link rel="canonical" href="https://parkno.no/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Parkno">
+  <meta property="og:title" content="Parkno — Innkjørselen din, tjener stille.">
+  <meta property="og:description" content="Lei ut parkeringsplassen din når du ikke bruker den. Verifiserte sjåfører, automatiske utbetalinger og rolig administrasjon.">
+  <meta property="og:url" content="https://parkno.no/">
+  <meta property="og:image" content="https://parkno.no/assets/parkno-logo-icon.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="icon" href="assets/parkno-logo-icon.png">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Parkno",
+      "url": "https://parkno.no/",
+      "logo": "https://parkno.no/assets/parkno-logo-icon.png",
+      "email": "kontakt@parkno.no",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bergen",
+        "addressCountry": "NO"
+      },
+      "sameAs": []
+    }
+  </script>
+  <style>
+    html, body {
+      margin: 0; min-height: 100%; overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0) 52%),
+        radial-gradient(circle at 82% 28%, rgba(20, 184, 166, 0.16) 0%, rgba(20, 184, 166, 0) 56%),
+        radial-gradient(circle at 78% 82%, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0) 60%),
+        linear-gradient(180deg, #F8FAF7 0%, #EDF6F2 28%, #DEF1EC 55%, #D2E1F1 82%, #C7D6EE 100%);
+      background-attachment: fixed;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      color: #17211F;
+      -webkit-font-smoothing: antialiased;
+    }
+    * { box-sizing: border-box; }
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid rgba(78,167,185,0.58);
+      outline-offset: 4px;
+    }
+    .skip-link {
+      position: fixed; left: 18px; top: 18px; z-index: 100;
+      padding: 12px 16px; border-radius: 999px;
+      background: #17211F; color: #fff; text-decoration: none;
+      font: 700 13px/1 Inter, system-ui, sans-serif;
+      transform: translateY(-140%);
+      transition: transform 160ms ease;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    /* — Decorative blobs behind everything — */
+    .bg-blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .bg-blobs span {
+      position: absolute; border-radius: 50%; filter: blur(80px);
+      will-change: transform, opacity;
+    }
+    .bg-blobs .b1 { width: 560px; height: 560px; top: -180px; left: -180px; background: #B5F3D7; opacity: 0.62; }
+    .bg-blobs .b2 { width: 480px; height: 480px; top: 28%; right: -200px; background: #B6CDF8; opacity: 0.58; }
+    .bg-blobs .b3 { width: 420px; height: 420px; bottom: -160px; left: 28%; background: #9CE0C5; opacity: 0.42; }
+    /* — Top nav — */
+    .nav {
+      position: sticky; top: 16px; z-index: 50;
+      margin: 16px auto 0; max-width: 1180px; padding: 0 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 6px; padding: 8px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(23,33,31,0.08), 0 1px 2px rgba(23,33,31,0.04);
+    }
+    .nav-brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: #17211F;
+      padding-right: 10px;
+      text-decoration: none;
+    }
+    .nav-brand .logo {
+      width: 100px; height: 100px;
+      display: block; object-fit: contain; object-position: center;
+      margin: -34px -10px -34px -16px;
+    }
+    .nav-brand .pl { color: #4EA7B9; }
+    .nav-link {
+      background: transparent; border: 0; cursor: pointer;
+      padding: 10px 14px; border-radius: 999px;
+      font: 600 13px/1 Inter, system-ui, sans-serif; color: #34413E;
+      letter-spacing: -0.01em;
+      display: inline-flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .nav-link:hover { color: #17211F; background: rgba(23,33,31,0.04); }
+    .nav-link.is-primary {
+      background: #EF8F7A;
+      color: #17211F;
+      padding: 10px 18px;
+      box-shadow: 0 8px 18px rgba(239,143,122,0.34), 0 2px 6px rgba(23,33,31,0.08);
+    }
+    .nav-link.is-primary:hover {
+      background: #F2A18F;
+      color: #17211F;
+      transform: translateY(-1px);
+    }
+    .download-zone {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      padding: 14px 18px;
+      margin: -14px -18px;
+    }
+    .download-zone .nav-link.is-primary {
+      will-change: transform;
+    }
+    .nav-cta {
+      height: 40px; padding: 0 18px; border-radius: 999px;
+      background: #EF8F7A; color: #17211F; border: 0; cursor: pointer;
+      font: 600 13px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      display: inline-flex; align-items: center; gap: 6px;
+      box-shadow: 0 8px 18px rgba(239,143,122,0.34);
+    }
+
+    /* — Layout — */
+    .page {
+      position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 80px;
+    }
+    .parkno-content-section,
+    .trust-panel,
+    .host-intake,
+    .contact-card,
+    .foot {
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 720px;
+    }
+
+    /* Kinetic opener */
+    .mp-kinetic {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      height: 100vh;
+      margin: 0 calc(50% - 50vw);
+      overflow: hidden;
+      background: #0F0F0F;
+      color: #F8FAF7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      isolation: isolate;
+    }
+    .mp-kinetic .mp-kinetic-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .mp-kinetic .mp-kinetic-bg span {
+      position: absolute;
+      background: linear-gradient(135deg, #F8FAF7 0%, #93D6E3 28%, #4EA7B9 58%, #EF8F7A 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font: 800 clamp(0.9rem, 2vw, 1.5rem)/1 Inter, system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.58;
+      filter: drop-shadow(0 0 18px rgba(78,167,185,0.34));
+      will-change: transform, opacity;
+    }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(2n) {
+      background-image: linear-gradient(135deg, #D8EEF2 0%, #4EA7B9 36%, #8BCFB0 68%, #EF8F7A 100%);
+    }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(3n) {
+      background-image: linear-gradient(135deg, #8BCFB0 0%, #DDEFE7 30%, #93D6E3 62%, #4EA7B9 100%);
+    }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(1) { top: 10%; left: 8%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(2) { top: 18%; right: 12%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(3) { top: 35%; left: 16%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(4) { top: 48%; right: 10%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(5) { bottom: 30%; left: 10%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(6) { bottom: 20%; right: 18%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(7) { bottom: 10%; left: 30%; }
+    .mp-kinetic .mp-kinetic-bg span:nth-child(8) { top: 70%; right: 35%; }
+    .mp-kinetic .mp-kinetic-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .mp-kinetic .mp-kinetic-word {
+      font: 900 clamp(4rem, 14vw, 12rem)/0.9 Inter, system-ui, sans-serif;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      overflow: hidden;
+      will-change: transform, opacity;
+    }
+
+    .hero {
+      display: grid; grid-template-columns: 1fr;
+      align-items: center; padding: 64px 0 48px;
+    }
+    .hero-logo {
+      display: block;
+      width: 200px; height: 200px;
+      object-fit: contain; object-position: left center;
+      margin: -22px 0 -4px -28px;
+      filter: drop-shadow(0 14px 26px rgba(23, 33, 31, 0.16));
+    }
+    .hero-overline {
+      font: 600 11px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.10em; text-transform: uppercase; color: #73817D;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .hero-overline::before {
+      content: ''; width: 24px; height: 1px; background: #73817D; display: inline-block;
+    }
+    .hero h1 {
+      font: 800 88px/0.96 Inter, system-ui, sans-serif;
+      letter-spacing: -0.045em; color: #17211F; margin: 22px 0 0;
+      text-wrap: balance;
+    }
+    .hero h1 .accent { color: #34413E; font-weight: 700; }
+    .hero h1 .accent-mint {
+      background: linear-gradient(180deg, #17211F 48%, #4EA7B9 78%, #EF8F7A 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p.lede {
+      font: 500 19px/1.5 Inter, system-ui, sans-serif;
+      color: #34413E; margin: 22px 0 0; max-width: 460px;
+    }
+    .hero-ctas { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .btn-primary {
+      height: 56px; padding: 0 26px; border-radius: 999px;
+      background: #EF8F7A; color: #17211F; border: 0; cursor: pointer;
+      font: 600 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      display: inline-flex; align-items: center; gap: 10px;
+      box-shadow: 0 14px 30px rgba(239,143,122,0.34), 0 2px 6px rgba(23,33,31,0.08);
+      transition: transform 220ms cubic-bezier(.2,.7,.2,1), box-shadow 220ms cubic-bezier(.2,.7,.2,1);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(239,143,122,0.38), 0 6px 14px rgba(23,33,31,0.10); }
+    .btn-primary .arrow {
+      width: 26px; height: 26px; border-radius: 999px; background: rgba(23,33,31,0.10);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .hero-trust {
+      display: flex; align-items: center; gap: 14px; margin-top: 36px;
+      font: 500 13px/1.4 Inter, system-ui, sans-serif; color: #73817D;
+    }
+    .avatars { display: inline-flex; }
+    .avatars .a {
+      width: 30px; height: 30px; border-radius: 999px; border: 2px solid #F8FAF7;
+      margin-left: -8px; display: inline-flex; align-items: center; justify-content: center;
+      font: 700 10px/1 Inter; color: #17211F;
+    }
+    .avatars .a:first-child { margin-left: 0; }
+    .avatars .a1 { background: #DDEFE7; }
+    .avatars .a2 { background: #D8EEF2; }
+    .avatars .a3 { background: #93D6E3; color: #17211F; }
+    .avatars .a4 { background: #8BCFB0; }
+    .hero-proof {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+      max-width: 540px;
+    }
+    .hero-proof-item {
+      min-height: 76px;
+      padding: 14px 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.58);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: 0 8px 18px rgba(23,33,31,0.05);
+    }
+    .hero-proof-item strong {
+      display: block;
+      font: 800 22px/1.05 Inter, system-ui, sans-serif;
+      letter-spacing: -0.03em;
+      color: #17211F;
+      font-feature-settings: 'tnum';
+    }
+    .hero-proof-item span {
+      display: block;
+      margin-top: 6px;
+      font: 600 12px/1.3 Inter, system-ui, sans-serif;
+      color: #73817D;
+    }
+
+    /* — Section style — */
+    .section { padding: 80px 0 24px; }
+    .section-overline {
+      font: 600 11px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: #73817D;
+    }
+    .section-title {
+      font: 700 56px/1.04 Inter, system-ui, sans-serif;
+      letter-spacing: -0.035em; color: #17211F; margin: 14px 0 0;
+      max-width: 760px; text-wrap: balance;
+    }
+    .section-lede {
+      font: 500 18px/1.5 Inter; color: #34413E; margin: 18px 0 0; max-width: 560px;
+    }
+
+    /* Stat band */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      margin-top: 48px; padding: 28px 32px; border-radius: 28px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 24px rgba(23,33,31,0.06);
+    }
+    .stat { padding: 0 18px; border-left: 1px solid rgba(23,33,31,0.06); }
+    .stat:first-child { border-left: 0; padding-left: 0; }
+    .stat .v {
+      font: 800 36px/1.05 Inter; letter-spacing: -0.03em; color: #17211F;
+      font-feature-settings: 'tnum';
+    }
+    .stat .l {
+      font: 500 13px/1.4 Inter; color: #73817D; margin-top: 6px;
+    }
+
+    /* GSAP transition */
+    .parkno-gsap-transition {
+      --transition-light: #F8FAF7;
+      --transition-dark: #17211F;
+
+      width: 100vw;
+      height: 100vh;
+      margin: 0 calc(50% - 50vw);
+      overflow: hidden;
+      background: var(--transition-light);
+      position: relative;
+      isolation: isolate;
+    }
+    .parkno-gsap-transition .transition-label {
+      position: absolute;
+      display: block;
+      text-align: center;
+      font: 900 clamp(2.25rem, 7vw, 5.5rem)/0.9 Inter, system-ui, sans-serif;
+      z-index: 2;
+      width: 50%;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      color: var(--transition-light);
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      mix-blend-mode: difference;
+    }
+    .parkno-gsap-transition .transition-label-left { left: 0; }
+    .parkno-gsap-transition .transition-label-right { right: 0; }
+    .parkno-gsap-transition .transition-box {
+      height: 1.2vh;
+      width: 50vw;
+      margin-bottom: -0.2vh;
+      background: var(--transition-dark);
+      display: block;
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    /* — How it works — */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+    .step {
+      padding: 28px; border-radius: 28px;
+      background: #DDEFE7;
+      box-shadow: 0 4px 12px rgba(23,33,31,0.06);
+      position: relative; overflow: hidden;
+      min-height: 240px; display: flex; flex-direction: column;
+    }
+    .step.mist { background: #D8EEF2; }
+    .step.silver { background: #EAF0EC; }
+    .step .num {
+      width: 36px; height: 36px; border-radius: 999px; background: #17211F; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font: 800 16px/1 Inter; letter-spacing: -0.04em;
+    }
+    .step h3 {
+      font: 700 22px/1.2 Inter; letter-spacing: -0.025em; color: #17211F;
+      margin: 22px 0 0;
+    }
+    .step p {
+      font: 500 14px/1.5 Inter; color: rgba(52,65,62,0.85); margin: 10px 0 0;
+    }
+    .step .meta {
+      margin-top: auto; padding-top: 16px;
+      font: 700 13px/1 Inter; color: #17211F;
+      font-feature-settings: 'tnum';
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    /* conversion system */
+    .trust-panel {
+      margin: 56px 0 0;
+      padding: 34px;
+      border-radius: 34px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(255,255,255,0.74);
+      box-shadow: 0 14px 30px rgba(23,33,31,0.08);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .trust-item {
+      min-height: 148px;
+      padding: 20px;
+      border-radius: 24px;
+      background: #F8FAF7;
+      border: 1px solid rgba(23,33,31,0.05);
+    }
+    .trust-item .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #DDEFE7;
+      color: #17211F;
+      font: 800 15px/1 Inter, system-ui, sans-serif;
+    }
+    .trust-item h3 {
+      margin: 16px 0 0;
+      font: 800 17px/1.15 Inter, system-ui, sans-serif;
+      letter-spacing: -0.025em;
+      color: #17211F;
+    }
+    .trust-item p {
+      margin: 8px 0 0;
+      font: 500 13px/1.45 Inter, system-ui, sans-serif;
+      color: #34413E;
+    }
+    .launch-strip {
+      margin-top: 18px;
+      padding: 22px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #DDEFE7 0%, #D8EEF2 100%);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+    .launch-strip h3 {
+      margin: 0;
+      font: 800 24px/1.1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.035em;
+      color: #17211F;
+    }
+    .launch-strip p {
+      margin: 8px 0 0;
+      font: 500 14px/1.45 Inter, system-ui, sans-serif;
+      color: #34413E;
+      max-width: 620px;
+    }
+    .zone-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .zone-list span {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.64);
+      font: 700 12px/1 Inter, system-ui, sans-serif;
+      color: #17211F;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .host-intake {
+      scroll-margin-top: 96px;
+      margin: 64px 0 44px;
+      padding: 44px;
+      border-radius: 36px;
+      background: #F8FAF7;
+      border: 1px solid rgba(255,255,255,0.78);
+      box-shadow: 0 18px 38px rgba(23,33,31,0.10);
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .host-intake h2 {
+      margin: 12px 0 0;
+      font: 800 40px/1.04 Inter, system-ui, sans-serif;
+      letter-spacing: -0.04em;
+      color: #17211F;
+      text-wrap: balance;
+    }
+    .host-intake p {
+      margin: 14px 0 0;
+      font: 500 16px/1.5 Inter, system-ui, sans-serif;
+      color: #34413E;
+      max-width: 440px;
+    }
+    .intake-steps {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .intake-steps div {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font: 700 13px/1.35 Inter, system-ui, sans-serif;
+      color: #17211F;
+    }
+    .intake-steps span {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #EF8F7A;
+      color: #17211F;
+      font: 800 12px/1 Inter, system-ui, sans-serif;
+      flex: 0 0 auto;
+    }
+    .host-form {
+      display: grid;
+      gap: 14px;
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(23,33,31,0.06);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .host-form label {
+      display: grid;
+      gap: 8px;
+      font: 800 12px/1.2 Inter, system-ui, sans-serif;
+      color: #34413E;
+      letter-spacing: -0.01em;
+    }
+    .host-form input,
+    .host-form select {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid rgba(23,33,31,0.10);
+      border-radius: 16px;
+      background: #fff;
+      color: #17211F;
+      padding: 0 14px;
+      font: 700 14px/1 Inter, system-ui, sans-serif;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(23,33,31,0.04);
+    }
+    .host-form input:focus,
+    .host-form select:focus {
+      border-color: rgba(78,167,185,0.72);
+      box-shadow: 0 0 0 4px rgba(78,167,185,0.14);
+    }
+    .host-form button {
+      min-height: 54px;
+      border: 0;
+      border-radius: 999px;
+      background: #17211F;
+      color: #fff;
+      cursor: pointer;
+      font: 800 15px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: 0 14px 30px rgba(23,33,31,0.18);
+    }
+    .form-note {
+      margin: 0;
+      font: 600 12px/1.4 Inter, system-ui, sans-serif;
+      color: #73817D;
+    }
+    .form-status {
+      min-height: 18px;
+      margin: 0;
+      font: 700 13px/1.4 Inter, system-ui, sans-serif;
+      color: #17211F;
+    }
+    .faq-panel {
+      margin: 42px 0 0;
+      padding: 30px;
+      border-radius: 34px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(255,255,255,0.74);
+      box-shadow: 0 12px 28px rgba(23,33,31,0.07);
+    }
+    .faq-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .faq-list details {
+      border-radius: 22px;
+      background: #F8FAF7;
+      border: 1px solid rgba(23,33,31,0.06);
+      overflow: hidden;
+    }
+    .faq-list summary {
+      min-height: 56px;
+      padding: 18px 20px;
+      cursor: pointer;
+      list-style: none;
+      font: 800 15px/1.25 Inter, system-ui, sans-serif;
+      color: #17211F;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after {
+      content: '+';
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #DDEFE7;
+      flex: 0 0 auto;
+    }
+    .faq-list details[open] summary::after { content: '-'; }
+    .faq-list p {
+      margin: 0;
+      padding: 0 20px 20px;
+      font: 500 14px/1.5 Inter, system-ui, sans-serif;
+      color: #34413E;
+      max-width: 760px;
+    }
+
+    /* — Testimonial — */
+    .quote {
+      margin: 48px 0 0; padding: 36px 40px; border-radius: 34px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 28px rgba(23,33,31,0.08);
+    }
+    .quote q {
+      font: 500 24px/1.4 Inter; color: #17211F; letter-spacing: -0.02em;
+      display: block; quotes: '"' '"';
+      max-width: 720px; text-wrap: pretty;
+    }
+    .quote .who {
+      display: flex; align-items: center; gap: 12px; margin-top: 22px;
+    }
+    .quote .who .a {
+      width: 40px; height: 40px; border-radius: 999px;
+      background: linear-gradient(135deg,#DDEFE7,#93D6E3);
+      display: inline-flex; align-items: center; justify-content: center;
+      font: 700 13px/1 Inter; color: #17211F;
+      border: 2px solid rgba(255,255,255,0.7);
+    }
+    .quote .who .name { font: 700 14px/1.2 Inter; color: #17211F; }
+    .quote .who .meta { font: 500 13px/1.2 Inter; color: #73817D; margin-top: 2px; }
+
+    /* — Final CTA — */
+    .final-cta {
+      margin: 80px 0 0; padding: 56px 48px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #34413E 0%, #17211F 100%);
+      color: #fff;
+      position: relative; overflow: hidden;
+      box-shadow: 0 24px 48px rgba(23,33,31,0.18);
+    }
+    .final-cta .blob1 { position: absolute; width: 320px; height: 320px; border-radius: 999px; background: rgba(239,143,122,0.34); filter: blur(70px); top: -100px; right: -100px; }
+    .final-cta .blob2 { position: absolute; width: 220px; height: 220px; border-radius: 999px; background: rgba(139,207,176,0.22); filter: blur(60px); bottom: -80px; left: -40px; }
+    .final-cta .inner { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; }
+    .final-cta h2 {
+      font: 700 48px/1.05 Inter; letter-spacing: -0.035em; color: #fff;
+      margin: 0; max-width: 460px; text-wrap: balance;
+    }
+    .final-cta p {
+      font: 500 16px/1.5 Inter; color: rgba(255,255,255,0.7); margin: 16px 0 0; max-width: 380px;
+    }
+    .final-cta .btn-mint {
+      height: 56px; padding: 0 28px; border-radius: 999px;
+      background: #EF8F7A; color: #17211F; border: 0; cursor: pointer;
+      font: 700 15px/1 Inter; letter-spacing: -0.01em;
+      display: inline-flex; align-items: center; gap: 10px;
+      box-shadow: 0 14px 30px rgba(239,143,122,0.28), 0 12px 28px rgba(0,0,0,0.18);
+      transition: transform 220ms cubic-bezier(.2,.7,.2,1);
+    }
+    .final-cta .btn-mint:hover { transform: translateY(-2px); }
+
+    /* contact */
+    .contact-card {
+      scroll-margin-top: 96px;
+      margin: 36px 0 0;
+      padding: 34px 40px;
+      border-radius: 34px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 28px rgba(17,20,22,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      transition: box-shadow 280ms ease, border-color 280ms ease, transform 280ms ease;
+    }
+    .contact-card.is-kontakt-flash {
+      animation: kontaktFlash 1.7s cubic-bezier(.2,.7,.2,1);
+    }
+    @keyframes kontaktFlash {
+      0% {
+        box-shadow:
+          0 0 0 0 rgba(37, 99, 235, 0),
+          0 12px 28px rgba(17,20,22,0.08);
+        border-color: rgba(255, 255, 255, 0.7);
+        transform: scale(1);
+      }
+      18% {
+        box-shadow:
+          0 0 0 10px rgba(16, 185, 129, 0.32),
+          0 24px 48px rgba(37, 99, 235, 0.22);
+        border-color: rgba(16, 185, 129, 0.55);
+        transform: scale(1.012);
+      }
+      55% {
+        box-shadow:
+          0 0 0 22px rgba(37, 99, 235, 0.0),
+          0 18px 38px rgba(37, 99, 235, 0.14);
+        border-color: rgba(37, 99, 235, 0.4);
+        transform: scale(1.005);
+      }
+      100% {
+        box-shadow:
+          0 0 0 0 rgba(37, 99, 235, 0),
+          0 12px 28px rgba(17,20,22,0.08);
+        border-color: rgba(255, 255, 255, 0.7);
+        transform: scale(1);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .contact-card.is-kontakt-flash { animation: none; }
+    }
+    .contact-card .section-overline { display: block; }
+    .contact-card h2 {
+      font: 700 36px/1.08 Inter, system-ui, sans-serif;
+      letter-spacing: -0.035em;
+      color: #111416;
+      margin: 10px 0 0;
+    }
+    .contact-card p {
+      font: 500 15px/1.5 Inter, system-ui, sans-serif;
+      color: #2F3437;
+      margin: 10px 0 0;
+      max-width: 460px;
+    }
+    .contact-card a {
+      color: #111416;
+      text-decoration: none;
+    }
+    .contact-email {
+      flex-shrink: 0;
+      min-width: min(100%, 300px);
+      padding: 20px 22px;
+      border-radius: 24px;
+      background: #DDEAF0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+    }
+    .contact-email .label {
+      font: 700 10px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(47,52,55,0.72);
+    }
+    .contact-email .value {
+      display: inline-block;
+      margin-top: 8px;
+      font: 800 20px/1.15 Inter, system-ui, sans-serif;
+      letter-spacing: -0.025em;
+    }
+
+    /* footer */
+    .foot {
+      margin-top: 64px; padding: 40px 0 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      font: 500 12px/1.4 Inter; color: #73817D; gap: 24px; flex-wrap: wrap;
+    }
+    .foot .links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .foot a {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      color: #34413E;
+      text-decoration: none;
+    }
+    .mobile-sticky-cta { display: none; }
+
+    /* responsive */
+    @media (max-width: 960px) {
+      .nav { padding: 0 18px; }
+      .nav-inner { width: 100%; justify-content: space-between; }
+      .nav-brand { min-width: 0; padding-right: 4px; }
+      .nav-brand .logo {
+        width: 32px;
+        height: 30px;
+        object-fit: contain;
+        background: rgba(255,255,255,0.55);
+      }
+      .nav-link:not(:last-child) { display: none; }
+      .nav-link:last-child {
+        height: 40px;
+        padding: 0 18px;
+        color: #17211F;
+      }
+      .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 36px; }
+      .hero h1 { font-size: 56px; }
+      .hero p.lede { max-width: 620px; }
+      .hero-proof { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 100%; }
+      .stats { grid-template-columns: 1fr 1fr; gap: 12px; padding: 22px; }
+      .stat { padding: 12px; border-left: 0; border-top: 1px solid rgba(23,33,31,0.06); }
+      .stat:nth-child(1), .stat:nth-child(2) { border-top: 0; }
+      .steps { grid-template-columns: 1fr; }
+      .section-title { font-size: 40px; }
+      .mp-kinetic {
+        min-height: 100vh;
+        height: 100vh;
+      }
+      .mp-kinetic .mp-kinetic-word {
+        font-size: clamp(3.2rem, 18vw, 6rem);
+      }
+      .parkno-gsap-transition {
+        margin-top: 0;
+      }
+      .parkno-gsap-transition .transition-label {
+        width: 100%;
+        font-size: clamp(2rem, 14vw, 4rem);
+      }
+      .parkno-gsap-transition .transition-label-left {
+        top: 42%;
+      }
+      .parkno-gsap-transition .transition-label-right {
+        top: 58%;
+      }
+      .parkno-gsap-transition .transition-box {
+        width: 55vw;
+      }
+      .final-cta { padding: 36px 24px; }
+      .final-cta .inner { grid-template-columns: 1fr; }
+      .final-cta h2 { font-size: 36px; }
+      .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .launch-strip,
+      .host-intake {
+        grid-template-columns: 1fr;
+      }
+      .zone-list { justify-content: flex-start; }
+      .contact-card { align-items: flex-start; flex-direction: column; padding: 28px 24px; }
+      .contact-card h2 { font-size: 30px; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 0 18px 96px; }
+      .nav { top: 10px; margin-top: 10px; padding: 0; }
+      .nav-inner { padding: 7px 7px 7px 12px; }
+      .nav-brand { font-size: 15px; }
+      .hero {
+        min-height: calc(100svh - 90px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 24px 0 16px;
+        gap: 20px;
+      }
+      .hero > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .hero-overline { margin-top: 4px; }
+      .hero h1 {
+        font-size: clamp(2.6rem, 13vw, 3.6rem);
+        letter-spacing: -0.05em;
+        margin: 6px 0 0;
+      }
+      .hero p.lede { font-size: 15px; margin: 6px 0 0; }
+      .hero-ctas { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 14px; }
+      .btn-primary {
+        height: 50px;
+        width: 100%;
+        justify-content: center;
+      }
+      .hero-trust {
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 14px;
+        font-size: 12px;
+      }
+      .hero-proof {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .hero-proof-item {
+        min-height: 0;
+        padding: 10px 12px;
+        border-radius: 18px;
+      }
+      .hero-proof-item strong { font-size: 18px; }
+      .hero-proof-item span { font-size: 11px; margin-top: 2px; }
+      .section { padding-top: 60px; }
+      .section-title { font-size: 34px; letter-spacing: -0.03em; }
+      .section-lede { font-size: 16px; }
+      .stats { grid-template-columns: 1fr; padding: 18px; margin-top: 34px; }
+      .stat,
+      .stat:first-child {
+        border-left: 0;
+        border-top: 1px solid rgba(23,33,31,0.06);
+        padding: 16px 4px;
+      }
+      .stat:first-child { border-top: 0; padding-top: 4px; }
+      .stat .v { font-size: 31px; }
+      .mp-kinetic { min-height: 76vh; height: 76vh; }
+      .trust-panel,
+      .host-intake {
+        margin-top: 42px;
+        padding: 24px 18px;
+        border-radius: 30px;
+      }
+      .trust-grid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .trust-item { min-height: 0; }
+      .launch-strip { padding: 18px; border-radius: 24px; }
+      .launch-strip h3 { font-size: 22px; }
+      .zone-list span { min-height: 36px; display: inline-flex; align-items: center; }
+      .host-intake h2 { font-size: 31px; }
+      .host-form { padding: 16px; border-radius: 24px; }
+      .faq-panel { padding: 22px 18px; border-radius: 28px; }
+      .faq-list summary { min-height: 58px; padding: 16px; }
+      .faq-list p { padding: 0 16px 18px; }
+      .quote { padding: 26px 22px; border-radius: 28px; }
+      .quote q { font-size: 19px; }
+      .final-cta { margin-top: 54px; padding: 32px 22px; border-radius: 30px; }
+      .final-cta h2 { font-size: 31px; }
+      .final-cta .btn-mint { width: 100%; justify-content: center; }
+      .contact-email { width: 100%; min-width: 0; }
+      .contact-email .value {
+        font-size: clamp(16px, 5vw, 20px);
+        overflow-wrap: anywhere;
+      }
+      .foot { align-items: flex-start; flex-direction: column; padding-bottom: 24px; }
+      .foot .links { gap: 14px; }
+      .mobile-sticky-cta {
+        position: fixed;
+        left: 14px;
+        right: 14px;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        z-index: 70;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        border-radius: 999px;
+        background: rgba(28, 28, 30, 0.72);
+        -webkit-backdrop-filter: blur(28px) saturate(180%);
+        backdrop-filter: blur(28px) saturate(180%);
+        color: #F8FAF7;
+        border: 0.5px solid rgba(255,255,255,0.18);
+        text-decoration: none;
+        font: 700 15px/1 -apple-system, "SF Pro Display", Inter, system-ui, sans-serif;
+        letter-spacing: -0.01em;
+        box-shadow:
+          0 16px 36px rgba(17,20,22,0.28),
+          0 6px 14px rgba(17,20,22,0.18),
+          inset 0 0.5px 0 rgba(255,255,255,0.22);
+      }
+    }
+
+    /* — Appen kommer snart popup — */
+    .app-soon-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(17, 20, 22, 0.45);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      animation: appSoonFadeIn 240ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-overlay[hidden] { display: none; }
+    .app-soon-card {
+      position: relative;
+      width: 100%; max-width: 420px;
+      padding: 32px 32px 28px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.92);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      backdrop-filter: blur(28px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 30px 60px rgba(17, 20, 22, 0.22), 0 12px 24px rgba(17, 20, 22, 0.12);
+      text-align: left;
+      animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 0; background: rgba(17, 20, 22, 0.06); color: #2F3437;
+      font: 500 22px/1 Inter, system-ui, sans-serif;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 160ms ease;
+    }
+    .app-soon-close:hover { background: rgba(17, 20, 22, 0.12); }
+    .app-soon-logo {
+      display: block; width: 120px; height: 120px;
+      object-fit: contain; object-position: center;
+      margin: -16px 0 -8px -22px;
+    }
+    .app-soon-card h2 {
+      margin: 4px 0 0;
+      color: #111416;
+      font: 800 26px/1.1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.03em;
+    }
+    .app-soon-card p {
+      margin: 12px 0 0;
+      color: #2F3437;
+      font: 500 15px/1.5 Inter, system-ui, sans-serif;
+    }
+    .app-soon-card a { color: #1E40AF; text-decoration: underline; }
+    .app-soon-ok {
+      width: 100%; height: 52px;
+      margin-top: 22px;
+      border: 0; border-radius: 999px;
+      background: linear-gradient(135deg, #10B981 0%, #14B8A6 45%, #2563EB 100%);
+      color: #fff;
+      cursor: pointer;
+      font: 700 14px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.32);
+      transition: transform 200ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-ok:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(37, 99, 235, 0.36);
+    }
+    @keyframes appSoonFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes appSoonRise {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+      .bg-blobs span,
+      .mp-kinetic .mp-kinetic-bg span,
+      .mp-kinetic .mp-kinetic-word,
+      .parkno-gsap-transition .transition-box { will-change: auto; }
+      .mp-kinetic {
+        height: 70vh;
+        min-height: 70vh;
+      }
+      .parkno-gsap-transition {
+        height: 42vh;
+      }
+    }
+
+    /* — Apple-style hero — */
+    .phero {
+      position: relative; z-index: 1;
+      width: 100vw;
+      margin: 0 calc(50% - 50vw);
+      background: #ffffff;
+      text-align: center;
+      padding: 52px 0 0;
+    }
+    .phero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .phero-title {
+      margin: 0;
+      font: 700 clamp(40px, 7vw, 64px)/1.04 Inter, -apple-system, system-ui, sans-serif;
+      letter-spacing: -0.025em;
+      color: #1d1d1f;
+    }
+    .phero-sub {
+      margin: 10px 0 0;
+      font: 500 clamp(19px, 3.4vw, 28px)/1.25 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      color: #1d1d1f;
+      text-wrap: balance;
+    }
+    .phero-ctas {
+      display: flex; justify-content: center; align-items: center;
+      gap: 18px; margin: 24px 0 0; flex-wrap: wrap;
+    }
+    .phero-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 0 24px; border-radius: 980px;
+      font: 500 17px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      cursor: pointer; text-decoration: none;
+      border: 1px solid transparent;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+    .phero-btn--primary { background: #0071e3; color: #fff; border-color: #0071e3; }
+    .phero-btn--primary:hover { background: #0077ED; transform: translateY(-1px); }
+    .phero-btn--ghost { background: transparent; color: #0071e3; border-color: rgba(0,113,227,0.6); }
+    .phero-btn--ghost:hover { background: rgba(0,113,227,0.08); }
+    .phero-media {
+      margin: 4px auto 0;
+      max-width: 1240px;
+      padding: 0 24px;
+    }
+    .phero-img {
+      display: block; width: 100%; height: auto;
+    }
+    /* Graceful fallback until assets/parkno-billboard.jpg exists */
+    .phero-media.is-missing {
+      max-width: 720px;
+      border: 2px dashed rgba(23,33,31,0.22);
+      border-radius: 20px;
+      padding: 72px 24px;
+      background: rgba(255,255,255,0.55);
+    }
+    .phero-media.is-missing .phero-img { display: none; }
+    .phero-media.is-missing::after {
+      content: "Legg billboard-bildet her: assets/parkno-billboard.jpg";
+      display: block;
+      font: 600 14px/1.5 Inter, system-ui, sans-serif;
+      color: #73817D;
+    }
+    @media (max-width: 640px) {
+      .phero { padding: 28px 0 0; }
+      .phero-inner { padding: 0 18px; }
+      .phero-ctas { flex-direction: column; gap: 10px; }
+      .phero-btn { width: 100%; }
+      .phero-media { margin-top: 16px; }
+    }
+
+    /* — Registrer modal (Tidlig tilgang for utleiere) — */
+    .register-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(17, 20, 22, 0.45);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      animation: appSoonFadeIn 240ms cubic-bezier(.2,.7,.2,1);
+      overflow-y: auto;
+    }
+    .register-overlay[hidden] { display: none; }
+    .register-card {
+      position: relative;
+      width: 100%; max-width: 560px; margin: auto;
+      padding: 30px 28px 26px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.96);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      backdrop-filter: blur(28px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 30px 60px rgba(17, 20, 22, 0.22), 0 12px 24px rgba(17, 20, 22, 0.12);
+      animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
+    }
+    .register-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 0; background: rgba(17, 20, 22, 0.06); color: #2F3437;
+      font: 500 22px/1 Inter, system-ui, sans-serif; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 160ms ease;
+    }
+    .register-close:hover { background: rgba(17, 20, 22, 0.12); }
+    .register-intro h2 {
+      margin: 10px 0 0; color: #17211F;
+      font: 800 26px/1.12 Inter, system-ui, sans-serif; letter-spacing: -0.03em;
+    }
+    .register-intro p {
+      margin: 12px 0 0; color: #34413E;
+      font: 500 15px/1.5 Inter, system-ui, sans-serif;
+    }
+    .register-card .host-form { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Hopp til innhold</a>
+  <div class="bg-blobs"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+
+  <main class="page parkno-page" id="main-content" data-screen-label="Parkno · landing">
+    <nav class="nav" aria-label="Hovedmeny">
+      <div class="nav-inner">
+        <a class="nav-link" href="#how">Slik fungerer det</a>
+        <a class="nav-link js-kontakt-link" href="#kontakt">Kontakt</a>
+        <a class="nav-link" href="#bedrift">Bedrift</a>
+        <a class="nav-link" href="login.html">Logg inn</a>
+        <span class="download-zone" id="download-app-zone"><a class="nav-link is-primary" href="#" id="download-app-link">Last ned appen</a></span>
+      </div>
+    </nav>
+
+    <!-- Apple-style hero -->
+    <section class="phero" aria-labelledby="phero-title" data-site-section="0">
+      <div class="phero-inner">
+        <h1 class="phero-title" id="phero-title">Parkno</h1>
+        <p class="phero-sub">Lei ut plassen din. Tjen på den som står tom.</p>
+        <div class="phero-ctas">
+          <button type="button" class="phero-btn phero-btn--primary js-open-register">Registrer</button>
+          <a class="phero-btn phero-btn--ghost" href="#how">Les mer</a>
+        </div>
+      </div>
+      <div class="phero-media">
+        <img class="phero-img" src="assets/parkno-billboard.jpg"
+             alt="Parkno-plakat på en reklametavle i Bergen: «Står plassen din tom? Tjen penger på den.»"
+             onerror="this.closest('.phero-media').classList.add('is-missing')">
+      </div>
+    </section>
+
+    <!-- Tidlig tilgang for utleiere — modal bak «Registrer»-knappen -->
+    <div class="register-overlay" id="register-overlay" role="dialog" aria-modal="true" aria-labelledby="host-intake-title" hidden>
+      <div class="register-card">
+        <button class="register-close" type="button" aria-label="Lukk" id="register-close">×</button>
+        <div class="register-intro">
+          <div class="section-overline">Tidlig tilgang for utleiere</div>
+        <h2 id="host-intake-title">Fortell oss hvor plassen er. Vi svarer personlig.</h2>
+        <p>Ingen tung registrering før produktet er klart. Send en kort interesse fra siden, så tar Parkno kontakt med neste steg for Bergen-lanseringen.</p>
+        <div class="intake-steps" aria-label="Neste steg">
+          <div><span>1</span>Du sender område og type plass.</div>
+          <div><span>2</span>Vi vurderer etterspørsel i nabolaget.</div>
+          <div><span>3</span>Du får personlig svar før plassen åpnes.</div>
+        </div>
+      </div>
+
+      <form class="host-form" id="host-intake-form">
+        <div class="form-row">
+          <label>
+            Navn
+            <input name="name" autocomplete="name" placeholder="Sondre" required>
+          </label>
+          <label>
+            E-post
+            <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="navn@eksempel.no" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            Område
+            <select name="area" required>
+              <option value="">Velg område</option>
+              <option>Møhlenpris</option>
+              <option>Sandviken</option>
+              <option>Sentrum</option>
+              <option>Bryggen</option>
+              <option>Bergen Storsenter</option>
+              <option>Annet sted i Bergen</option>
+            </select>
+          </label>
+          <label>
+            Type plass
+            <select name="space" required>
+              <option value="">Velg type</option>
+              <option>Innkjørsel</option>
+              <option>Garasje</option>
+              <option>Reservert plass</option>
+              <option>Flere plasser</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Når er plassen ofte ledig?
+          <select name="availability">
+            <option>Hverdager på dagtid</option>
+            <option>Kvelder</option>
+            <option>Helger</option>
+            <option>Fleksibelt / varierer</option>
+          </select>
+        </label>
+        <button type="submit">Send interesse</button>
+        <p class="form-note">Åpner en ferdig utfylt e-post. Ingen data sendes til en server ennå.</p>
+        <p class="form-status" id="host-form-status" aria-live="polite"></p>
+      </form>
+      </div>
+    </div>
+
+    <!-- Section 2: GSAP bar transition -->
+    <section class="parkno-gsap-transition" aria-label="Ledig plass til reservert" data-site-section="2" data-mp-transition>
+      <span class="transition-label transition-label-left">Ledig<br/>plass</span>
+      <span class="transition-label transition-label-right">Reservert</span>
+    </section>
+
+
+    <!-- Section 3: Content before transition -->
+    <section class="parkno-content-section" aria-label="I tall og slik fungerer det" data-site-section="3">
+
+      <div class="section" id="how">
+        <div class="section-overline">Slik fungerer det</div>
+        <h2 class="section-title">Annonsér én gang. Tjen mens du er på jobb, sover eller er bortreist.</h2>
+        <p class="section-lede">En tom plass tjener ingenting. Annonsér på fem minutter og la sjåfører reservere på telefonen — du bestemmer selv når den er tilgjengelig.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">1</div>
+            <h3>Ta bilder av plassen.</h3>
+            <p>Tre bilder, adressen, når den er ledig. Vi verifiserer innen én time.</p>
+            <div class="meta">~5 min oppsett</div>
+          </div>
+          <div class="step mist">
+            <div class="num">2</div>
+            <h3>Sjåfører reserverer et vindu.</h3>
+            <p>Verifiserte sjåfører ser plassen din, velger en tid og betaler før de kommer. Du trenger ikke løfte en finger.</p>
+            <div class="meta">Ingen nøkler, ingen kontakt</div>
+          </div>
+          <div class="step silver">
+            <div class="num">3</div>
+            <h3>Utbetaling rett på konto.</h3>
+            <p>Hver fredag, automatisk. NOK til din norske bankkonto, åpne gebyrer, fullt regnskap.</p>
+            <div class="meta">Fredag · 09:00 · NOK</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Kinetic typography GSAP (removed for now)
+    <section class="mp-kinetic" aria-label="Finn parkering, parker, eller lei ut med Parkno" data-site-section="4" data-mp-kinetic>
+      <div class="mp-kinetic-bg" aria-hidden="true">
+        <span>ledig plass</span>
+        <span>parkering</span>
+        <span>enkelt</span>
+        <span>reservert</span>
+        <span>nær deg</span>
+        <span>parkno</span>
+        <span>sjåfør</span>
+        <span>utleier</span>
+      </div>
+      <div class="mp-kinetic-content" aria-hidden="true">
+        <div class="mp-kinetic-word">FINN</div>
+        <div class="mp-kinetic-word">PARKER</div>
+        <div class="mp-kinetic-word">LEI UT</div>
+      </div>
+    </section>
+    -->
+
+    <!-- Section 6: Conversion -->
+    <section class="parkno-content-section" aria-label="Utleiere og start" data-site-section="6">
+      <section class="trust-panel" aria-labelledby="trust-title">
+        <div class="section-overline">Trygghet først</div>
+        <h2 class="section-title" id="trust-title">Bygget for å fjerne den lille tvilen før den blir stor.</h2>
+        <p class="section-lede">Parkno skal føles enkelt, men aldri tilfeldig. Hver reservasjon har tydelig sjåfør, bil, betaling og tidsvindu.</p>
+
+        <div class="trust-grid">
+          <div class="trust-item">
+            <div class="mark">ID</div>
+            <h3>Verifiserte brukere</h3>
+            <p>BankID er planlagt for konto og vertsgodkjenning, med bil og skiltnummer knyttet til reservasjonen.</p>
+          </div>
+          <div class="trust-item">
+            <div class="mark">kr</div>
+            <h3>Betalt før ankomst</h3>
+            <p>Sjåføren reserverer et konkret vindu og betaler før plassen brukes. Ingen kontanter, ingen uklar avtale.</p>
+          </div>
+          <div class="trust-item">
+            <div class="mark">09</div>
+            <h3>Fredagsutbetaling</h3>
+            <p>Inntekten samles og sendes automatisk i NOK hver fredag kl. 09:00, med åpne gebyrer.</p>
+          </div>
+          <div class="trust-item">
+            <div class="mark">1M</div>
+            <h3>Skadedekning</h3>
+            <p>Målet er dekning opptil 1 000 000 kr per reservasjon når forsikringspartner er bekreftet.</p>
+          </div>
+        </div>
+
+        <div class="launch-strip" aria-label="Lanseringsområder i Bergen">
+          <div>
+            <h3>Starter der parkering faktisk er vanskelig.</h3>
+            <p>Første bølge fokuserer på sentrale Bergen-nabolag med høy etterspørsel og korte avstander mellom vert og sjåfør.</p>
+          </div>
+          <div class="zone-list" aria-label="Prioriterte områder">
+            <span>Møhlenpris</span>
+            <span>Sandviken</span>
+            <span>Sentrum</span>
+            <span>Bryggen</span>
+            <span>Bergen Storsenter</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-panel" aria-labelledby="faq-title">
+        <div class="section-overline">Vanlige spørsmål</div>
+        <h2 class="section-title" id="faq-title">Det du lurer på før du sier ja.</h2>
+        <div class="faq-list">
+          <details>
+            <summary>Må jeg være tilgjengelig når noen parkerer?</summary>
+            <p>Nei. Poenget er at sjåføren reserverer et tydelig tidsvindu, betaler før ankomst og ser instruksjonene i appen. Du bestemmer når plassen er ledig.</p>
+          </details>
+          <details>
+            <summary>Hva skjer hvis sjåføren blir stående for lenge?</summary>
+            <p>Reservasjoner er tidsstyrte. Neste produktsteg er varsler, overtidshåndtering og en tydelig historikk slik at verten slipper å følge opp manuelt.</p>
+          </details>
+          <details>
+            <summary>Hvordan vet jeg hvem som bruker plassen?</summary>
+            <p>Parkno er designet rundt verifiserte kontoer, bilinformasjon og skiltnummer på reservasjonen. Verten skal alltid se hvem som har booket.</p>
+          </details>
+          <details>
+            <summary>Koster det noe å legge ut plassen?</summary>
+            <p>Nei. Modellen er gratis annonsering og 12 % Parkno-gebyr på fullførte reservasjoner. Det gjør terskelen lav for tidlige Bergen-verter.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Quote -->
+      <div class="section">
+        <div class="section-overline">Utleiere sier</div>
+        <div class="quote">
+          <q>Jeg begynte å leie ut innkjørselen da jeg var i pappapermisjon. Et halvt år senere dekker den felleskostnadene i borettslaget — og jeg har ikke gjort noe siden jeg tok bildene.</q>
+          <div class="who">
+            <div class="a">SH</div>
+            <div>
+              <div class="name">Sondre H.</div>
+              <div class="meta">Møhlenpris · utleier siden aug. 2024</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final CTA -->
+      <div id="host-cta">
+        <div class="final-cta">
+          <div class="blob1"></div><div class="blob2"></div>
+          <div class="inner">
+            <div>
+              <div style="font: 600 11px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: rgba(255,255,255,0.55);">Begynn å leie ut</div>
+              <h2>Plassen din kan tjene penger allerede på fredag.</h2>
+              <p>Annonsér på fem minutter. Vi verifiserer innen én time, og første utbetaling kommer påfølgende fredag kl. 09:00.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+              <button class="btn-mint js-open-register" type="button">
+                Lei ut plassen din
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#17211F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </button>
+              <span style="font: 500 13px/1.4 Inter; color: rgba(255,255,255,0.55);">Gratis å annonsere · 12 % på fullførte reservasjoner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="contact-card" id="kontakt" aria-labelledby="kontakt-title">
+        <div>
+          <div class="section-overline">Kontakt</div>
+          <h2 id="kontakt-title">Snakk med Parkno.</h2>
+          <p>Har du spørsmål om utleie, reservasjoner eller samarbeid, kan du kontakte oss direkte på e-post.</p>
+        </div>
+        <div class="contact-email">
+          <div class="label">Email:</div>
+          <a class="value" href="mailto:kontakt@parkno.no">kontakt@parkno.no</a>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <div>© 2026 Parkno AS · Org.nr 998 877 665 · Bergen, Norge</div>
+        <div class="links">
+          <a href="#kontakt">Personvern</a><a href="#kontakt">Vilkår</a><a href="#trust-title">Dekning og forsikring</a><a href="#kontakt">Hjelp</a><a href="mailto:kontakt@parkno.no?subject=English%20information%20about%20Parkno">English</a>
+        </div>
+      </footer>
+    </section>
+  </main>
+  <a class="mobile-sticky-cta js-open-register" href="#">Lei ut plassen din</a>
+
+  <!-- "Last ned appen" coming-soon popup -->
+  <div class="app-soon-overlay" id="app-soon-overlay" role="dialog" aria-modal="true" aria-labelledby="app-soon-title" hidden>
+    <div class="app-soon-card">
+      <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
+      <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="Parkno">
+      <h2 id="app-soon-title">Appen kommer snart!</h2>
+      <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
+      <button class="app-soon-ok" type="button" id="app-soon-ok">Greit, jeg venter</button>
+    </div>
+  </div>
+
+  <script>
+    function scrollToId(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion && window.__parknoLenis) {
+        window.__parknoLenis.scrollTo(el, { offset: -24, duration: 1.08 });
+        return;
+      }
+      el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+
+    function flashKontakt() {
+      const el = document.getElementById('kontakt');
+      if (!el) return;
+      el.classList.remove('is-kontakt-flash');
+      void el.offsetWidth; // restart animation
+      el.classList.add('is-kontakt-flash');
+      setTimeout(() => el.classList.remove('is-kontakt-flash'), 1900);
+    }
+
+    function jumpToKontakt() {
+      const el = document.getElementById('kontakt');
+      if (!el) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion && window.__parknoLenis) {
+        window.__parknoLenis.scrollTo(el, {
+          offset: -32, duration: 1.2,
+          onComplete: flashKontakt,
+        });
+      } else {
+        el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        setTimeout(flashKontakt, reduceMotion ? 0 : 750);
+      }
+    }
+
+    document.querySelectorAll('.js-kontakt-link').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        jumpToKontakt();
+      });
+    });
+
+    // "Last ned appen" → Appen kommer snart popup
+    (function initAppSoonPopup() {
+      const overlay = document.getElementById('app-soon-overlay');
+      const link = document.getElementById('download-app-link');
+      const closeBtn = document.getElementById('app-soon-close');
+      const okBtn = document.getElementById('app-soon-ok');
+      if (!overlay || !link) return;
+
+      let lastFocus = null;
+      function open(e) {
+        if (e) e.preventDefault();
+        lastFocus = document.activeElement;
+        overlay.hidden = false;
+        document.body.style.overflow = 'hidden';
+        (okBtn || closeBtn || overlay).focus();
+      }
+      function close() {
+        overlay.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+
+      link.addEventListener('click', open);
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      if (okBtn) okBtn.addEventListener('click', close);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.hidden) close();
+      });
+    })();
+
+    // Registrer → "Tidlig tilgang for utleiere" modal
+    (function initRegisterModal() {
+      const overlay = document.getElementById('register-overlay');
+      if (!overlay) return;
+      const closeBtn = document.getElementById('register-close');
+      const triggers = document.querySelectorAll('.js-open-register');
+      let lastFocus = null;
+
+      function open(e) {
+        if (e) e.preventDefault();
+        lastFocus = document.activeElement;
+        overlay.hidden = false;
+        document.body.style.overflow = 'hidden';
+        const firstField = overlay.querySelector('input, select');
+        (firstField || closeBtn || overlay).focus();
+      }
+      function close() {
+        overlay.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+
+      triggers.forEach((trigger) => trigger.addEventListener('click', open));
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.hidden) close();
+      });
+    })();
+
+    // If we landed here via #kontakt (from login/register), scroll + flash
+    if (window.location.hash === '#kontakt') {
+      window.addEventListener('load', () => {
+        // Strip hash so browser doesn't fight our smooth scroll
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        setTimeout(jumpToKontakt, 200);
+      });
+    }
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const id = link.getAttribute('href').slice(1);
+        if (!id) return;
+        event.preventDefault();
+        scrollToId(id);
+        window.history.pushState(null, '', `#${id}`);
+      });
+    });
+    const hostForm = document.getElementById('host-intake-form');
+    if (hostForm) {
+      hostForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!hostForm.reportValidity()) return;
+
+        const data = new FormData(hostForm);
+        const status = document.getElementById('host-form-status');
+        const lines = [
+          'Hei Parkno,',
+          '',
+          'Jeg vil registrere interesse som tidlig utleier.',
+          '',
+          `Navn: ${data.get('name')}`,
+          `E-post: ${data.get('email')}`,
+          `Område: ${data.get('area')}`,
+          `Type plass: ${data.get('space')}`,
+          `Ledighet: ${data.get('availability')}`,
+          '',
+          'Send meg gjerne neste steg.'
+        ];
+        const subject = encodeURIComponent('Tidlig utleierinteresse - Parkno');
+        const body = encodeURIComponent(lines.join('\n'));
+        if (status) status.textContent = 'Klart. E-postutkastet åpnes nå.';
+        window.location.href = `mailto:kontakt@parkno.no?subject=${subject}&body=${body}`;
+      });
+    }
+  </script>
+
+  <!-- Criipto Verify (BankID + Norwegian/European e-ID) SDK -->
+  <script type="text/javascript" src="https://unpkg.com/@criipto/auth-js@^3.8"></script>
+
+  <script src="https://unpkg.com/lenis@1.3.13/dist/lenis.min.js" integrity="sha384-Nu2D9pzc3S/9RqOSipfAKa1eKIEtZEJtDUaf6rx5sEaCH3XN55fGolPs7PCMeMJu" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" integrity="sha384-xb96EMJeax+NLXMC88ZBa1xAeAW+kn+horHh/zFlbMLG2UPWhMJJSlv7fi57hS+Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js" integrity="sha384-QsPhgdP78a1erQNT34dj/oyh7uPCXUnT/FkptUa/56LnSGsbTBmdiAOfB7j+8K4A" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js" integrity="sha384-JCMGAgtMgo/19ttIm8BSnUFxOA5KAxaKT7jZdTDtaL0df8+CHKRo9XFCmhsvUlXG" crossorigin="anonymous"></script>
+  <script>
+    // Magnetic + wiggle "Last ned appen" button
+    (function initDownloadAppButton() {
+      if (typeof gsap === 'undefined') return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const btn = document.getElementById('download-app-link');
+      const zone = document.getElementById('download-app-zone');
+      if (!btn || !zone) return;
+
+      const strength = 0.25;
+
+      // Subtle wiggle (CustomWiggle plugin isn't loaded — use a manual sine timeline)
+      const wiggle = gsap.timeline({ repeat: -1, defaults: { ease: 'sine.inOut' } });
+      wiggle
+        .to(btn, { rotation: 2.5,  duration: 0.55 })
+        .to(btn, { rotation: -2,   duration: 0.5 })
+        .to(btn, { rotation: 1,    duration: 0.45 })
+        .to(btn, { rotation: 0,    duration: 0.5 })
+        .to({}, { duration: 4 }); // long pause between wiggles
+
+      zone.addEventListener('mousemove', (e) => {
+        const rect = zone.getBoundingClientRect();
+        const x = gsap.utils.mapRange(rect.left, rect.right, -rect.width / 2, rect.width / 2, e.clientX);
+        const y = gsap.utils.mapRange(rect.top, rect.bottom, -rect.height / 2, rect.height / 2, e.clientY);
+        gsap.to(btn, {
+          x: x * strength,
+          y: y * strength,
+          duration: 0.4,
+          ease: 'power2.out',
+          overwrite: 'auto', // keeps the rotation wiggle alive
+        });
+      });
+
+      zone.addEventListener('mouseleave', () => {
+        gsap.to(btn, {
+          x: 0, y: 0,
+          duration: 0.7,
+          ease: 'elastic.out(1, 0.4)',
+          overwrite: 'auto',
+        });
+      });
+    })();
+
+    (function initParknoGsapSections() {
+      const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let gsapSectionsReady = false;
+
+      function createParknoTransitionBoxes() {
+        const root = document.querySelector('.parkno-gsap-transition');
+        if (!root) return null;
+        if (root.querySelector('.transition-box')) return root;
+
+        const fragment = document.createDocumentFragment();
+        Array.from({ length: 100 }).forEach(() => {
+          const box = document.createElement('div');
+          box.className = 'transition-box';
+          fragment.appendChild(box);
+        });
+        root.appendChild(fragment);
+        return root;
+      }
+
+      function setupLenis() {
+        if (reduceMotionQuery.matches || !window.Lenis || window.__parknoLenis) return;
+
+        const lenis = new Lenis({
+          duration: 1.08,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          syncTouch: false,
+        });
+
+        lenis.on('scroll', () => {
+          if (window.ScrollTrigger) ScrollTrigger.update();
+        });
+
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+        window.__parknoLenis = lenis;
+      }
+
+      function registerPlugins() {
+        if (!window.gsap) return false;
+
+        const plugins = [];
+        if (window.ScrollTrigger) plugins.push(ScrollTrigger);
+        if (window.SplitText) plugins.push(SplitText);
+        if (window.ScrambleTextPlugin) plugins.push(ScrambleTextPlugin);
+        if (window.CustomEase) plugins.push(CustomEase);
+        if (plugins.length) gsap.registerPlugin(...plugins);
+        return true;
+      }
+
+      function initKineticHero() {
+        const root = document.querySelector('.mp-kinetic');
+        if (!root) return null;
+
+        return gsap.context(() => {
+          const kineticEase = window.CustomEase
+            ? CustomEase.create('mp-kinetic-ease', '0.16,1,0.3,1')
+            : 'power4.out';
+          const words = gsap.utils.toArray('.mp-kinetic-word');
+          const bgWords = gsap.utils.toArray('.mp-kinetic-bg span');
+          const introScrollTrigger = () => window.ScrollTrigger
+            ? { trigger: root, start: 'top 72%', once: true }
+            : undefined;
+
+          if (window.SplitText) {
+            const splitWords = words.map((word) => new SplitText(word, { type: 'chars' }));
+            const chars = splitWords.flatMap((split) => split.chars);
+            gsap.from(chars, {
+              scrollTrigger: introScrollTrigger(),
+              yPercent: 120,
+              opacity: 0,
+              duration: 1,
+              stagger: 0.018,
+              ease: kineticEase,
+            });
+          } else {
+            gsap.from('.mp-kinetic-word', {
+              scrollTrigger: introScrollTrigger(),
+              yPercent: 120,
+              opacity: 0,
+              duration: 1,
+              stagger: 0.18,
+              ease: kineticEase,
+            });
+          }
+
+          if (window.ScrambleTextPlugin) {
+            bgWords.forEach((word, index) => {
+              const text = word.textContent;
+              gsap.fromTo(word, {
+                scrambleText: { text: '', chars: 'lowerCase' },
+              }, {
+                scrollTrigger: introScrollTrigger(),
+                scrambleText: { text, chars: 'lowerCase', speed: 0.35 },
+                duration: 0.8,
+                delay: 0.08 * index,
+                ease: 'none',
+              });
+            });
+          }
+
+          const bgFloat = gsap.to('.mp-kinetic-bg span', {
+            paused: true,
+            y: 'random(-24, 24)',
+            x: 'random(-24, 24)',
+            opacity: 'random(0.42, 0.86)',
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            stagger: 0.15,
+            ease: 'sine.inOut',
+          });
+
+          if (window.ScrollTrigger) {
+            ScrollTrigger.create({
+              trigger: root,
+              start: 'top bottom',
+              end: 'bottom top',
+              onEnter: () => bgFloat.play(),
+              onEnterBack: () => bgFloat.play(),
+              onLeave: () => bgFloat.pause(),
+              onLeaveBack: () => bgFloat.pause(),
+            });
+          } else {
+            bgFloat.play();
+          }
+        }, root);
+      }
+
+      function initTransition() {
+        const transition = createParknoTransitionBoxes();
+        if (!transition || !window.ScrollTrigger) return null;
+
+        return gsap.context(() => {
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: transition,
+                scrub: 0.5,
+                pin: true,
+                start: 'top top',
+                end: '+=150%',
+              },
+            })
+            .to('.transition-box', {
+              force3D: true,
+              duration: 1,
+              xPercent: 100,
+              ease: 'power1.inOut',
+              stagger: { amount: 1 },
+            })
+            .to('.transition-box', { ease: 'power1.out', duration: 1, rotation: '45deg' }, 0)
+            .to('.transition-box', { ease: 'power1.in', duration: 1, rotation: '0deg' }, 1);
+        }, transition);
+      }
+
+      function setupGsapSections() {
+        if (gsapSectionsReady) return;
+        gsapSectionsReady = true;
+
+        const scrollToHashTarget = () => {
+          const id = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+          if (!id) return;
+          window.setTimeout(() => scrollToId(id), 80);
+        };
+
+        createParknoTransitionBoxes();
+        if (reduceMotionQuery.matches || !registerPlugins()) {
+          scrollToHashTarget();
+          return;
+        }
+
+        setupLenis();
+        window.__parknoGsapContexts = [
+          initKineticHero(),
+          initTransition(),
+        ].filter(Boolean);
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+        scrollToHashTarget();
+      }
+
+      function bootWhenReady() {
+        setupGsapSections();
+      }
+
+      function refreshTriggers() {
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }
+
+      function whenFontsReady(callback) {
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(callback).catch(callback);
+          return;
+        }
+        callback();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => whenFontsReady(bootWhenReady), { once: true });
+      } else {
+        whenFontsReady(bootWhenReady);
+      }
+
+      window.addEventListener('load', refreshTriggers);
+
+      reduceMotionQuery.addEventListener('change', () => window.location.reload());
+      window.addEventListener('resize', refreshTriggers);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Bli med på ventelisten — Parkno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Parkno gjør det enkelt å finne og leie privat parkering i Bergen. Bli med på ventelisten og få tidlig tilgang når appen lanseres.">
+  <meta name="theme-color" content="#FCFDFC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0C1110" media="(prefers-color-scheme: dark)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="icon" href="assets/parkno-logo-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bli med på ventelisten — Parkno">
+  <meta property="og:description" content="Finn og lei privat parkering i Bergen. Få tidlig tilgang når Parkno lanseres.">
+  <meta property="og:image" content="assets/parkno-logo-icon.png">
+
+  <style>
+    /* ============================================================
+       PARKNO · Venteliste — "AirGlass"
+       Single high-conversion landing page. The form IS the hero.
+       Vanilla HTML/CSS/JS — no framework, no heavy libs.
+       Themed via CSS custom properties; dark mode is a token swap.
+       ============================================================ */
+
+    :root {
+      /* Surfaces */
+      --bg-1: #FCFDFC;
+      --bg-2: #F3F7F4;
+      --bg-3: #E9F3F3;
+      --blob-a: #B5F3D7;
+      --blob-b: #B6CDF8;
+      --blob-c: #93D6E3;
+
+      /* Ink */
+      --ink:   #17211F;
+      --ink-2: #34413E;
+      --ink-3: #73817D;
+
+      /* One confident accent + supporting brand tints */
+      --accent:   #4EA7B9;   /* premium blue */
+      --accent-2: #8BCFB0;   /* fresh green  */
+      --coral:    #EF8F7A;   /* warm signal  */
+
+      /* Glass card + fields */
+      --card-bg: rgba(255, 255, 255, 0.80);
+      --card-bd: rgba(255, 255, 255, 0.92);
+      --field-bg: rgba(255, 255, 255, 0.90);
+      --field-bd: rgba(23, 33, 31, 0.10);
+      --field-bg-focus: #ffffff;
+
+      /* Primary button */
+      --btn-bg: #17211F;
+      --btn-fg: #ffffff;
+      --btn-shadow: 0 14px 30px rgba(23, 33, 31, 0.22);
+
+      /* Chips, lines */
+      --chip-bg: rgba(255, 255, 255, 0.76);
+      --hairline: rgba(23, 33, 31, 0.10);
+      --glow: rgba(78, 167, 185, 0.18);
+
+      /* Motion — springy, never linear */
+      --spring: cubic-bezier(.2, .9, .25, 1.25);
+      --ease:   cubic-bezier(.2, .7, .2, 1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-1: #0C1110;
+        --bg-2: #0F1614;
+        --bg-3: #0A1417;
+        --blob-a: #123A2C;
+        --blob-b: #14233F;
+        --blob-c: #103840;
+
+        --ink:   #F3F7F4;
+        --ink-2: #C3CEC9;
+        --ink-3: #8A9692;
+
+        --card-bg: rgba(22, 30, 28, 0.52);
+        --card-bd: rgba(255, 255, 255, 0.10);
+        --field-bg: rgba(255, 255, 255, 0.06);
+        --field-bd: rgba(255, 255, 255, 0.14);
+        --field-bg-focus: rgba(255, 255, 255, 0.12);
+
+        --btn-bg: linear-gradient(135deg, #4EA7B9 0%, #8BCFB0 100%);
+        --btn-fg: #06120F;
+        --btn-shadow: 0 14px 34px rgba(78, 167, 185, 0.34);
+
+        --chip-bg: rgba(255, 255, 255, 0.07);
+        --hairline: rgba(255, 255, 255, 0.12);
+        --glow: rgba(78, 167, 185, 0.28);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      /* One smooth gradient — no stacked radials, so it can't band/pixelate.
+         Ambient brand colour comes from the soft .blobs wash below. */
+      background: linear-gradient(168deg, var(--bg-1) 0%, var(--bg-2) 60%, var(--bg-3) 100%);
+      background-attachment: fixed;
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: inherit; }
+    :focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    /* Honeypot — invisible to humans, tempting to bots. Server drops it. */
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+    /* Ambient brand blobs (behind everything, decorative) */
+    .blobs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .blobs span { position: absolute; border-radius: 999px; filter: blur(120px); opacity: .32; }
+    .blobs .b1 { width: 560px; height: 560px; top: -200px; left: -180px; background: var(--blob-a); }
+    .blobs .b2 { width: 480px; height: 480px; right: -200px; top: 20%; background: var(--blob-b); opacity: .26; }
+    .blobs .b3 { width: 420px; height: 420px; left: 36%; bottom: -190px; background: var(--blob-c); opacity: .2; }
+
+    /* Confetti canvas sits above content but ignores pointer events */
+    #confetti {
+      position: fixed; inset: 0; z-index: 60; pointer-events: none;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 560px;
+      margin: 0 auto;
+      padding: 18px 22px calc(28px + env(safe-area-inset-bottom));
+      min-height: 100svh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ---------- Header: brand only, no links that lead away ---------- */
+    .top {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; padding: 6px 2px 0;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 9px;
+      font: 800 18px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em;
+      color: var(--ink); text-decoration: none;
+    }
+    /* The PNG is transparent with a wide empty margin; scaling up crops that
+       padding so the lockup reads as just the pin mark — no halo around it. */
+    .brand img {
+      width: 30px; height: 30px; object-fit: contain;
+      background: none; transform: scale(1.2); transform-origin: center;
+    }
+    .brand .no { color: var(--accent); }
+    .meta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font: 600 11px/1.2 var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+      letter-spacing: 0.04em; color: var(--ink-3);
+    }
+    .meta .dot {
+      width: 7px; height: 7px; border-radius: 999px; background: var(--accent-2);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent);
+      animation: pulse 2.4s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 55%, transparent); }
+      70%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent-2) 0%, transparent); }
+      100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 0%, transparent); }
+    }
+
+    /* ---------- Hero (vertically centered; the form lives here) ---------- */
+    .hero {
+      flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 22px 0 8px;
+    }
+
+    /* Social proof / scarcity chip */
+    .count-chip {
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 8px 15px; border-radius: 999px;
+      background: var(--chip-bg);
+      border: 1px solid var(--card-bd);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      backdrop-filter: blur(18px) saturate(150%);
+      box-shadow: 0 6px 16px rgba(23, 33, 31, 0.06);
+      font: 600 13px/1 Inter, system-ui, sans-serif; color: var(--ink-2);
+      letter-spacing: -0.01em;
+    }
+    .count-chip .live {
+      width: 8px; height: 8px; border-radius: 999px; background: var(--coral);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--coral) 60%, transparent);
+      animation: pulse-coral 2.2s ease-out infinite;
+    }
+    @keyframes pulse-coral {
+      0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--coral) 55%, transparent); }
+      70%  { box-shadow: 0 0 0 7px color-mix(in srgb, var(--coral) 0%, transparent); }
+      100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--coral) 0%, transparent); }
+    }
+    .count-chip b { color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+    .overline {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 18px;
+      font: 700 11px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+    }
+    .overline::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+
+    h1 {
+      margin: 12px 0 0;
+      font: 800 clamp(2.3rem, 9.5vw, 3.4rem)/1.02 Inter, system-ui, sans-serif;
+      letter-spacing: -0.045em; text-wrap: balance;
+    }
+    h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--ink) 40%, var(--accent) 88%, var(--coral) 120%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .subhead {
+      margin: 14px 0 0; max-width: 440px;
+      font: 500 16px/1.5 Inter, system-ui, sans-serif; color: var(--ink-2);
+      text-wrap: pretty;
+      transition: opacity 260ms var(--ease);
+    }
+
+    /* ---------- Glass form card ---------- */
+    .card {
+      position: relative; margin-top: 18px; padding: 22px;
+      border-radius: 26px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-bd);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      backdrop-filter: blur(28px) saturate(150%);
+      box-shadow: 0 30px 64px rgba(23, 33, 31, 0.16), 0 8px 20px rgba(23, 33, 31, 0.07);
+    }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    /* Spacing below the name row only. NOT `.field + .field` — that selector
+       also matches the 2nd field *inside* .row and shoves it 12px down,
+       leaving the two name inputs misaligned. */
+    .row + .field { margin-top: 12px; }
+    .field label {
+      font: 700 12.5px/1.2 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      color: var(--ink-2);
+    }
+    .field input {
+      width: 100%; height: 52px;
+      border: 1px solid var(--field-bd); border-radius: 16px;
+      background: var(--field-bg); color: var(--ink);
+      padding: 0 15px; outline: none;
+      font: 600 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      box-shadow: inset 0 1px 2px rgba(23, 33, 31, 0.04);
+      transition: border-color 160ms var(--ease), box-shadow 200ms var(--ease),
+                  background 160ms var(--ease), transform 200ms var(--spring);
+    }
+    .field input::placeholder { color: var(--ink-3); }
+    .field input:focus {
+      background: var(--field-bg-focus);
+      border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+      box-shadow: 0 0 0 4px var(--glow);
+      transform: translateY(-1px);
+    }
+    .field input:user-invalid {
+      border-color: color-mix(in srgb, var(--coral) 80%, transparent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--coral) 20%, transparent);
+    }
+
+    /* "valgfritt" hint on optional labels — quiet, never competes with the label */
+    .field .opt {
+      font-weight: 600; font-size: 11px; color: var(--ink-3);
+      letter-spacing: 0; text-transform: lowercase;
+    }
+
+    /* Segmented role toggle — frames intent, never blocks signup (one is always on) */
+    .seg {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+      margin: 0 0 14px; padding: 5px; border: 1px solid var(--field-bd);
+      border-radius: 16px; background: var(--field-bg);
+      box-shadow: inset 0 1px 2px rgba(23, 33, 31, 0.04);
+    }
+    .seg legend {
+      float: left; width: 100%; padding: 0 0 9px 3px;
+      font: 700 12.5px/1.2 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      color: var(--ink-2);
+    }
+    .seg__opt {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      min-height: 42px; border-radius: 12px; cursor: pointer;
+      font: 700 14px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      color: var(--ink-2);
+      transition: color 160ms var(--ease), background 200ms var(--ease), box-shadow 200ms var(--ease);
+    }
+    .seg__opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+    .seg__opt span { position: relative; z-index: 1; }
+    .seg__opt:has(input:checked) {
+      background: var(--card-bg); color: var(--ink);
+      box-shadow: 0 4px 12px rgba(23, 33, 31, 0.12);
+    }
+    .seg__opt:has(input:focus-visible) {
+      outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent);
+      outline-offset: 2px;
+    }
+
+    /* Primary submit — tactile press + gradient shimmer */
+    .submit {
+      position: relative; overflow: hidden;
+      width: 100%; min-height: 56px; margin-top: 16px;
+      border: 0; border-radius: 999px;
+      background: var(--btn-bg); color: var(--btn-fg); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      font: 800 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      box-shadow: var(--btn-shadow);
+      transition: transform 220ms var(--spring), box-shadow 220ms var(--ease), filter 160ms var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .submit::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+      transform: translateX(-130%);
+    }
+    .submit:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(23, 33, 31, 0.26); }
+    .submit:hover::after { animation: shimmer 900ms var(--ease); }
+    .submit:active { transform: scale(0.97); }
+    .submit[disabled] { cursor: progress; filter: saturate(0.6) opacity(0.8); }
+    .submit .label, .submit .arrow { transition: transform 220ms var(--spring); }
+    @keyframes shimmer { to { transform: translateX(130%); } }
+
+    /* tiny spinner shown while submitting */
+    .spinner {
+      width: 17px; height: 17px; border-radius: 999px;
+      border: 2px solid color-mix(in srgb, var(--btn-fg) 35%, transparent);
+      border-top-color: var(--btn-fg);
+      animation: spin 700ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status {
+      min-height: 0; margin: 12px 0 0;
+      font: 600 13px/1.45 Inter, system-ui, sans-serif; color: var(--ink-2);
+    }
+    .status:not(:empty) {
+      padding: 11px 13px; border-radius: 14px;
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+    .status.is-error:not(:empty) {
+      background: color-mix(in srgb, var(--coral) 20%, transparent);
+      color: color-mix(in srgb, var(--coral) 60%, var(--ink));
+    }
+    .status a { font-weight: 800; text-decoration: underline; }
+
+    /* Trust row: payments + reassurance */
+    .trust {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px;
+      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--hairline);
+    }
+    .pays { display: inline-flex; align-items: center; gap: 8px; }
+    .pay {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 30px; padding: 0 12px; border-radius: 8px;
+      font: 800 12.5px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+    }
+    .pay--vipps { background: #FF5B24; color: #fff; }
+    .pay--apple {
+      background: var(--ink); color: var(--bg-1);
+    }
+    .pay--apple svg { width: 13px; height: 13px; margin-top: -2px; }
+    .trust__note {
+      margin-left: auto; text-align: right;
+      font: 600 12px/1.4 Inter, system-ui, sans-serif; color: var(--ink-3);
+    }
+    .fineprint {
+      margin: 14px 2px 0; max-width: 460px;
+      font: 500 12px/1.5 Inter, system-ui, sans-serif; color: var(--ink-3);
+    }
+
+    /* Founding-member perk — honest urgency, right at the decision point */
+    .perk {
+      display: flex; align-items: center; gap: 9px; margin: 14px 0 0;
+      padding: 11px 14px; border-radius: 14px;
+      background: color-mix(in srgb, var(--coral) 14%, transparent);
+      font: 700 12.5px/1.35 Inter, system-ui, sans-serif; color: var(--ink-2);
+      letter-spacing: -0.01em;
+    }
+    .perk b { color: var(--ink); }
+    .perk .star { color: var(--coral); font-size: 15px; line-height: 1; flex: 0 0 auto; }
+
+    /* ---------- Success state ---------- */
+    .success { display: none; }
+    .success.is-on { display: block; animation: rise 520ms var(--spring); }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
+
+    .success .check {
+      width: 60px; height: 60px;
+    }
+    .success .check circle {
+      stroke: var(--accent-2); stroke-width: 3; fill: color-mix(in srgb, var(--accent-2) 18%, transparent);
+      stroke-dasharray: 151; stroke-dashoffset: 151;
+      animation: draw 520ms var(--ease) forwards;
+    }
+    .success .check path {
+      stroke: var(--accent-2); stroke-width: 4; fill: none;
+      stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 48; stroke-dashoffset: 48;
+      animation: draw 380ms var(--ease) 360ms forwards;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    .success h2 {
+      margin: 16px 0 0; font: 800 26px/1.1 Inter, system-ui, sans-serif; letter-spacing: -0.035em;
+    }
+    .success .pos {
+      margin: 14px 0 0; display: flex; align-items: baseline; gap: 8px;
+    }
+    .success .pos .hash { font: 800 22px/1 Inter; color: var(--accent); }
+    .success .pos .num {
+      font: 800 clamp(2.4rem, 12vw, 3.4rem)/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.04em; color: var(--ink); font-variant-numeric: tabular-nums;
+    }
+    .success .pos .of { font: 600 13px/1.3 Inter; color: var(--ink-3); }
+    .success > p { margin: 10px 0 0; font: 500 15px/1.5 Inter; color: var(--ink-2); max-width: 420px; }
+
+    .referral {
+      margin-top: 20px; padding: 18px; border-radius: 20px;
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      border: 1px solid var(--hairline);
+    }
+    .referral h3 { margin: 0; font: 800 15px/1.2 Inter; letter-spacing: -0.02em; color: var(--ink); }
+    .referral p { margin: 7px 0 0; font: 500 13px/1.45 Inter; color: var(--ink-2); }
+    .ref-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .ref-btn {
+      flex: 1 1 auto; min-height: 48px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--field-bd); background: var(--field-bg); color: var(--ink);
+      font: 800 13.5px/1 Inter; letter-spacing: -0.01em;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform 200ms var(--spring), background 160ms var(--ease);
+    }
+    .ref-btn:active { transform: scale(0.97); }
+    .ref-btn--primary { background: var(--btn-bg); color: var(--btn-fg); border-color: transparent; box-shadow: var(--btn-shadow); }
+    .ref-link {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: var(--field-bg); border: 1px dashed var(--field-bd);
+      font: 600 12.5px/1.4 var(--font-mono, ui-monospace, monospace); color: var(--ink-2);
+      word-break: break-all;
+    }
+
+    /* ---------- "Slik fungerer det" — compact 3-step row ---------- */
+    .how { margin-top: 24px; }
+    .how__title {
+      margin: 0 0 14px 2px;
+      font: 800 13px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
+    }
+    .steps {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .step {
+      display: flex; flex-direction: column; gap: 9px;
+      padding: 15px 14px; border-radius: 18px;
+      background: var(--card-bg); border: 1px solid var(--card-bd);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      backdrop-filter: blur(18px) saturate(150%);
+    }
+    .step__n {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
+      color: var(--accent); font: 800 13px/1 Inter, system-ui, sans-serif;
+    }
+    .step__txt {
+      display: flex; flex-direction: column; gap: 3px;
+      font: 500 12.5px/1.4 Inter, system-ui, sans-serif; color: var(--ink-3);
+    }
+    .step__txt b { color: var(--ink); font-weight: 800; font-size: 13.5px; letter-spacing: -0.01em; }
+    @media (max-width: 440px) {
+      .steps { grid-template-columns: 1fr; }
+      .step { flex-direction: row; align-items: center; gap: 12px; padding: 13px 14px; }
+      .step__n { flex: 0 0 auto; }
+    }
+
+    /* ---------- Footer ---------- */
+    .foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; margin-top: 26px; padding-top: 4px;
+      font: 500 12px/1.4 Inter, system-ui, sans-serif; color: var(--ink-3);
+    }
+    .foot a { color: var(--ink-2); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+
+    /* ---------- Entrance reveal ---------- */
+    [data-reveal] { opacity: 0; transform: translateY(16px); }
+    .ready [data-reveal] {
+      opacity: 1; transform: none;
+      transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+      transition-delay: var(--d, 0ms);
+    }
+
+    @media (max-width: 380px) {
+      .row { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+      [data-reveal] { opacity: 1; transform: none; }
+      .success .check circle, .success .check path { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blobs" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <div class="wrap">
+    <header class="top" data-reveal style="--d:40ms">
+      <span class="brand"><img src="assets/parkno-logo-icon.png" alt="">Park<span class="no">no</span></span>
+      <span class="meta"><span class="dot" aria-hidden="true"></span>Bergen · <span id="clock">--:--</span></span>
+    </header>
+
+    <main class="hero">
+      <div class="count-chip" data-reveal style="--d:120ms" aria-live="off">
+        <span class="live" aria-hidden="true"></span>
+        <span><b id="count">0</b> allerede på ventelisten</span>
+      </div>
+
+      <p class="overline" data-reveal style="--d:200ms">Kommer snart i Bergen</p>
+      <h1 data-reveal style="--d:260ms">Parkering i Bergen,<br><em>uten stress.</em></h1>
+      <p class="subhead" data-reveal style="--d:340ms">
+        Finn og lei privat parkering i Bergen — enkelt, trygt og ofte billigere enn p-hus.
+      </p>
+
+      <!-- The capture card -->
+      <section class="card" aria-label="Bli med på ventelisten" data-reveal style="--d:500ms">
+        <form id="form" novalidate>
+          <!-- Honeypot -->
+          <div class="hp" aria-hidden="true">
+            <label for="company">Firma</label>
+            <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <fieldset class="seg" id="role-seg">
+            <legend>Jeg vil</legend>
+            <label class="seg__opt">
+              <input type="radio" name="role" value="park" checked>
+              <span>Parkere</span>
+            </label>
+            <label class="seg__opt">
+              <input type="radio" name="role" value="host">
+              <span>Leie ut plass</span>
+            </label>
+          </fieldset>
+
+          <div class="row">
+            <div class="field">
+              <label for="firstname">Fornavn <span class="opt">valgfritt</span></label>
+              <input id="firstname" name="firstname" type="text" autocomplete="given-name" placeholder="Ola">
+            </div>
+            <div class="field">
+              <label for="lastname">Etternavn <span class="opt">valgfritt</span></label>
+              <input id="lastname" name="lastname" type="text" autocomplete="family-name" placeholder="Nordmann">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">E-post</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="navn@eksempel.no" required>
+          </div>
+
+          <p class="perk" id="perk">
+            <span class="star" aria-hidden="true">★</span>
+            <span id="perk-text">Founding-medlemmer får tidlig tilgang og founding-pris ved lansering.</span>
+          </p>
+
+          <button class="submit" type="submit" id="submit">
+            <span class="label" id="submit-label">Få tidlig tilgang</span>
+            <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+
+          <div class="trust">
+            <span class="pays" aria-label="Betaling med Vipps og Apple Pay">
+              <span class="pay pay--vipps">Vipps</span>
+              <span class="pay pay--apple">
+                <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zM262.1 104.5c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                Pay
+              </span>
+            </span>
+            <span class="trust__note">Gratis å bli med · Ingen spam</span>
+          </div>
+
+          <p class="fineprint">
+            Vi lagrer kun navnet og e-posten din for å varsle deg om lansering — GDPR-trygt, lagret i Norge.
+            Du kan melde deg av når som helst.
+          </p>
+        </form>
+
+        <!-- Success -->
+        <div class="success" id="success" tabindex="-1" aria-live="polite">
+          <svg class="check" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="24"/>
+            <path d="M16 29l8 8 17-18"/>
+          </svg>
+          <h2 id="success-title">Du er på listen! 🎉</h2>
+          <div class="pos">
+            <span class="hash">#</span>
+            <span class="num" id="position">0</span>
+            <span class="of">din plass i køen</span>
+          </div>
+          <p id="success-body">Vi gir deg beskjed så snart Parkno åpner i Bergen. Sjekk innboksen din for en bekreftelse.</p>
+
+          <div class="referral">
+            <h3>Snik forbi køen ⚡</h3>
+            <p>Inviter en venn — for hver som blir med via lenken din, rykker du oppover listen.</p>
+            <div class="ref-actions">
+              <button type="button" class="ref-btn ref-btn--primary" id="ref-share">Del lenken</button>
+              <button type="button" class="ref-btn" id="ref-copy">Kopier lenke</button>
+            </div>
+            <div class="ref-link" id="ref-link"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="how" aria-label="Slik fungerer det" data-reveal style="--d:560ms">
+        <h2 class="how__title">Slik fungerer det</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__n">1</span>
+            <span class="step__txt"><b>Finn plass</b>Søk opp ledig privat parkering nær deg.</span>
+          </li>
+          <li class="step">
+            <span class="step__n">2</span>
+            <span class="step__txt"><b>Reserver</b>Book og betal trygt med Vipps eller Apple Pay.</span>
+          </li>
+          <li class="step">
+            <span class="step__n">3</span>
+            <span class="step__txt"><b>Parker</b>Kjør inn på din reserverte plass. Ferdig.</span>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="foot" data-reveal style="--d:600ms">
+      <span>© 2026 Parkno AS · Bergen, Norge</span>
+      <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a>
+    </footer>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var $ = function (id) { return document.getElementById(id); };
+
+    /* ----------------------------------------------------------
+       Config
+       BASE_COUNT is a seeded founding-member baseline, NOT a live
+       DB read — the API has no public count endpoint by design.
+       It's the honest "early access in batches" framing; bump it
+       as real signups grow, or wire it to a count endpoint later.
+       ---------------------------------------------------------- */
+    var BASE_COUNT = 1247;
+    var nbFormat = new Intl.NumberFormat('nb-NO');
+
+    /* ----------------------------------------------------------
+       0. Entrance + Bergen clock
+       ---------------------------------------------------------- */
+    document.documentElement.classList.add('ready');
+    (function clock() {
+      var el = $('clock'); if (!el) return;
+      var paint = function () {
+        try {
+          el.textContent = new Intl.DateTimeFormat('nb-NO', {
+            hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo'
+          }).format(new Date());
+        } catch (e) {
+          var d = new Date();
+          el.textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+        }
+      };
+      paint(); setInterval(paint, 20000);
+    })();
+
+    /* ----------------------------------------------------------
+       1. Count-up for the social-proof chip
+       ---------------------------------------------------------- */
+    function countTo(el, target, dur, done) {
+      if (reduce) { el.textContent = nbFormat.format(target); if (done) done(); return; }
+      var start = performance.now();
+      var from = parseInt(String(el.textContent).replace(/\D/g, ''), 10) || 0;
+      function frame(now) {
+        var t = Math.min(1, (now - start) / dur);
+        var eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+        el.textContent = nbFormat.format(Math.round(from + (target - from) * eased));
+        if (t < 1) requestAnimationFrame(frame);
+        else if (done) done();
+      }
+      requestAnimationFrame(frame);
+    }
+    countTo($('count'), BASE_COUNT, 1400);
+
+    /* ----------------------------------------------------------
+       2. Referral link (stable per browser)
+       ---------------------------------------------------------- */
+    function refCode() {
+      var k = 'parkno_ref';
+      try {
+        var v = localStorage.getItem(k);
+        if (!v) { v = Math.random().toString(36).slice(2, 8).toUpperCase(); localStorage.setItem(k, v); }
+        return v;
+      } catch (e) {
+        return Math.random().toString(36).slice(2, 8).toUpperCase();
+      }
+    }
+    function shareUrl() { return location.origin + '/?ref=' + refCode(); }
+
+    /* ----------------------------------------------------------
+       3. Source tracking — preserves the QR poster slug (?s=),
+          falling back to 'web'. Matches the API's `source` column.
+       ---------------------------------------------------------- */
+    function trackedSource() {
+      var slug = 'web';
+      try {
+        var raw = new URLSearchParams(location.search).get('s') || '';
+        var clean = raw.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+        if (clean) slug = clean;
+      } catch (e) { /* noop */ }
+      return slug;
+    }
+
+    /* ----------------------------------------------------------
+       4. Confetti — tiny canvas burst. No-op under reduced motion.
+       ---------------------------------------------------------- */
+    var confetti = (function () {
+      var canvas = $('confetti');
+      var ctx = canvas.getContext('2d');
+      var parts = [];
+      var raf = null;
+      var COLORS = ['#8BCFB0', '#93D6E3', '#4EA7B9', '#EF8F7A', '#17211F'];
+
+      function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function spawn(x, y) {
+        for (var i = 0; i < 70; i++) {
+          var a = (Math.random() * Math.PI) - Math.PI; // upward fan
+          var speed = 6 + Math.random() * 9;
+          parts.push({
+            x: x, y: y,
+            vx: Math.cos(a) * speed * (Math.random() > .5 ? 1 : .7),
+            vy: Math.sin(a) * speed - 4,
+            g: 0.22 + Math.random() * 0.1,
+            w: 6 + Math.random() * 6, h: 8 + Math.random() * 6,
+            rot: Math.random() * Math.PI, vr: (Math.random() - .5) * 0.3,
+            color: COLORS[(Math.random() * COLORS.length) | 0],
+            life: 0, ttl: 90 + Math.random() * 40
+          });
+        }
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = parts.length - 1; i >= 0; i--) {
+          var p = parts[i];
+          p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+          var alpha = Math.max(0, 1 - p.life / p.ttl);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+          if (p.life >= p.ttl || p.y > innerHeight + 40) parts.splice(i, 1);
+        }
+        if (parts.length) { raf = requestAnimationFrame(tick); }
+        else { ctx.clearRect(0, 0, canvas.width, canvas.height); raf = null; }
+      }
+
+      return function fire() {
+        if (reduce) return;
+        size();
+        var cx = innerWidth / 2;
+        spawn(cx - 80, innerHeight * 0.42);
+        spawn(cx + 80, innerHeight * 0.42);
+        if (!raf) raf = requestAnimationFrame(tick);
+      };
+    })();
+
+    /* ----------------------------------------------------------
+       5. Form submit → /api/waitlist
+       ---------------------------------------------------------- */
+    var form = $('form');
+    var statusEl = $('status');
+    var submitBtn = $('submit');
+    var successEl = $('success');
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function val(id) { var el = $(id); return el ? el.value.trim() : ''; }
+
+    function selectedRole() {
+      var r = document.querySelector('input[name="role"]:checked');
+      return r && r.value === 'host' ? 'host' : 'park';
+    }
+
+    function payload() {
+      return {
+        source: trackedSource(),
+        company: val('company'), // honeypot
+        role: selectedRole(),
+        first_name: val('firstname'),
+        last_name: val('lastname'),
+        email: val('email')
+      };
+    }
+
+    /* Role-aware founding perk — keeps the incentive honest for each audience. */
+    var PERK = {
+      park: 'Founding-medlemmer får tidlig tilgang og founding-pris ved lansering.',
+      host: 'Founding-verter: 0 % provisjon på utleie det første året.'
+    };
+    function syncPerk() {
+      var el = $('perk-text'); if (!el) return;
+      el.textContent = PERK[selectedRole()] || PERK.park;
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="role"]'), function (r) {
+      r.addEventListener('change', syncPerk);
+    });
+    syncPerk();
+
+    function mailtoFallback(p) {
+      var body = 'Navn: ' + p.first_name + ' ' + p.last_name + '\nE-post: ' + p.email;
+      return 'mailto:kontakt@parkno.no?subject=' + encodeURIComponent('Parkno venteliste')
+        + '&body=' + encodeURIComponent(body);
+    }
+
+    function setError(html) {
+      statusEl.classList.add('is-error');
+      statusEl.innerHTML = html;
+    }
+
+    function setLoading(on) {
+      submitBtn.disabled = on;
+      submitBtn.innerHTML = on
+        ? '<span class="spinner" aria-hidden="true"></span><span class="label">Sender …</span>'
+        : '<span class="label">Få tidlig tilgang</span>'
+          + '<svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+    }
+
+    function reveal(already) {
+      // Position: their spot in the founding cohort (seeded baseline + this signup)
+      var pos = BASE_COUNT + 1;
+      form.style.display = 'none';
+      successEl.classList.add('is-on');
+
+      if (already) {
+        $('success-title').textContent = 'Du står allerede på listen ✓';
+        $('success-body').textContent = 'Denne e-posten er allerede registrert. Vi gir deg beskjed så snart Parkno åpner i Bergen.';
+      }
+
+      $('ref-link').textContent = shareUrl();
+      countTo($('position'), pos, 900);
+      confetti();
+
+      // Update the social-proof chip to reflect the new signup
+      countTo($('count'), pos, 700);
+
+      try { successEl.focus(); } catch (e) { /* noop */ }
+      successEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      statusEl.classList.remove('is-error');
+      statusEl.textContent = '';
+
+      // Client-side validation (cheap, friendly) before the network.
+      // Only e-post is required — name is optional and never blocks signup.
+      if (!EMAIL_RE.test(val('email'))) {
+        return setError('Skriv inn en gyldig e-postadresse.');
+      }
+
+      var p = payload();
+      setLoading(true);
+
+      fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { res: res, data: data };
+        });
+      }).then(function (r) {
+        if (r.res.ok && r.data && r.data.ok) {
+          reveal(!!r.data.already);
+        } else if (r.res.status === 422 && r.data && r.data.fields) {
+          setError('Fyll ut: ' + r.data.fields.join(', ') + '.');
+          setLoading(false);
+        } else if (r.res.status === 429) {
+          setError('For mange forsøk akkurat nå. Vent et minutt og prøv igjen.');
+          setLoading(false);
+        } else {
+          setError('Klarte ikke å registrere deg. Prøv igjen, eller <a href="' + mailtoFallback(p) + '">send oss en e-post</a> så legger vi deg til.');
+          setLoading(false);
+        }
+      }).catch(function () {
+        setError('Noe gikk galt. Prøv igjen, eller <a href="' + mailtoFallback(p) + '">send oss en e-post</a> så legger vi deg til.');
+        setLoading(false);
+      });
+    });
+
+    /* ----------------------------------------------------------
+       6. Referral share + copy
+       ---------------------------------------------------------- */
+    var shareText = 'Jeg ble nettopp med på ventelisten til Parkno — appen som gjør parkering i Bergen enkel. Bli med du også:';
+
+    $('ref-share').addEventListener('click', function () {
+      var url = shareUrl();
+      if (navigator.share) {
+        navigator.share({ title: 'Parkno', text: shareText, url: url }).catch(function () { /* user cancelled */ });
+      } else {
+        copy(url, this);
+      }
+    });
+    $('ref-copy').addEventListener('click', function () { copy(shareUrl(), this); });
+
+    function copy(text, btn) {
+      var done = function () {
+        var old = btn.textContent;
+        btn.textContent = 'Kopiert ✓';
+        setTimeout(function () { btn.textContent = old; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () { legacyCopy(text); done(); });
+      } else {
+        legacyCopy(text); done();
+      }
+    }
+    function legacyCopy(text) {
+      var t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', '');
+      t.style.position = 'absolute'; t.style.left = '-9999px';
+      document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } catch (e) { /* noop */ }
+      document.body.removeChild(t);
+    }
+
+    /* ----------------------------------------------------------
+       7. Preview hook (no backend needed)
+       Visiting ?preview=success renders the success state + confetti
+       without a network round-trip, so the "money moment" can be
+       demoed and screenshotted. Real visitors never carry this param.
+       ---------------------------------------------------------- */
+    try {
+      if (new URLSearchParams(location.search).get('preview') === 'success') {
+        setTimeout(function () { reveal(false); }, reduce ? 0 : 300);
+      }
+    } catch (e) { /* noop */ }
+  })();
+  </script>
+</body>
+</html>

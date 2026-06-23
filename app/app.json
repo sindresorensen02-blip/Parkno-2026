@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "Parkno",
+    "slug": "parkno",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/parkno-icon-opaque.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/parkno-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "eu.minplass.app",
+      "buildNumber": "1",
+      "appleTeamId": "C52D5TBW47",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Parkno bruker posisjonen din for å varsle deg når du er nær parkeringsplassen.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Parkno bruker posisjonen din i bakgrunnen for å varsle deg automatisk når du er nær parkeringsplassen.",
+        "NSLocationAlwaysUsageDescription": "Parkno bruker posisjonen din i bakgrunnen for å varsle deg automatisk når du er nær parkeringsplassen.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/parkno-logo.png",
+        "backgroundColor": "#F4F3F2"
+      },
+      "package": "eu.minplass.app",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/parkno-logo.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-asset",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Parkno bruker posisjonen din for å varsle deg når du er nær parkeringsplassen.",
+          "isIosBackgroundLocationEnabled": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/parkno-icon-opaque.png",
+          "color": "#10B981"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Parkno trenger tilgang til bilder for å la deg sette profilbilde."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e18922bc-9d16-41e1-a8ec-ff088c57cef4"
+      }
+    },
+    "owner": "parkno"
+  }
+}

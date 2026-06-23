@@ -1,0 +1,912 @@
+﻿<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Logg inn — Parkno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Logg inn på Parkno for å administrere reservasjoner, tilgjengelighet og utbetalinger.">
+  <meta name="theme-color" content="#F7F8F6">
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="icon" href="assets/parkno-logo-icon.png">
+  <script type="text/javascript" src="https://unpkg.com/@criipto/auth-js@^3.8"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      background: linear-gradient(180deg, #F7F8F6 0%, #EDEFEF 56%, #DDEAF0 100%);
+      color: #111416;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-sizing: border-box; }
+
+    a { color: inherit; }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(95, 175, 211, 0.58);
+      outline-offset: 4px;
+    }
+
+    .login-blobs {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-blobs span {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(82px);
+    }
+
+    .login-blobs .b1 {
+      width: 520px;
+      height: 520px;
+      top: -190px;
+      left: -120px;
+      background: #DCEBDF;
+      opacity: 0.7;
+    }
+
+    .login-blobs .b2 {
+      width: 440px;
+      height: 440px;
+      right: -170px;
+      top: 20%;
+      background: #9ECFE3;
+      opacity: 0.45;
+    }
+
+    .login-blobs .b3 {
+      width: 360px;
+      height: 360px;
+      left: 42%;
+      bottom: -140px;
+      background: #9FD6B4;
+      opacity: 0.34;
+    }
+
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      min-height: 100vh;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px 32px 40px;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .login-nav {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 24px rgba(17, 20, 22, 0.08), 0 1px 2px rgba(17, 20, 22, 0.04);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      backdrop-filter: blur(22px) saturate(140%);
+    }
+    .login-nav-link.is-primary {
+      background: #EF8F7A;
+      color: #17211F;
+      padding: 0 18px;
+      box-shadow: 0 8px 18px rgba(239,143,122,0.34), 0 2px 6px rgba(23,33,31,0.08);
+      cursor: pointer;
+      border: 0;
+      font: 600 13px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+    }
+    .login-nav-link.is-primary:hover {
+      background: #F2A18F;
+      color: #17211F;
+      transform: translateY(-1px);
+    }
+
+    .login-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      color: #111416;
+      font: 700 16px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
+
+    .login-brand .logo {
+      width: 34px;
+      height: 32px;
+      border-radius: 10px;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      box-shadow: 0 5px 12px rgba(78, 167, 185, 0.22);
+    }
+
+    .login-brand .pl { color: #5FAFD3; }
+
+    .login-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: #2F3437;
+      text-decoration: none;
+      font: 600 13px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .login-nav-link:hover {
+      color: #111416;
+      background: rgba(17, 20, 22, 0.04);
+    }
+
+    .login-nav-link.is-active {
+      background: #111416;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(17, 20, 22, 0.18);
+    }
+
+    .login-main {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 64px;
+      align-items: center;
+      padding: 68px 0 44px;
+    }
+
+    .login-overline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #7B8589;
+      font: 600 11px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .login-overline::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: #7B8589;
+      display: inline-block;
+    }
+
+    .login-copy h1 {
+      max-width: 620px;
+      margin: 22px 0 0;
+      color: #111416;
+      font: 800 clamp(3.8rem, 8vw, 6.4rem)/0.96 Inter, system-ui, sans-serif;
+      letter-spacing: -0.055em;
+      overflow-wrap: break-word;
+      text-wrap: balance;
+    }
+
+    .login-copy,
+    .login-card {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .login-copy h1 span {
+      background: linear-gradient(180deg, #111416 58%, #5FAFD3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .login-copy p {
+      max-width: 460px;
+      margin: 22px 0 0;
+      color: #2F3437;
+      font: 500 19px/1.5 Inter, system-ui, sans-serif;
+    }
+
+    .login-signal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 650px;
+      margin-top: 38px;
+    }
+
+    .login-signal {
+      min-height: 142px;
+      padding: 18px;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 24px rgba(17, 20, 22, 0.06);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      backdrop-filter: blur(22px) saturate(140%);
+    }
+
+    .login-signal:nth-child(2) { background: rgba(220, 235, 223, 0.74); }
+    .login-signal:nth-child(3) { background: rgba(221, 234, 240, 0.78); }
+
+    .login-signal .k {
+      color: rgba(47, 52, 55, 0.72);
+      font: 700 10px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .login-signal .v {
+      margin-top: 18px;
+      color: #111416;
+      font: 800 26px/1.02 Inter, system-ui, sans-serif;
+      letter-spacing: -0.035em;
+      font-feature-settings: "tnum";
+    }
+
+    .login-signal .m {
+      margin-top: 8px;
+      color: rgba(47, 52, 55, 0.72);
+      font: 500 13px/1.35 Inter, system-ui, sans-serif;
+    }
+
+    .login-card {
+      padding: 28px;
+      border-radius: 34px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      box-shadow: 0 40px 80px rgba(17, 20, 22, 0.16), 0 12px 24px rgba(17, 20, 22, 0.08);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      backdrop-filter: blur(28px) saturate(150%);
+    }
+
+    .login-card h2 {
+      margin: 0;
+      color: #111416;
+      font: 800 34px/1.05 Inter, system-ui, sans-serif;
+      letter-spacing: -0.04em;
+    }
+
+    .login-card .sub {
+      margin: 10px 0 0;
+      color: #7B8589;
+      font: 500 14px/1.45 Inter, system-ui, sans-serif;
+    }
+
+    .login-role {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 24px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(17, 20, 22, 0.05);
+    }
+
+    .login-role button {
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #2F3437;
+      cursor: pointer;
+      font: 700 13px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .login-role button.is-selected {
+      background: #111416;
+      color: #fff;
+      box-shadow: 0 5px 12px rgba(17, 20, 22, 0.16);
+    }
+
+    .login-bankid {
+      width: 100%;
+      height: 54px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 999px;
+      background: #39134C;
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font: 700 15px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: 0 12px 28px rgba(57, 19, 76, 0.34);
+      transition: transform 220ms cubic-bezier(.2, .7, .2, 1), box-shadow 220ms cubic-bezier(.2, .7, .2, 1);
+    }
+
+    .login-bankid:hover,
+    .login-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(17, 20, 22, 0.22);
+    }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      color: #7B8589;
+      font: 600 12px/1 Inter, system-ui, sans-serif;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: rgba(17, 20, 22, 0.08);
+    }
+
+    .login-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .login-field label {
+      color: #2F3437;
+      font: 700 13px/1.2 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .login-field input {
+      width: 100%;
+      height: 54px;
+      border: 1px solid rgba(17, 20, 22, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #111416;
+      outline: none;
+      padding: 0 16px;
+      font: 600 15px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: inset 0 1px 2px rgba(17, 20, 22, 0.04);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .login-field input:focus {
+      background: #fff;
+      border-color: rgba(95, 175, 211, 0.7);
+      box-shadow: 0 0 0 4px rgba(95, 175, 211, 0.16);
+    }
+
+    .login-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 16px;
+      color: #7B8589;
+      font: 600 13px/1.35 Inter, system-ui, sans-serif;
+    }
+
+    .login-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-check input {
+      width: 16px;
+      height: 16px;
+      accent-color: #111416;
+    }
+
+    .login-forgot {
+      color: #2F3437;
+      text-decoration: none;
+    }
+
+    .login-forgot:hover { text-decoration: underline; }
+
+    .login-submit {
+      width: 100%;
+      height: 56px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 999px;
+      background: #111416;
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font: 700 15px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: 0 12px 28px rgba(17, 20, 22, 0.18);
+      transition: transform 220ms cubic-bezier(.2, .7, .2, 1), box-shadow 220ms cubic-bezier(.2, .7, .2, 1);
+    }
+
+    .login-status {
+      min-height: 20px;
+      margin: 14px 0 0;
+      color: #2F3437;
+      font: 600 13px/1.45 Inter, system-ui, sans-serif;
+    }
+    .login-status:not(:empty) {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(221, 234, 240, 0.72);
+    }
+
+    .login-card-foot {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(17, 20, 22, 0.08);
+      color: #7B8589;
+      text-align: center;
+      font: 600 13px/1.45 Inter, system-ui, sans-serif;
+    }
+
+    .login-card-foot a {
+      color: #111416;
+      text-decoration: none;
+    }
+
+    .login-card-foot a:hover { text-decoration: underline; }
+
+    .login-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: #7B8589;
+      font: 500 12px/1.4 Inter, system-ui, sans-serif;
+    }
+
+    .login-footer-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .login-footer a {
+      color: #2F3437;
+      text-decoration: none;
+    }
+
+    .login-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 980px) {
+      .login-main {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 48px 0 34px;
+      }
+
+      .login-card {
+        max-width: 520px;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .login-wrap {
+        padding: 14px 18px 28px;
+      }
+
+      .login-nav-inner {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .login-nav {
+        justify-content: flex-start;
+      }
+
+      .login-nav-link:not(.is-active) {
+        display: none;
+      }
+
+      .login-brand {
+        min-width: 0;
+        padding-right: 4px;
+      }
+
+      .login-brand .logo {
+        width: 32px;
+        height: 30px;
+        object-fit: contain;
+        background: rgba(255,255,255,0.55);
+      }
+
+      .login-nav-link.is-active {
+        background: #EF8F7A;
+        color: #111416;
+        box-shadow: 0 8px 18px rgba(239,143,122,0.34);
+      }
+
+      .login-main {
+        padding-top: 38px;
+        display: block;
+      }
+
+      .login-copy h1 {
+        max-width: 100%;
+        font-size: clamp(2.5rem, 11vw, 3.2rem);
+        letter-spacing: -0.045em;
+        line-height: 0.98;
+        text-wrap: normal;
+      }
+
+      .login-copy p {
+        max-width: 100%;
+        font-size: 16px;
+      }
+
+      .login-signal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .login-signal {
+        min-height: auto;
+      }
+
+      .login-card {
+        margin-top: 34px;
+        padding: 22px;
+        border-radius: 28px;
+      }
+
+      .login-card h2 {
+        font-size: 30px;
+      }
+
+      .login-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .login-nav-inner,
+      .login-copy,
+      .login-card,
+      .login-signal-grid {
+        max-width: 354px;
+      }
+    }
+
+    /* — Appen kommer snart popup — */
+    .app-soon-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(17, 20, 22, 0.45);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      animation: appSoonFadeIn 240ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-overlay[hidden] { display: none; }
+    .app-soon-card {
+      position: relative;
+      width: 100%; max-width: 420px;
+      padding: 32px 32px 28px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.92);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      backdrop-filter: blur(28px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 30px 60px rgba(17, 20, 22, 0.22), 0 12px 24px rgba(17, 20, 22, 0.12);
+      text-align: left;
+      animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 0; background: rgba(17, 20, 22, 0.06); color: #2F3437;
+      font: 500 22px/1 Inter, system-ui, sans-serif;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 160ms ease;
+    }
+    .app-soon-close:hover { background: rgba(17, 20, 22, 0.12); }
+    .app-soon-logo {
+      display: block; width: 120px; height: 120px;
+      object-fit: contain; object-position: center;
+      margin: -16px 0 -8px -22px;
+    }
+    .app-soon-card h2 {
+      margin: 4px 0 0;
+      color: #111416;
+      font: 800 26px/1.1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.03em;
+    }
+    .app-soon-card p {
+      margin: 12px 0 0;
+      color: #2F3437;
+      font: 500 15px/1.5 Inter, system-ui, sans-serif;
+    }
+    .app-soon-card a { color: #1E40AF; text-decoration: underline; }
+    .app-soon-ok {
+      width: 100%; height: 52px;
+      margin-top: 22px;
+      border: 0; border-radius: 999px;
+      background: linear-gradient(135deg, #10B981 0%, #14B8A6 45%, #2563EB 100%);
+      color: #fff;
+      cursor: pointer;
+      font: 700 14px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.32);
+      transition: transform 200ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+    }
+    .app-soon-ok:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(37, 99, 235, 0.36);
+    }
+    @keyframes appSoonFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes appSoonRise {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-blobs" aria-hidden="true">
+    <span class="b1"></span>
+    <span class="b2"></span>
+    <span class="b3"></span>
+  </div>
+
+  <div class="login-wrap">
+    <nav class="login-nav" aria-label="Hovedmeny">
+      <div class="login-nav-inner">
+        <a class="login-nav-link" href="index.html#how">Slik fungerer det</a>
+        <a class="login-nav-link" href="index.html#kontakt">Kontakt</a>
+        <a class="login-nav-link" href="index.html#bedrift">Bedrift</a>
+        <a class="login-nav-link is-active" href="login.html" aria-current="page">Logg inn</a>
+        <a class="login-nav-link is-primary" href="#" id="download-app-link">Last ned appen</a>
+      </div>
+    </nav>
+
+    <main class="login-main">
+      <section class="login-copy" aria-labelledby="login-title">
+        <div class="login-overline">Parkno konto</div>
+        <h1 id="login-title">Logg inn og hold plassen <span>under kontroll.</span></h1>
+        <p>Se reservasjoner, administrer tilgjengelighet og følg utbetalingene dine fra ett rolig sted.</p>
+
+        <div class="login-signal-grid" aria-label="Kontostatus">
+          <div class="login-signal">
+            <div class="k">Neste reservasjon</div>
+            <div class="v">14:30</div>
+            <div class="m">Møhlenpris · reservert vindu</div>
+          </div>
+          <div class="login-signal">
+            <div class="k">Utbetaling</div>
+            <div class="v">Fredag</div>
+            <div class="m">Automatisk til konto kl. 09:00</div>
+          </div>
+          <div class="login-signal">
+            <div class="k">Sikkerhet</div>
+            <div class="v">BankID</div>
+            <div class="m">Klar for verifisert innlogging</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="login-card" aria-label="Logg inn">
+        <h2>Logg inn</h2>
+        <p class="sub">Bruk BankID eller e-post når kontosystemet er aktivert.</p>
+
+        <div class="login-role" aria-label="Velg kontotype">
+          <button type="button" class="is-selected" aria-pressed="true" data-role="driver">Sjåfør</button>
+          <button type="button" aria-pressed="false" data-role="host">Utleier</button>
+        </div>
+
+        <button class="login-bankid" type="button" id="bankid-button">
+          Logg inn med BankID
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+
+        <div class="login-divider">eller</div>
+
+        <form id="login-form" novalidate>
+          <div class="login-field">
+            <label for="email">E-post</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="navn@eksempel.no" required>
+          </div>
+
+          <div class="login-field">
+            <label for="password">Passord</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Passord" required>
+          </div>
+
+          <div class="login-row">
+            <label class="login-check">
+              <input type="checkbox" name="remember" autocomplete="off">
+              Husk meg
+            </label>
+            <a class="login-forgot" id="forgot-link" href="#forgot">Glemt passord?</a>
+          </div>
+
+          <button class="login-submit" type="submit">
+            Fortsett
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+
+          <p class="login-status" id="login-status" aria-live="polite"></p>
+        </form>
+
+        <div class="login-card-foot">
+          Ny hos Parkno? <a href="register.html">Registrer deg</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="login-footer">
+      <div>© 2026 Parkno AS · Bergen, Norge</div>
+      <div class="login-footer-links">
+        <a href="#">Personvern</a>
+        <a href="#">Vilkår</a>
+        <a href="#">Hjelp</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- "Last ned appen" coming-soon popup -->
+  <div class="app-soon-overlay" id="app-soon-overlay" role="dialog" aria-modal="true" aria-labelledby="app-soon-title" hidden>
+    <div class="app-soon-card">
+      <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
+      <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="Parkno">
+      <h2 id="app-soon-title">Appen kommer snart!</h2>
+      <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
+      <button class="app-soon-ok" type="button" id="app-soon-ok">Greit, jeg venter</button>
+    </div>
+  </div>
+
+  <script>
+    (function initLoginPage() {
+      const status = document.getElementById('login-status');
+      const form = document.getElementById('login-form');
+      const bankidButton = document.getElementById('bankid-button');
+      const forgotLink = document.getElementById('forgot-link');
+      const roleButtons = document.querySelectorAll('.login-role button');
+
+      // ─── Criipto BankID config — fill in from your Criipto application ───
+      const CRIIPTO_DOMAIN = 'YOUR_DOMAIN.criipto.id';   // e.g. 'parkno.criipto.id'
+      const CRIIPTO_CLIENT_ID = 'YOUR_CLIENT_ID';        // from Criipto admin
+      // Returns the user to wherever your callback lives. For now we land back here.
+      const CRIIPTO_REDIRECT_URI = window.location.origin + window.location.pathname;
+      const isConfigured =
+        CRIIPTO_DOMAIN && !CRIIPTO_DOMAIN.startsWith('YOUR_') &&
+        CRIIPTO_CLIENT_ID && !CRIIPTO_CLIENT_ID.startsWith('YOUR_');
+
+      let criiptoAuth = null;
+      if (isConfigured && window.Criipto && window.Criipto.CriiptoAuth) {
+        criiptoAuth = new window.Criipto.CriiptoAuth({
+          domain: CRIIPTO_DOMAIN,
+          clientID: CRIIPTO_CLIENT_ID,
+          store: sessionStorage,
+        });
+      }
+
+      function showPendingMessage() {
+        if (!status) return;
+        status.textContent = 'Innlogging kobles til når autentisering er aktivert.';
+      }
+
+      function startBankIdLogin() {
+        if (!criiptoAuth) {
+          showPendingMessage();
+          return;
+        }
+        if (status) status.textContent = 'Åpner BankID …';
+        criiptoAuth.redirect.authorize({
+          redirectUri: CRIIPTO_REDIRECT_URI,
+          acrValues: 'urn:grn:authn:no:bankid',
+          responseType: 'code',
+          responseMode: 'query',
+        }).catch((err) => {
+          console.error('Criipto BankID error:', err);
+          if (status) status.textContent = 'Klarte ikke å åpne BankID. Prøv igjen.';
+        });
+      }
+
+      roleButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          roleButtons.forEach((item) => {
+            const isSelected = item === button;
+            item.classList.toggle('is-selected', isSelected);
+            item.setAttribute('aria-pressed', String(isSelected));
+          });
+        });
+      });
+
+      if (bankidButton) {
+        bankidButton.addEventListener('click', startBankIdLogin);
+      }
+
+      if (forgotLink) {
+        forgotLink.addEventListener('click', (event) => {
+          event.preventDefault();
+          if (status) status.textContent = 'Passordtilbakestilling kobles til når autentisering er aktivert.';
+        });
+      }
+
+      if (form) {
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          showPendingMessage();
+        });
+      }
+    })();
+
+    // "Last ned appen" → Appen kommer snart popup
+    (function initAppSoonPopup() {
+      const overlay = document.getElementById('app-soon-overlay');
+      const link = document.getElementById('download-app-link');
+      const closeBtn = document.getElementById('app-soon-close');
+      const okBtn = document.getElementById('app-soon-ok');
+      if (!overlay || !link) return;
+
+      let lastFocus = null;
+      function open(e) {
+        if (e) e.preventDefault();
+        lastFocus = document.activeElement;
+        overlay.hidden = false;
+        document.body.style.overflow = 'hidden';
+        (okBtn || closeBtn || overlay).focus();
+      }
+      function close() {
+        overlay.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+
+      link.addEventListener('click', open);
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      if (okBtn) okBtn.addEventListener('click', close);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.hidden) close();
+      });
+    })();
+  </script>
+</body>
+</html>

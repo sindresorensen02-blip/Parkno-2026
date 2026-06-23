@@ -1,0 +1,152 @@
+﻿/* ==========================================================================
+   Parkno AirGlass — Colors & Type
+   Premium iOS-inspired design tokens for the Parkno parking marketplace.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ---------- Brand palette ---------- */
+  --frost-white:    #F8FAF7;
+  --soft-silver:    #EAF0EC;
+  --mist-blue:      #D8EEF2;
+  --pale-mint:      #DDEFE7;
+  --deep-charcoal:  #17211F;
+  --soft-charcoal:  #34413E;
+  --muted-gray:     #73817D;
+  --fresh-green:    #8BCFB0;
+  --ice-blue:       #93D6E3;
+  --premium-blue:   #4EA7B9;
+  --conversion-coral: #EF8F7A;
+
+  /* ---------- Semantic surfaces ---------- */
+  --bg-app:         var(--frost-white);
+  --bg-app-tint:    linear-gradient(180deg, #F8FAF7 0%, #EAF0EC 60%, #D8EEF2 100%);
+  --bg-card:        rgba(255, 255, 255, 0.62);
+  --bg-card-solid:  #FFFFFF;
+  --bg-pill:        rgba(255, 255, 255, 0.55);
+  --bg-pill-active: var(--deep-charcoal);
+  --bg-mint:        var(--pale-mint);
+  --bg-mist:        var(--mist-blue);
+
+  /* ---------- Foreground / text ---------- */
+  --fg-1:           var(--deep-charcoal);   /* primary text, headlines */
+  --fg-2:           var(--soft-charcoal);   /* secondary text, body */
+  --fg-3:           var(--muted-gray);      /* captions, meta */
+  --fg-on-dark:     #FFFFFF;
+  --fg-on-mint:     var(--deep-charcoal);
+  --fg-link:        var(--premium-blue);
+  --fg-action:      var(--deep-charcoal);
+
+  /* ---------- Lines & dividers ---------- */
+  --line-glass:     rgba(255, 255, 255, 0.55);
+  --line-hairline:  rgba(17, 20, 22, 0.06);
+  --line-hairline-strong: rgba(17, 20, 22, 0.10);
+
+  /* ---------- Status / signal ---------- */
+  --signal-available: var(--fresh-green);
+  --signal-info:      var(--ice-blue);
+  --signal-premium:   var(--premium-blue);
+  --signal-action:    var(--conversion-coral);
+
+  
+  /* ---------- Radii ---------- */
+  --r-xs:   8px;
+  --r-sm:   12px;
+  --r-md:   18px;
+  --r-lg:   26px;
+  --r-card: 28px;
+  --r-hero: 34px;
+  --r-nav:  32px;
+  --r-pill: 999px;
+
+  /* ---------- Spacing scale (4pt base, 8pt rhythm) ---------- */
+  --s-1:   4px;
+  --s-2:   8px;
+  --s-3:   12px;
+  --s-4:   16px;
+  --s-5:   20px;
+  --s-6:   24px;
+  --s-7:   32px;
+  --s-8:   40px;
+  --s-9:   56px;
+  --s-10:  72px;
+
+  /* ---------- Shadows (gentle, layered) ---------- */
+  --shadow-1: 0 2px 4px rgba(17, 20, 22, 0.08), 0 1px 2px rgba(17, 20, 22, 0.05);
+  --shadow-2: 0 10px 24px rgba(17, 20, 22, 0.12), 0 2px 6px rgba(17, 20, 22, 0.07);
+  --shadow-3: 0 22px 44px rgba(17, 20, 22, 0.16), 0 6px 14px rgba(17, 20, 22, 0.08);
+  --shadow-4: 0 40px 80px rgba(17, 20, 22, 0.22), 0 12px 24px rgba(17, 20, 22, 0.10);
+  --shadow-nav: 0 30px 60px rgba(17, 20, 22, 0.22), 0 10px 20px rgba(17, 20, 22, 0.10);
+  --shadow-press: inset 0 1px 2px rgba(17, 20, 22, 0.06);
+
+  /* ---------- Glass recipes ---------- */
+  --glass-blur:   saturate(140%) blur(22px);
+  --glass-blur-strong: saturate(160%) blur(34px);
+  --glass-bg:     rgba(255, 255, 255, 0.55);
+  --glass-bg-dim: rgba(247, 248, 246, 0.72);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+
+  /* ---------- Type system ---------- */
+  --font-display: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-text:    "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+
+  /* Type scale — iOS-friendly, generous on display */
+  --t-display-1: 700 44px/1.05 var(--font-display);
+  --t-display-2: 700 36px/1.08 var(--font-display);
+  --t-h1:        700 28px/1.15 var(--font-display);
+  --t-h2:        600 22px/1.25 var(--font-display);
+  --t-h3:        600 18px/1.30 var(--font-display);
+  --t-body:      400 16px/1.45 var(--font-text);
+  --t-body-md:   500 16px/1.45 var(--font-text);
+  --t-callout:   500 15px/1.40 var(--font-text);
+  --t-caption:   500 13px/1.35 var(--font-text);
+  --t-overline:  600 11px/1.20 var(--font-text);
+  --t-price:     800 22px/1.10 var(--font-display);
+  --t-price-lg:  800 32px/1.05 var(--font-display);
+  --t-mono:      500 13px/1.40 var(--font-mono);
+
+  /* Tracking */
+  --track-tight:   -0.02em;
+  --track-display: -0.025em;
+  --track-overline: 0.08em;
+
+  /* ---------- Motion ---------- */
+  --ease-standard: cubic-bezier(.2, .7, .2, 1);
+  --ease-spring:   cubic-bezier(.2, .9, .25, 1.2);
+  --dur-fast:   140ms;
+  --dur-base:   220ms;
+  --dur-slow:   420ms;
+}
+
+/* ---------- Semantic element styles ---------- */
+.mp-display-1 { font: var(--t-display-1); letter-spacing: var(--track-display); color: var(--fg-1); }
+.mp-display-2 { font: var(--t-display-2); letter-spacing: var(--track-display); color: var(--fg-1); }
+.mp-h1        { font: var(--t-h1);        letter-spacing: var(--track-tight);   color: var(--fg-1); }
+.mp-h2        { font: var(--t-h2);        letter-spacing: var(--track-tight);   color: var(--fg-1); }
+.mp-h3        { font: var(--t-h3);        color: var(--fg-1); }
+.mp-body      { font: var(--t-body);      color: var(--fg-2); }
+.mp-body-md   { font: var(--t-body-md);   color: var(--fg-1); }
+.mp-callout   { font: var(--t-callout);   color: var(--fg-2); }
+.mp-caption   { font: var(--t-caption);   color: var(--fg-3); }
+.mp-overline  { font: var(--t-overline);  letter-spacing: var(--track-overline); text-transform: uppercase; color: var(--fg-3); }
+.mp-price     { font: var(--t-price);     letter-spacing: var(--track-display);  color: var(--fg-1); }
+.mp-price-lg  { font: var(--t-price-lg);  letter-spacing: var(--track-display);  color: var(--fg-1); }
+.mp-mono      { font: var(--t-mono);      color: var(--fg-2); }
+
+/* ---------- Glass recipes (apply as utilities) ---------- */
+.mp-glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-2);
+}
+.mp-glass-strong {
+  background: var(--glass-bg-dim);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  backdrop-filter: var(--glass-blur-strong);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-3);
+}

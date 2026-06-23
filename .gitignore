@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Expo
+app/.expo/
+app/dist/
+
+# Env — never commit secrets
+.env
+.env.local
+app/.env
+web/.env
+
+# Build outputs
+app/android/
+app/ios/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Logs
+*.log
+server.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated
+graphify-out/
