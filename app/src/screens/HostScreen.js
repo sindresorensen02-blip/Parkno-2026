@@ -4,9 +4,24 @@ import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
+import EarningsChart from '../components/EarningsChart';
+import HostSpotCard from '../components/HostSpotCard';
 import { useSpots } from '../context/SpotsContext';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { formatKr } from '../lib/format';
+
+// TODO: wire HostSpotCard — normalise() in SpotsContext drops address/area/photos.
+// Static host listings + payouts (handoff data). Replace with live data later.
+const STATIC_SPOTS = [
+  { id: '1', address: 'Møhlenprisbakken 12', area: 'Møhlenpris', status: 'active', price: 35, weekly: 1540, photoUrl: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=400' },
+  { id: '2', address: 'Nygårdsgaten 7',      area: 'Nygård',     status: 'paused', price: 28, weekly: 0,    photoUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?w=400' },
+  { id: '3', address: 'Sandviksveien 44',    area: 'Sandviken',  status: 'active', price: 22, weekly: 720,  photoUrl: null },
+];
+const STATIC_PAYOUTS = [
+  { id: 'p1', date: '15. juni', amount: 1920 },
+  { id: 'p2', date: '1. juli',  amount: 2480 },
+];
 
 const BAR_DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
@@ -190,86 +205,43 @@ export default function HostScreen({ navigation }) {
             ))}
           </View>
         ) : (
-          /* ── Active host: period switcher + earnings card ── */
-          <>
-            <View style={styles.periodRow}>
-              {PERIOD_META.map((p) => (
-                <TouchableOpacity key={p.id} onPress={() => setPeriod(p.id)} style={[styles.periodBtn, period === p.id && styles.periodBtnActive]}>
-                  <Text style={[styles.periodText, period === p.id && styles.periodTextActive]}>{p.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.earningsCard}>
-              <View style={styles.cardBlob} />
-              <Text style={styles.cardLabel}>Inntekt {cur.heading}</Text>
-              <View style={styles.cardValueRow}>
-                {loadingE ? (
-                  <ActivityIndicator color="#FFFFFF" style={{ marginVertical: 8 }} />
-                ) : (
-                  <>
-                    <Text style={styles.cardValue}>{fmt(curAmt)}</Text>
-                    <Text style={styles.cardUnit}>kr</Text>
-                  </>
-                )}
-              </View>
-              <Text style={styles.cardSub}>{loadingE ? '—' : subText}</Text>
-
-              <View style={styles.barsContainer}>
-                {dailyBars.map((h, i) => (
-                  <View key={i} style={styles.barWrap}>
-                    <View style={[styles.bar, { height: `${h}%`, backgroundColor: i === 6 ? '#4E96F0' : 'rgba(17,20,22,0.09)' }]} />
-                  </View>
-                ))}
-              </View>
-              <View style={styles.barLabels}>
-                {BAR_DAYS.map((d, i) => (
-                  <Text key={i} style={[styles.barLabel, { color: i === 6 ? '#4E96F0' : '#BCC5CB' }]}>{d}</Text>
-                ))}
-              </View>
-            </View>
-          </>
+          /* ── Active host: interactive earnings chart ── */
+          <EarningsChart onYtdPress={() => {}} />
         )}
 
-        {/* Payout card */}
-        {!payout.loading && (payout.queued > 0 || !profile?.bank_account) && (
+        {/* Bank-account setup prompt (still real — needed to receive payouts) */}
+        {!payout.loading && !profile?.bank_account && (
           <View style={styles.payoutCard}>
             <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
-            {!profile?.bank_account ? (
-              <TouchableOpacity style={styles.payoutSetupRow} activeOpacity={0.85} onPress={() => navigation.getParent()?.navigate('Profil', { screen: 'Betalingsmetoder' })}>
-                <View style={styles.payoutSetupIcon}>
-                  <Icon name="alert-circle" size={18} color="#fff" strokeWidth={2} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.payoutSetupTitle}>Legg til bankkonto</Text>
-                  <Text style={styles.payoutSetupSub}>Påkrevd for å motta utbetalinger</Text>
-                </View>
-                <Icon name="chevron-right" size={16} color="rgba(255,255,255,0.7)" strokeWidth={2} />
-              </TouchableOpacity>
-            ) : (
-              <>
-                <View style={styles.payoutLeft}>
-                  <Text style={styles.payoutLabel}>Neste utbetaling</Text>
-                  <View style={styles.payoutAmtRow}>
-                    <Text style={styles.payoutAmt}>{fmt(Math.round(payout.queued))}</Text>
-                    <Text style={styles.payoutUnit}>kr</Text>
-                  </View>
-                  <Text style={styles.payoutSub}>
-                    {payout.nextDate
-                      ? payout.nextDate.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' })
-                      : '—'}
-                  </Text>
-                </View>
-                {payoutCountdown && (
-                  <View style={styles.payoutBadge}>
-                    <Icon name="clock" size={12} color="#fff" strokeWidth={2} />
-                    <Text style={styles.payoutBadgeText}>{payoutCountdown}</Text>
-                  </View>
-                )}
-              </>
-            )}
+            <TouchableOpacity style={styles.payoutSetupRow} activeOpacity={0.85} onPress={() => navigation.getParent()?.navigate('Profil', { screen: 'Betalingsmetoder' })}>
+              <View style={styles.payoutSetupIcon}>
+                <Icon name="alert-circle" size={18} color="#fff" strokeWidth={2} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.payoutSetupTitle}>Legg til bankkonto</Text>
+                <Text style={styles.payoutSetupSub}>Påkrevd for å motta utbetalinger</Text>
+              </View>
+              <Icon name="chevron-right" size={16} color="rgba(255,255,255,0.7)" strokeWidth={2} />
+            </TouchableOpacity>
           </View>
         )}
+
+        {/* Full-bleed divider band */}
+        <View style={styles.dividerBand} />
+
+        {/* Kommende (upcoming payouts) */}
+        <Text style={styles.kommendeTitle}>Kommende</Text>
+        <View style={styles.payoutList}>
+          {STATIC_PAYOUTS.map((p, i) => (
+            <View key={p.id} style={[styles.payoutRow, i < STATIC_PAYOUTS.length - 1 && styles.payoutRowBorder]}>
+              <View>
+                <Text style={styles.payoutOverline}>PLANLAGT</Text>
+                <Text style={styles.payoutDate}>{p.date}</Text>
+              </View>
+              <Text style={styles.payoutAmount}>{formatKr(p.amount)}</Text>
+            </View>
+          ))}
+        </View>
 
         {/* Inbox shortcut */}
         <TouchableOpacity style={styles.inboxRow} activeOpacity={0.85} onPress={() => navigation.push('Inboks')}>
@@ -284,29 +256,22 @@ export default function HostScreen({ navigation }) {
         </TouchableOpacity>
 
         {/* My spots */}
-        {SPOTS.length > 0 && (
-          <Text style={styles.sectionTitle}>Mine plasser</Text>
-        )}
-        {SPOTS.map((spot) => (
-          <TouchableOpacity key={spot.id} style={styles.spotRow} activeOpacity={0.85} onPress={() => navigation.push('RedigerPlass', { spot })}>
-            <View style={[styles.statusDotWrap, {
-              backgroundColor: spot.moderation_status === 'pending'  ? 'rgba(245,158,11,0.12)'
-                             : spot.moderation_status === 'rejected' ? 'rgba(239,68,68,0.08)'
-                             : spot.active ? 'rgba(16,185,129,0.12)' : 'rgba(17,20,22,0.06)',
-            }]}>
-              <View style={[styles.statusDot, {
-                backgroundColor: spot.moderation_status === 'pending'  ? '#F59E0B'
-                               : spot.moderation_status === 'rejected' ? '#EF4444'
-                               : spot.active ? '#4E96F0' : '#BCC5CB',
-              }]} />
-            </View>
-            <View style={styles.spotInfo}>
-              <Text style={styles.spotTitle}>{spot.title}</Text>
-              <Text style={[styles.spotSub, spot.moderation_status === 'rejected' && { color: '#EF4444' }]}>{spot.sub}</Text>
-            </View>
-            <Text style={styles.spotPrice}>{spot.price} kr/t</Text>
-            <Icon name="chevron-right" size={16} color="#6E809B" />
-          </TouchableOpacity>
+        <Text style={styles.spotsTitle}>Mine spots</Text>
+        <Text style={styles.spotsSub}>
+          {STATIC_SPOTS.filter(sp => sp.status === 'active').length} aktive · {formatKr(STATIC_SPOTS.reduce((sum, sp) => sum + sp.weekly, 0))} denne uken
+        </Text>
+        {STATIC_SPOTS.map((spot) => (
+          <HostSpotCard
+            key={spot.id}
+            status={spot.status}
+            address={spot.address}
+            area={spot.area}
+            weekly={spot.weekly}
+            price={spot.price}
+            photoUrl={spot.photoUrl}
+            onPress={() => navigation.push('RedigerPlass', { spot })}
+            onMenu={() => navigation.push('RedigerPlass', { spot })}
+          />
         ))}
 
         {/* Add spot CTA */}
@@ -386,6 +351,17 @@ const styles = StyleSheet.create({
   inboxHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
   sectionTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
+
+  dividerBand: { height: 7, borderRadius: 999, backgroundColor: 'rgba(152,182,216,0.16)', marginHorizontal: -20, marginTop: 24, marginBottom: 20 },
+  kommendeTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 19, color: '#FFFFFF', marginBottom: 10 },
+  payoutList: { marginBottom: 24 },
+  payoutRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 },
+  payoutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(152,182,216,0.16)' },
+  payoutOverline: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#6E809B', letterSpacing: 0.8, textTransform: 'uppercase' },
+  payoutDate: { fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#FFFFFF', marginTop: 2 },
+  payoutAmount: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', fontVariant: ['tabular-nums'] },
+  spotsTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 23, color: '#FFFFFF', letterSpacing: -0.5 },
+  spotsSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12.5, color: '#98B6D8', marginTop: 2, marginBottom: 16 },
 
   spotRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 8, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
   statusDotWrap: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
