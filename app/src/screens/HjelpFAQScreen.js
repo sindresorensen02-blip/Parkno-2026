@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, LayoutAnimation } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, LayoutAnimation } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -62,12 +63,12 @@ export default function HjelpFAQScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} showsVerticalScrollIndicator={false}>
 
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Hjelp & FAQ</Text>
           <View style={s.backBtn} />
@@ -76,8 +77,8 @@ export default function HjelpFAQScreen({ navigation }) {
         {/* Hero */}
         <View style={s.hero}>
           <View style={s.heroIcon}>
-            <LinearGradient colors={['#DCEBDF', '#9ECFE3']} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
-            <Icon name="shield" size={26} color="#111416" strokeWidth={1.8} />
+            <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
+            <Icon name="shield" size={26} color="#FFFFFF" strokeWidth={1.8} />
           </View>
           <Text style={s.heroTitle}>Hvordan kan vi hjelpe?</Text>
           <Text style={s.heroSub}>Her finner du svar på de vanligste spørsmålene.</Text>
@@ -95,7 +96,7 @@ export default function HjelpFAQScreen({ navigation }) {
                     {i > 0 && <View style={s.divider} />}
                     <TouchableOpacity style={s.qRow} onPress={() => toggle(key)} activeOpacity={0.75}>
                       <Text style={s.question}>{item.q}</Text>
-                      <Icon name={isOpen ? 'x' : 'chevron-right'} size={16} color="#C4CACC" strokeWidth={2} />
+                      <Icon name={isOpen ? 'x' : 'chevron-right'} size={16} color="#6E809B" strokeWidth={2} />
                     </TouchableOpacity>
                     {isOpen && (
                       <View style={s.answerWrap}>
@@ -111,7 +112,7 @@ export default function HjelpFAQScreen({ navigation }) {
 
         <TouchableOpacity style={s.contactBtn} onPress={() => navigation.navigate('KontaktOss')} activeOpacity={0.85}>
           <Text style={s.contactBtnText}>Fant du ikke svaret? Kontakt oss</Text>
-          <Icon name="chevron-right" size={16} color="#7B8589" strokeWidth={2} />
+          <Icon name="chevron-right" size={16} color="#98B6D8" strokeWidth={2} />
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -122,20 +123,20 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
   hero: { alignItems: 'center', marginBottom: 28 },
   heroIcon: { width: 56, height: 56, borderRadius: 28, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  heroTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: '#111416', letterSpacing: -0.4, marginBottom: 6 },
-  heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#7B8589', textAlign: 'center' },
+  heroTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: '#FFFFFF', letterSpacing: -0.4, marginBottom: 6 },
+  heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', textAlign: 'center' },
   section: { marginBottom: 20 },
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
-  card: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden' },
-  divider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)' },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  card: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden' },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)' },
   qRow: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
-  question: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', flex: 1, lineHeight: 20, letterSpacing: -0.14 },
+  question: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', flex: 1, lineHeight: 20, letterSpacing: -0.14 },
   answerWrap: { paddingHorizontal: 16, paddingBottom: 16 },
-  answer: { fontFamily: 'System', fontWeight: '400', fontSize: 13, color: '#2F3437', lineHeight: 20 },
-  contactBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22 },
-  contactBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416' },
+  answer: { fontFamily: 'System', fontWeight: '400', fontSize: 13, color: '#98B6D8', lineHeight: 20 },
+  contactBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22 },
+  contactBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF' },
 });

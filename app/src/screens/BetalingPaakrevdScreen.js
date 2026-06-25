@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator, Image } from 'react-native';
+﻿import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator, Image } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
+import DurationSlider from '../components/DurationSlider';
 import ReservationSuccess from '../components/ReservationSuccess';
 import { useBalance } from '../context/BalanceContext';
 import { useAuth } from '../context/AuthContext';
 import { usePremium } from '../context/PremiumContext';
 import { useActiveBooking } from '../context/ActiveBookingContext';
 import { supabase } from '../lib/supabase';
+import { BOOKING_FEE_RATE } from '../constants/booking';
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+function formatDuration(mins) {
+  if (mins < 60) return `${mins} min`;
+  const h = Math.floor(mins / 60);
+  const rem = mins % 60;
+  return rem ? `${h} t ${rem} min` : `${h} t`;
+}
 
 // Brand palette (mirrors colors_and_type.css)
 const C = {
-  frost:    '#F8FAF7',
-  silver:   '#EAF0EC',
-  mist:     '#D8EEF2',
-  mint:     '#DDEFE7',
-  charcoal: '#17211F',
-  soft:     '#34413E',
-  muted:    '#73817D',
-  green:    '#8BCFB0',
-  ice:      '#93D6E3',
-  premium:  '#4EA7B9',
+  frost:    '#263548',
+  silver:   '#2B394C',
+  mist:     '#2B394C',
+  mint:     '#3A4C68',
+  charcoal: '#FFFFFF',
+  soft:     '#98B6D8',
+  muted:    '#98B6D8',
+  green:    '#6FB1F7',
+  ice:      '#7FBBF8',
+  premium:  '#5EA2F5',
   coral:    '#EF8F7A',
   glass:    'rgba(255,255,255,0.62)',
   glassDim: 'rgba(247,248,246,0.72)',
@@ -31,15 +42,26 @@ const C = {
 
 const METHODS = [
   {
+    id: 'applepay',
+    label: 'Apple Pay',
+    sub: 'Betal raskt og sikkert med Apple Pay',
+    icon: 'credit-card',
+    isApplePay: true,
+    accent: '#FFFFFF',
+    accentSoft: 'rgba(255,255,255,0.10)',
+    ctaGradient: ['#4E96F0', '#5EA2F5', '#4E96F0'],
+    ctaShadow: '#4E96F0',
+    recommended: true,
+  },
+  {
     id: 'vipps',
     label: 'Vipps',
     sub: 'Bekreft med Vipps på sekunder',
     icon: 'zap',
-    accent: '#FF5B24',                       // Vipps brand orange
-    accentSoft: 'rgba(255,91,36,0.12)',
-    ctaGradient: ['#FF8A5B', '#FF5B24', '#E0490F'],
-    ctaShadow: '#FF5B24',
-    recommended: true,
+    accent: '#5EA2F5',
+    accentSoft: 'rgba(94,162,245,0.14)',
+    ctaGradient: ['#4E96F0', '#5EA2F5', '#6FB1F7'],
+    ctaShadow: '#4E96F0',
   },
   {
     id: 'card',
@@ -47,62 +69,100 @@ const METHODS = [
     sub: 'Visa · Mastercard · BankAxept',
     icon: 'credit-card',
     accent: C.green,
-    accentSoft: 'rgba(139,207,176,0.18)',
-    ctaGradient: ['#10B981', '#14B8A6', '#2563EB'],
-    ctaShadow: '#10B981',
+    accentSoft: 'rgba(94,162,245,0.14)',
+    ctaGradient: ['#4E96F0', '#5EA2F5', '#4E96F0'],
+    ctaShadow: '#4E96F0',
   },
   {
     id: 'klarna',
     label: 'Klarna',
     sub: 'Betal senere · 14 dager rentefritt',
     icon: 'clock',
-    accent: '#FFB3C7',                       // Klarna brand pink
-    accentSoft: 'rgba(255,179,199,0.25)',
-    ctaGradient: ['#FFB3C7', '#FFB3C7', '#FFB3C7'],
-    ctaShadow: '#FFB3C7',
-    ctaTextColor: '#17120F',                 // Klarna's signature black text on pink
+    accent: '#6FB1F7',
+    accentSoft: 'rgba(94,162,245,0.14)',
+    ctaGradient: ['#4E96F0', '#5EA2F5', '#6FB1F7'],
+    ctaShadow: '#4E96F0',
   },
 ];
 
+// Brand logos for each payment method (drawn with brand colours — no image
+// assets needed). Styles live in the `s` StyleSheet at the bottom of the file.
+function MethodLogo({ method }) {
+  if (method.isApplePay) {
+    return <View style={s.applePayBadge}><Text style={s.applePayBadgeText}>{'\uF8FF'} Pay</Text></View>;
+  }
+  if (method.id === 'vipps') {
+    return (
+      <View style={[s.brandBadge, { backgroundColor: '#FF5B24' }]}>
+        <Text style={s.brandTextWhite}>V</Text>
+      </View>
+    );
+  }
+  if (method.id === 'card') {
+    // Mastercard mark — two overlapping circles
+    return (
+      <View style={[s.brandBadge, { backgroundColor: '#FFFFFF' }]}>
+        <View style={s.mcWrap}>
+          <View style={[s.mcCircle, { backgroundColor: '#EB001B' }]} />
+          <View style={[s.mcCircle, { backgroundColor: '#F79E1B', marginLeft: -7, opacity: 0.9 }]} />
+        </View>
+      </View>
+    );
+  }
+  if (method.id === 'klarna') {
+    return (
+      <View style={[s.brandBadge, { backgroundColor: '#FFB3C7' }]}>
+        <Text style={s.brandTextDark}>K</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={[s.payMethodIcon, { backgroundColor: method.accentSoft }]}>
+      <Icon name={method.icon} size={16} color={method.accent} strokeWidth={2.2} />
+    </View>
+  );
+}
+
 export default function BetalingPaakrevdScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
-  const {
-    total,
-    subtotal,
-    bookingFee,
-    durationStr,
-    startStr,
-    endStr,
-    address,
-    area,
-    spotId,
-    startsAtIso,
-    endsAtIso,
-    durationMins,
-  } = route?.params ?? {};
+  const { pricePerHour, address, area, spotId } = route?.params ?? {};
   const { user } = useAuth();
   const { isPremium, toggle: togglePremium } = usePremium();
 
-  // Premium savings for THIS booking. If the user isn't premium yet, the
-  // booking fee is the saving they'd get; if they're already premium the fee
-  // is 0 and we don't show the upsell.
-  const premiumSavings = !isPremium ? (bookingFee ?? 0) : 0;
-
-  const [selected, setSelected] = useState('vipps');
+  const [duration, setDuration] = useState(60); // minutes — chosen via the slider
+  const [selected, setSelected] = useState('applepay');
   const [processing, setProcessing] = useState(false);
   const [methodsOpen, setMethodsOpen] = useState(false);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [pendingExtras, setPendingExtras] = useState(null);
 
   const { balance, spend, refund } = useBalance();
   const { setDemoBooking } = useActiveBooking();
 
+  // Start time is fixed at mount; the slider duration drives everything else.
+  const start = useMemo(() => new Date(), []);
+  const hasSummary = pricePerHour != null;
+  const hours = duration / 60;
+  const subtotal = Math.round((pricePerHour ?? 0) * hours);
+  const standardFee = Math.round(subtotal * BOOKING_FEE_RATE);
+  const bookingFee = isPremium ? 0 : standardFee;
+  const total = subtotal + bookingFee;
+  const endsAt = new Date(start.getTime() + duration * 60_000);
+  const startStr = `${pad2(start.getHours())}:${pad2(start.getMinutes())}`;
+  const endStr = `${pad2(endsAt.getHours())}:${pad2(endsAt.getMinutes())}`;
+  const durationStr = formatDuration(duration);
+  const durationMins = duration;
+  const startsAtIso = start.toISOString();
+  const endsAtIso = endsAt.toISOString();
+
+  // Premium savings for THIS booking (the booking fee they'd avoid).
+  const premiumSavings = !isPremium ? bookingFee : 0;
+
   // Demo spots from BERGEN_SPOTS use short IDs like "p01" — they have no
   // matching row in supabase.spots, so we can't insert a reservation against
   // them. Treat anything that isn't a UUID as a demo spot.
   const isRealSpot = !!(spotId && String(spotId).length >= 32);
-
-  const hasSummary = typeof total === 'number';
   const isSaldoSelected = selected === 'saldo';
   const saldoCanCover = hasSummary && balance >= total && total > 0;
   const balanceApplied = isSaldoSelected && hasSummary ? Math.min(balance, total) : 0;
@@ -157,9 +217,13 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
 
   // Called by ReservationSuccess once the 3-stage animation has settled.
   const handleAnimationComplete = () => {
-    const target = route?.name?.startsWith('Kart') ? 'KartAktivParkering' : 'AktivParkering';
-    if (navigation.replace) navigation.replace(target, pendingExtras ?? {});
-    else { navigation.popToTop(); navigation.navigate(target, pendingExtras ?? {}); }
+    // The booking is now live in ActiveBookingContext, and the map surfaces it via
+    // the active-parking hero. Return to the map instead of stacking a near-
+    // identical AktivParkering page on top — that double-up was what made the back
+    // button loop ("same screen") and then error at the stack root. The dashboard
+    // stays one tap away via the hero, where its back button returns here cleanly.
+    if (navigation.popToTop) navigation.popToTop();
+    else navigation.goBack();
   };
 
   const pay = async () => {
@@ -229,24 +293,24 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
 
   return (
     <View style={s.root}>
-      {/* Brand background gradient */}
-      <LinearGradient
-        colors={[C.frost, C.silver, C.mist]}
-        locations={[0, 0.55, 1]}
-        style={StyleSheet.absoluteFillObject}
-      />
+      {/* Tap-to-dismiss backdrop — the screen behind (map) shows through the top */}
+      <TouchableOpacity style={s.backdrop} activeOpacity={1} onPress={() => navigation.goBack()} />
 
-      <ScrollView
-        contentContainerStyle={[s.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 28 }]}
-        showsVerticalScrollIndicator={false}
-      >
+      {/* Bottom sheet — covers ~55% of the screen, Waymo-style */}
+      <View style={s.sheet}>
+        <View style={s.grabber} />
+
+        <ScrollView
+          style={s.sheetScroll}
+          contentContainerStyle={[s.content, { paddingTop: 4, paddingBottom: 12 }]}
+          showsVerticalScrollIndicator={false}
+        >
         {/* Header */}
         <View style={s.headerRow}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn} hitSlop={8}>
             <Icon name="arrow-left" size={20} color={C.charcoal} strokeWidth={2} />
           </TouchableOpacity>
           <View style={s.headerCenter}>
-            <Text style={s.headerOverline}>Steg 2 av 2</Text>
             <Text style={s.headerTitle}>Bekreft og betal</Text>
           </View>
           <View style={[s.iconBtn, { backgroundColor: 'transparent', borderColor: 'transparent' }]} />
@@ -262,7 +326,6 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                 resizeMode="contain"
               />
               <View style={{ flex: 1 }}>
-                <Text style={s.summaryEyebrow}>RESERVASJON</Text>
                 <Text style={s.summaryAddress}>{address ?? 'Reservasjon'}</Text>
                 {!!area && <Text style={s.summaryArea}>{area}</Text>}
               </View>
@@ -280,21 +343,17 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
               <Text style={s.summaryTimeText}>{endStr}</Text>
             </View>
 
-            <View style={s.summaryDivider} />
+          </View>
+        )}
 
-            <View style={s.priceLine}>
-              <Text style={s.priceLineLabel}>Plass</Text>
-              <Text style={s.priceLineValue}>{subtotal} kr</Text>
+        {/* Duration — pick how long to park (drives the total) */}
+        {hasSummary && (
+          <View style={s.durationCard}>
+            <View style={s.durationHeader}>
+              <Text style={s.durationLabel}>Hvor lenge?</Text>
+              <Text style={s.durationValue}>{durationStr}</Text>
             </View>
-            <View style={s.priceLine}>
-              <Text style={s.priceLineLabel}>Bookingavgift</Text>
-              <Text style={s.priceLineValue}>{bookingFee} kr</Text>
-            </View>
-            <View style={s.summaryDivider} />
-            <View style={s.priceLine}>
-              <Text style={s.totalLabel}>Totalt</Text>
-              <Text style={s.totalValue}>{total} kr</Text>
-            </View>
+            <DurationSlider value={duration} min={30} max={480} step={30} onChange={setDuration} />
           </View>
         )}
 
@@ -313,7 +372,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
             )}
           >
             <LinearGradient
-              colors={['#FF8A5B', '#EF4444', '#7C3AED', '#2563EB']}
+              colors={['#4E96F0', '#5EA2F5', '#6FB1F7', '#7FBBF8']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               style={[StyleSheet.absoluteFillObject, { borderRadius: 18 }]}
             />
@@ -331,11 +390,14 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
               <Text style={s.premiumUpsellSub}>Slipp bookingavgiften · 49 kr/mnd</Text>
             </View>
             <View style={s.premiumUpsellCta}>
-              <Icon name="arrow-right" size={14} color="#17211F" strokeWidth={2.4} />
+              <Icon name="arrow-right" size={14} color="#FFFFFF" strokeWidth={2.4} />
             </View>
           </TouchableOpacity>
         )}
 
+        {/* Full method list hidden — selection now happens via the compact
+            payment bar that sits right above the CTA (Waymo-style). */}
+        {false && (<>
         <View style={s.sectionHead}>
           <Text style={s.sectionOverline}>Velg betalingsmåte</Text>
           <View style={s.arrowDownWrap}>
@@ -346,13 +408,13 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
           {isSaldoSelected && (
             <TouchableOpacity activeOpacity={0.9} style={[s.methodBtn, s.methodBtnActive]}>
               <View style={[s.methodIcon, { backgroundColor: 'rgba(16,185,129,0.14)' }]}>
-                <Icon name="wallet" size={20} color="#10B981" strokeWidth={2.2} />
+                <Icon name="wallet" size={20} color="#4E96F0" strokeWidth={2.2} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.methodLabel}>Saldo</Text>
                 <Text style={s.methodSub}>{balance} kr tilgjengelig</Text>
               </View>
-              <View style={[s.radio, { borderColor: '#10B981', backgroundColor: '#10B981' }]}>
+              <View style={[s.radio, { borderColor: '#4E96F0', backgroundColor: '#4E96F0' }]}>
                 <Icon name="check" size={12} color="#fff" strokeWidth={3} />
               </View>
             </TouchableOpacity>
@@ -420,7 +482,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                     </View>
                     <Text style={s.methodSub}>{m.sub}</Text>
                   </View>
-                  <Icon name="chevron-right" size={16} color="#C4CACC" strokeWidth={2.2} />
+                  <Icon name="chevron-right" size={16} color="#6E809B" strokeWidth={2.2} />
                 </TouchableOpacity>
               ))}
               {balance > 0 && !isSaldoSelected && (
@@ -435,7 +497,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                   style={[s.methodBtn, !saldoCanCover && { opacity: 0.55 }]}
                 >
                   <View style={[s.methodIcon, { backgroundColor: 'rgba(16,185,129,0.14)' }]}>
-                    <Icon name="wallet" size={20} color="#10B981" strokeWidth={2.2} />
+                    <Icon name="wallet" size={20} color="#4E96F0" strokeWidth={2.2} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={s.methodLabel}>Saldo</Text>
@@ -445,12 +507,13 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                         : `Trenger ${hasSummary ? total - balance : 0} kr mer for å dekke`}
                     </Text>
                   </View>
-                  <Icon name="chevron-right" size={16} color="#C4CACC" strokeWidth={2.2} />
+                  <Icon name="chevron-right" size={16} color="#6E809B" strokeWidth={2.2} />
                 </TouchableOpacity>
               )}
             </View>
           )}
         </View>
+        </>)}
 
         {/* Saldo as a payment method — tucked into a collapsible dropdown
             at the bottom of the methods list. Hidden when user has no balance. */}
@@ -486,7 +549,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                 ]}
               >
                 <View style={[s.methodIcon, { backgroundColor: 'rgba(16,185,129,0.14)' }]}>
-                  <Icon name="wallet" size={20} color="#10B981" strokeWidth={2.2} />
+                  <Icon name="wallet" size={20} color="#4E96F0" strokeWidth={2.2} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={s.methodLabelRow}>
@@ -498,7 +561,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                       : `Trenger ${hasSummary ? total - balance : 0} kr mer for å dekke`}
                   </Text>
                 </View>
-                <View style={[s.radio, isSaldoSelected && { borderColor: '#10B981', backgroundColor: '#10B981' }]}>
+                <View style={[s.radio, isSaldoSelected && { borderColor: '#4E96F0', backgroundColor: '#4E96F0' }]}>
                   {isSaldoSelected && <Icon name="check" size={12} color="#fff" strokeWidth={3} />}
                 </View>
               </TouchableOpacity>
@@ -506,28 +569,76 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
           </View>
         )}
 
-        {/* Secure note */}
-        <View style={s.secureRow}>
-          <Icon name="shield" size={13} color={C.premium} strokeWidth={2} />
-          <Text style={s.secureText}>
-            Du belastes først når reservasjonen er bekreftet. Alle betalinger er kryptert.
-          </Text>
+        </ScrollView>
+
+        {/* Pinned footer — payment method (Apple Pay / kort) + total + CTA,
+            anchored to the bottom of the sheet like the reference design. */}
+        <View style={[s.footer, { paddingBottom: insets.bottom + 12 }]}>
+        {/* Method picker — revealed only when the user taps the compact bar. */}
+        {methodsOpen && (
+          <View style={s.payPicker}>
+            {METHODS.map((m) => {
+              const active = m.id === selected;
+              return (
+                <TouchableOpacity
+                  key={m.id}
+                  activeOpacity={0.85}
+                  onPress={() => { setSelected(m.id); setMethodsOpen(false); }}
+                  style={[s.payPickerRow, active && s.payPickerRowActive]}
+                >
+                  <MethodLogo method={m} />
+                  <Text style={s.payPickerLabel}>{m.label}</Text>
+                  {active && <Icon name="check" size={16} color="#5EA2F5" strokeWidth={2.6} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+
+        {/* Price breakdown — revealed by the arrow next to the total. */}
+        {breakdownOpen && hasSummary && (
+          <View style={s.breakdownBox}>
+            <View style={s.breakdownRow}>
+              <Text style={s.breakdownLabel}>Plass</Text>
+              <Text style={s.breakdownValue}>{subtotal} kr</Text>
+            </View>
+            <View style={s.breakdownRow}>
+              <Text style={s.breakdownLabel}>Bookingavgift</Text>
+              <Text style={s.breakdownValue}>{bookingFee} kr</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Compact payment bar — method on the left, total on the right, sitting
+            directly above the CTA (Waymo-style). */}
+        <View style={s.payRow}>
+          <TouchableOpacity style={s.payMethod} activeOpacity={0.8} onPress={() => setMethodsOpen(o => !o)}>
+            <MethodLogo method={selectedMethod} />
+            <Text style={s.payMethodLabel}>{selectedMethod.label}</Text>
+            <Icon name="chevron-down" size={16} color="#98B6D8" strokeWidth={2.4} />
+          </TouchableOpacity>
+          {hasSummary && (
+            <TouchableOpacity style={s.payTotal} activeOpacity={0.8} onPress={() => setBreakdownOpen(o => !o)}>
+              <Text style={s.payTotalLabel}>Totalt</Text>
+              <Text style={s.payTotalText}>{total} kr</Text>
+              <Icon name={breakdownOpen ? 'chevron-up' : 'chevron-down'} size={16} color="#98B6D8" strokeWidth={2.4} />
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Primary CTA — matches the brand colour of the selected payment method
-            (Vipps orange, BankID purple, card = bright nav green/teal/blue). */}
+        {/* Primary CTA */}
         <TouchableOpacity
           onPress={pay}
           activeOpacity={0.92}
           disabled={processing}
           style={[
             s.cta,
-            { shadowColor: isSaldoSelected ? '#10B981' : selectedMethod.ctaShadow },
+            { shadowColor: isSaldoSelected ? '#4E96F0' : selectedMethod.ctaShadow },
             processing && { opacity: 0.75 },
           ]}
         >
           <LinearGradient
-            colors={isSaldoSelected ? ['#10B981', '#14B8A6', '#2563EB'] : selectedMethod.ctaGradient}
+            colors={isSaldoSelected ? ['#4E96F0', '#5EA2F5', '#4E96F0'] : selectedMethod.ctaGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]}
@@ -539,21 +650,11 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
               <Text style={[s.ctaText, !isSaldoSelected && selectedMethod.ctaTextColor && { color: selectedMethod.ctaTextColor }]}>
                 {ctaLabel}
               </Text>
-              {hasSummary && (
-                <View style={[s.ctaBadge, !isSaldoSelected && selectedMethod.ctaTextColor && { backgroundColor: 'rgba(23,18,15,0.12)' }]}>
-                  <Text style={[s.ctaBadgeText, !isSaldoSelected && selectedMethod.ctaTextColor && { color: selectedMethod.ctaTextColor }]}>
-                    {total} kr
-                  </Text>
-                </View>
-              )}
             </>
           )}
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.secondary} activeOpacity={0.7}>
-          <Text style={s.secondaryText}>Avbryt</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </View>
+      </View>
 
       {/* Three-stage reservation animation. Mounts immediately on success,
           plays anticipation → reveal → celebration, then onComplete fires and
@@ -573,14 +674,38 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
+
+  // Bottom-sheet shell (Waymo-style) — covers ~55% from the bottom
+  backdrop: { flex: 1 },
+  sheet: {
+    height: '55%',
+    backgroundColor: '#2B394C',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.30, shadowRadius: 24, elevation: 16,
+  },
+  grabber: {
+    width: 40, height: 5, borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    alignSelf: 'center', marginTop: 8, marginBottom: 6,
+  },
+  sheetScroll: { flex: 1 },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.06)',
+  },
+
   content: { paddingHorizontal: 20 },
 
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   iconBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: C.glass,
-    borderWidth: 1, borderColor: C.border,
+    width: 40, height: 40,
     alignItems: 'center', justifyContent: 'center',
   },
   headerCenter: { alignItems: 'center' },
@@ -593,15 +718,9 @@ const s = StyleSheet.create({
 
   // ── Booking summary ─────────────────────────────────────────────
   summaryCard: {
-    backgroundColor: '#fff',
-    borderRadius: 24, overflow: 'hidden',
-    padding: 20, paddingTop: 22,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(23,33,31,0.06)',
-    shadowColor: '#111416',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08, shadowRadius: 20, elevation: 4,
+    paddingHorizontal: 4,
+    paddingTop: 2,
+    marginBottom: 12,
   },
   summaryOrbA: {
     position: 'absolute',
@@ -630,23 +749,34 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 999,
-    backgroundColor: 'rgba(23,33,31,0.05)',
+    backgroundColor: 'rgba(255,255,255,0.07)',
     borderWidth: 1, borderColor: 'rgba(23,33,31,0.08)',
   },
   durationPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: C.charcoal, letterSpacing: -0.1 },
 
-  summaryTimeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 16, marginBottom: 4, marginLeft: 52 },
+  summaryTimeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, marginBottom: 2, marginLeft: 52 },
   summaryTimeText: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: C.charcoal, letterSpacing: -0.4 },
   timeArrow: {
-    width: 24, height: 24, borderRadius: 12,
-    backgroundColor: 'rgba(23,33,31,0.06)',
+    width: 24, height: 24,
     alignItems: 'center', justifyContent: 'center',
   },
 
-  summaryDivider: { height: 1, backgroundColor: 'rgba(23,33,31,0.08)', marginVertical: 14 },
+  summaryDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.10)', marginVertical: 9 },
+
+  // Duration slider card
+  durationCard: {
+    backgroundColor: '#3A4C68', borderRadius: 18,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10,
+    marginBottom: 16,
+  },
+  durationHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 },
+  durationLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
+  durationValue: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.34 },
   priceLine: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 2 },
   priceLineLabel: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: C.muted },
   priceLineValue: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: C.charcoal },
+  totalLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   totalLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: C.charcoal, letterSpacing: -0.2 },
   totalValue: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: C.charcoal, letterSpacing: -0.44 },
 
@@ -659,8 +789,8 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 12,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
   },
   saldoHeaderIcon: {
     width: 34, height: 34, borderRadius: 11,
@@ -677,7 +807,7 @@ const s = StyleSheet.create({
   },
   saldoChevron: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: 'rgba(23,33,31,0.06)',
+    backgroundColor: '#50607A',
     alignItems: 'center', justifyContent: 'center',
   },
   saldoChevronOpen: {
@@ -688,9 +818,9 @@ const s = StyleSheet.create({
   // Premium upsell card (between booking summary and method picker)
   premiumUpsell: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingHorizontal: 14, paddingVertical: 14,
-    borderRadius: 18, marginBottom: 22, overflow: 'hidden',
-    shadowColor: '#7C3AED', shadowOffset: { width: 0, height: 10 },
+    paddingHorizontal: 14, paddingVertical: 11,
+    borderRadius: 18, marginBottom: 4, overflow: 'hidden',
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.32, shadowRadius: 18, elevation: 6,
   },
   premiumUpsellOrb: {
@@ -748,10 +878,10 @@ const s = StyleSheet.create({
   methodsDropdownHeader: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,0.55)',
+    backgroundColor: '#3B4C69',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   methodsDropdownLabel: { flex: 1, fontFamily: 'System', fontWeight: '700', fontSize: 13, color: C.charcoal, letterSpacing: -0.1 },
   methodsDropdownBody: { gap: 10 },
@@ -761,11 +891,11 @@ const s = StyleSheet.create({
     backgroundColor: C.glassDim,
     borderRadius: 18,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   methodBtnActive: {
     borderColor: C.premium,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#3A4C68',
     shadowColor: C.premium,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
@@ -802,7 +932,7 @@ const s = StyleSheet.create({
     height: 56, borderRadius: 999, overflow: 'hidden',
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 18,
-    shadowColor: '#10B981',
+    shadowColor: '#4E96F0',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.40,
     shadowRadius: 18,
@@ -819,4 +949,60 @@ const s = StyleSheet.create({
 
   secondary: { paddingVertical: 14, alignItems: 'center', marginTop: 4 },
   secondaryText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: C.muted },
+
+  // Compact Waymo-style payment bar (method left, total right, above the CTA)
+  payRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginBottom: 10, paddingHorizontal: 4,
+  },
+  payMethod: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  payMethodIcon: {
+    width: 30, height: 30, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  payMethodLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.2 },
+  payTotal: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  payTotalLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#98B6D8', letterSpacing: -0.1 },
+  payTotalText: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.3 },
+
+  // Collapsible price breakdown (above the payment bar)
+  breakdownBox: {
+    backgroundColor: '#3A4C68', borderRadius: 14,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    paddingHorizontal: 14, paddingVertical: 6, marginBottom: 10,
+  },
+  breakdownRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6 },
+  breakdownLabel: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8' },
+  breakdownValue: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
+
+  applePayBadge: {
+    backgroundColor: '#FFFFFF', borderRadius: 6,
+    paddingHorizontal: 7, paddingVertical: 3,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  applePayBadgeText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#000000', letterSpacing: -0.2 },
+
+  // Brand logos (Vipps / Mastercard / Klarna)
+  brandBadge: { width: 30, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  brandTextWhite: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#FFFFFF' },
+  brandTextDark: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#17120F' },
+  mcWrap: { flexDirection: 'row', alignItems: 'center' },
+  mcCircle: { width: 13, height: 13, borderRadius: 6.5 },
+
+  // Method picker revealed on tap
+  payPicker: {
+    backgroundColor: '#3A4C68', borderRadius: 16,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    padding: 6, marginBottom: 12,
+  },
+  payPickerRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    paddingHorizontal: 10, paddingVertical: 12, borderRadius: 12,
+  },
+  payPickerRowActive: { backgroundColor: 'rgba(94,162,245,0.12)' },
+  payPickerIcon: {
+    width: 30, height: 30, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  payPickerLabel: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.2 },
 });

@@ -1,33 +1,32 @@
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput,
-  StyleSheet, Pressable,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { TouchableOpacity, Pressable } from './haptics';
 
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, spacing, shadow, typography } from '../theme';
+import { colors, radii, spacing, shadow, accentGlow, accentGrad, typography } from '../theme';
 import Icon from './Icon';
 
-// ── GlassCard ─────────────────────────────────────────────────
+// ── Surface (was GlassCard) ───────────────────────────────────
+// Dark elevated card. `strong` lifts it one surface level higher.
 export function GlassCard({ children, style, padding = 20, radius = radii.card, strong = false, onPress }) {
-  const intensity = strong ? 60 : 40;
   return (
-    <Pressable onPress={onPress} style={[styles.glassWrap, { borderRadius: radius }, style]}>
-      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radius, backgroundColor: 'rgba(255,255,255,0.72)' }]} />
-      <View style={[styles.glassInner, { padding, borderRadius: radius }]}>
+    <Pressable onPress={onPress} style={[styles.surfaceWrap, { borderRadius: radius }, style]}>
+      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radius, backgroundColor: strong ? colors.surface2 : colors.surface1 }]} />
+      <View style={[styles.surfaceInner, { padding, borderRadius: radius }]}>
         {children}
       </View>
     </Pressable>
   );
 }
+export const Surface = GlassCard;
 
-// ── PrimaryButton (charcoal pill) ─────────────────────────────
+// ── PrimaryButton (the single accent CTA per screen) ──────────
 export function PrimaryButton({ children, onPress, full = false, icon, style, disabled }) {
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.82}
+      activeOpacity={0.85}
       style={[
         styles.primaryBtn,
         full && styles.fullWidth,
@@ -35,6 +34,11 @@ export function PrimaryButton({ children, onPress, full = false, icon, style, di
         style,
       ]}
     >
+      <LinearGradient
+        colors={accentGrad}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+        style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill }]}
+      />
       <Text style={styles.primaryBtnText}>{children}</Text>
       {icon && (
         <View style={styles.primaryBtnIcon}>
@@ -45,11 +49,26 @@ export function PrimaryButton({ children, onPress, full = false, icon, style, di
   );
 }
 
-// ── GlassButton (frosted pill) ────────────────────────────────
+// ── OutlineButton (Waymo secondary — transparent + hairline) ──
+export function OutlineButton({ children, onPress, full = false, icon, style, disabled }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.7}
+      style={[styles.outlineBtn, full && styles.fullWidth, disabled && styles.disabledBtn, style]}
+    >
+      {icon}
+      <Text style={styles.outlineBtnText}>{children}</Text>
+    </TouchableOpacity>
+  );
+}
+
+// ── GlassButton (subtle filled dark pill) ─────────────────────
 export function GlassButton({ children, onPress, style, icon }) {
   return (
     <Pressable onPress={onPress} style={[styles.glassBtn, style]}>
-      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill, backgroundColor: 'rgba(255,255,255,0.72)' }]} />
+      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill, backgroundColor: colors.surface2 }]} />
       <View style={styles.glassBtnInner}>
         {icon}
         <Text style={styles.glassBtnText}>{children}</Text>
@@ -58,7 +77,7 @@ export function GlassButton({ children, onPress, style, icon }) {
   );
 }
 
-// ── HostCTAButton (mint pill) ─────────────────────────────────
+// ── HostCTAButton (accent pill) ───────────────────────────────
 export function HostCTAButton({ children, onPress, full = false, style }) {
   return (
     <TouchableOpacity
@@ -79,13 +98,10 @@ export function IconButton({ children, onPress, size = 44, dark = false, style }
       style={[
         styles.iconBtn,
         { width: size, height: size, borderRadius: size / 2 },
-        dark ? styles.iconBtnDark : styles.iconBtnLight,
         style,
       ]}
     >
-      {!dark && (
-        <View style={[StyleSheet.absoluteFillObject, { borderRadius: size / 2, backgroundColor: 'rgba(255,255,255,0.72)' }]} />
-      )}
+      <View style={[StyleSheet.absoluteFillObject, { borderRadius: size / 2, backgroundColor: colors.surface2 }]} />
       <View style={styles.iconBtnInner}>{children}</View>
     </Pressable>
   );
@@ -95,9 +111,6 @@ export function IconButton({ children, onPress, size = 44, dark = false, style }
 export function FilterPill({ children, active = false, onPress, icon, style }) {
   return (
     <Pressable onPress={onPress} style={[styles.filterPill, active ? styles.filterPillActive : styles.filterPillInactive, style]}>
-      {!active && (
-        <View style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill, backgroundColor: 'rgba(255,255,255,0.72)' }]} />
-      )}
       <View style={styles.filterPillInner}>
         {icon}
         <Text style={[styles.filterPillText, active && styles.filterPillTextActive]}>{children}</Text>
@@ -110,19 +123,19 @@ export function FilterPill({ children, active = false, onPress, icon, style }) {
 export function SearchBar({ value = '', placeholder = 'Hvor skal du?', onChangeText, voice = true, style }) {
   return (
     <Pressable style={[styles.searchBar, style]}>
-      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill, backgroundColor: 'rgba(255,255,255,0.72)' }]} />
+      <View style={[StyleSheet.absoluteFillObject, { borderRadius: radii.pill, backgroundColor: colors.surface2 }]} />
       <View style={styles.searchBarInner}>
-        <Icon name="search" size={20} color={colors.fg3} />
-        <TextInput
+        <Icon name="search" size={20} color={colors.textTertiary} />
+        <TextInput keyboardAppearance="dark"
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={colors.fg3}
+          placeholderTextColor={colors.textTertiary}
           style={styles.searchInput}
         />
         {voice && (
           <View style={styles.voiceBtn}>
-            <Icon name="mic" size={16} color="#fff" />
+            <Icon name="mic" size={16} color={colors.onAccent} />
           </View>
         )}
       </View>
@@ -133,9 +146,9 @@ export function SearchBar({ value = '', placeholder = 'Hvor skal du?', onChangeT
 // ── PriceBadge ────────────────────────────────────────────────
 export function PriceBadge({ price, unit = 'kr/t', dark = true, style }) {
   return (
-    <View style={[styles.priceBadge, dark ? styles.priceBadgeDark : styles.priceBadgeLight, style]}>
-      <Text style={[styles.priceBadgeValue, dark ? styles.textWhite : styles.textDark]}>{price}</Text>
-      <Text style={[styles.priceBadgeUnit, dark ? styles.textWhiteMuted : styles.textDarkMuted]}> {unit}</Text>
+    <View style={[styles.priceBadge, style]}>
+      <Text style={[styles.priceBadgeValue, styles.textWhite]}>{price}</Text>
+      <Text style={[styles.priceBadgeUnit, styles.textWhiteMuted]}> {unit}</Text>
     </View>
   );
 }
@@ -144,7 +157,7 @@ export function PriceBadge({ price, unit = 'kr/t', dark = true, style }) {
 export function RatingBadge({ rating, style }) {
   return (
     <View style={[styles.ratingBadge, style]}>
-      <Icon name="star" size={12} color={colors.fg1} fill={colors.fg1} strokeWidth={0} />
+      <Icon name="star" size={12} color={colors.warning} fill={colors.warning} strokeWidth={0} />
       <Text style={styles.ratingText}> {rating}</Text>
     </View>
   );
@@ -152,9 +165,9 @@ export function RatingBadge({ rating, style }) {
 
 // ── AvailabilityBadge ─────────────────────────────────────────
 const AVAIL = {
-  available: { label: 'Ledig',   dot: '#9FD6B4' },
-  premium:   { label: 'Premium', dot: '#5FAFD3' },
-  booked:    { label: 'Opptatt', dot: '#7B8589' },
+  available: { label: 'Ledig',   dot: colors.success },
+  premium:   { label: 'Premium', dot: colors.accent },
+  booked:    { label: 'Opptatt', dot: colors.textTertiary },
   new:       { label: 'Ny',      dot: null },
 };
 export function AvailabilityBadge({ status = 'available', style }) {
@@ -169,14 +182,14 @@ export function AvailabilityBadge({ status = 'available', style }) {
 
 // ── Styles ────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  // GlassCard
-  glassWrap: {
+  // Surface / GlassCard
+  surfaceWrap: {
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.6)',
+    borderColor: colors.border,
     ...shadow(1),
   },
-  glassInner: {
+  surfaceInner: {
     position: 'relative',
   },
 
@@ -185,16 +198,16 @@ const styles = StyleSheet.create({
     height: 56,
     paddingHorizontal: 22,
     borderRadius: radii.pill,
-    backgroundColor: colors.charcoal,
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
-    ...shadow(3),
+    ...accentGlow(2),
   },
   primaryBtnText: {
     ...typography.bodyMd,
-    color: '#fff',
+    color: colors.onAccent,
     fontFamily: 'System', fontWeight: '600',
     fontSize: 16,
     letterSpacing: -0.16,
@@ -204,12 +217,32 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   fullWidth: { width: '100%' },
   disabledBtn: { opacity: 0.4 },
+
+  // OutlineButton
+  outlineBtn: {
+    height: 56,
+    paddingHorizontal: 22,
+    borderRadius: radii.pill,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+  },
+  outlineBtnText: {
+    ...typography.bodyMd,
+    color: colors.textPrimary,
+    fontFamily: 'System', fontWeight: '600',
+    fontSize: 16,
+  },
 
   // GlassButton
   glassBtn: {
@@ -218,8 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.65)',
-    ...shadow(1),
+    borderColor: colors.border,
   },
   glassBtnInner: {
     flex: 1,
@@ -230,7 +262,7 @@ const styles = StyleSheet.create({
   },
   glassBtnText: {
     ...typography.bodyMd,
-    color: colors.fg1,
+    color: colors.textPrimary,
     fontFamily: 'System', fontWeight: '600',
     fontSize: 16,
   },
@@ -240,16 +272,16 @@ const styles = StyleSheet.create({
     height: 56,
     paddingHorizontal: 24,
     borderRadius: radii.pill,
-    backgroundColor: '#DCEBDF',
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadow(1),
+    ...accentGlow(1),
   },
   hostCTAText: {
     ...typography.bodyMd,
     fontFamily: 'System', fontWeight: '700',
     fontSize: 16,
-    color: colors.fg1,
+    color: colors.onAccent,
   },
 
   // IconButton
@@ -257,12 +289,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadow(1),
-  },
-  iconBtnDark: { backgroundColor: colors.charcoal },
-  iconBtnLight: {
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: colors.border,
   },
   iconBtnInner: {
     position: 'absolute',
@@ -277,12 +305,12 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     overflow: 'hidden',
     flexShrink: 0,
-    ...shadow(1),
   },
-  filterPillActive: { backgroundColor: colors.charcoal },
+  filterPillActive: { backgroundColor: colors.accent },
   filterPillInactive: {
+    backgroundColor: colors.surface2,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: colors.border,
   },
   filterPillInner: {
     flex: 1,
@@ -293,9 +321,9 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontFamily: 'System', fontWeight: '600',
     fontSize: 13,
-    color: colors.fg1,
+    color: colors.textSecondary,
   },
-  filterPillTextActive: { color: '#fff' },
+  filterPillTextActive: { color: colors.onAccent },
 
   // SearchBar
   searchBar: {
@@ -303,8 +331,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.65)',
-    ...shadow(1),
+    borderColor: colors.border,
   },
   searchBarInner: {
     flex: 1,
@@ -318,13 +345,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'System', fontWeight: '500',
     fontSize: 16,
-    color: colors.fg1,
+    color: colors.textPrimary,
   },
   voiceBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.charcoal,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -337,12 +364,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     gap: 3,
-  },
-  priceBadgeDark: { backgroundColor: colors.charcoal },
-  priceBadgeLight: {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: colors.surface2,
   },
   priceBadgeValue: {
     fontFamily: 'System', fontWeight: '700',
@@ -353,10 +375,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     opacity: 0.7,
   },
-  textWhite: { color: '#fff' },
-  textDark:  { color: colors.fg1 },
-  textWhiteMuted: { color: 'rgba(255,255,255,0.7)' },
-  textDarkMuted:  { color: 'rgba(23,33,31,0.7)' },
+  textWhite: { color: colors.textPrimary },
+  textWhiteMuted: { color: colors.textSecondary },
 
   // RatingBadge
   ratingBadge: {
@@ -365,14 +385,14 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: radii.pill,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: colors.surface2,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: colors.border,
   },
   ratingText: {
     fontFamily: 'System', fontWeight: '700',
     fontSize: 12,
-    color: colors.fg1,
+    color: colors.textPrimary,
   },
 
   // AvailabilityBadge
@@ -383,9 +403,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 11,
     borderRadius: radii.pill,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: colors.surface2,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: colors.border,
   },
   availDot: {
     width: 7,
@@ -395,6 +415,6 @@ const styles = StyleSheet.create({
   availText: {
     fontFamily: 'System', fontWeight: '600',
     fontSize: 12,
-    color: colors.fg1,
+    color: colors.textPrimary,
   },
 });

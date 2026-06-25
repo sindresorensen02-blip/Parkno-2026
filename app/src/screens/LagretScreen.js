@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+﻿import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -67,14 +68,14 @@ export default function LagretScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: 120 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.titleRow}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
-            <Icon name="arrow-left" size={20} color="#111416" strokeWidth={2} />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" strokeWidth={2} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>Lagret</Text>
@@ -86,7 +87,7 @@ export default function LagretScreen({ navigation }) {
           <ActivityIndicator color="#4EA7B9" style={{ marginTop: 60 }} />
         ) : saved.length === 0 ? (
           <View style={styles.empty}>
-            <View style={styles.emptyIcon}><Icon name="heart" size={28} color="#7B8589" /></View>
+            <View style={styles.emptyIcon}><Icon name="heart" size={28} color="#98B6D8" /></View>
             <Text style={styles.emptyLabel}>Ingen lagrede plasser</Text>
             <Text style={styles.emptySub}>Trykk ♥ på en plass for å lagre den her</Text>
           </View>
@@ -142,26 +143,26 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  title: { fontFamily: 'System', fontWeight: '800', fontSize: 26, color: '#111416', letterSpacing: -0.52 },
-  sub: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#7B8589', marginTop: 2 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  title: { fontFamily: 'System', fontWeight: '800', fontSize: 26, color: '#FFFFFF', letterSpacing: -0.52 },
+  sub: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#98B6D8', marginTop: 2 },
   empty: { alignItems: 'center', marginTop: 80, gap: 12 },
-  emptyIcon: { width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  emptyLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 17, color: '#111416', letterSpacing: -0.34 },
-  emptySub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#7B8589', textAlign: 'center', paddingHorizontal: 20 },
-  card: { padding: 16, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', marginBottom: 10 },
+  emptyIcon: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  emptyLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 17, color: '#FFFFFF', letterSpacing: -0.34 },
+  emptySub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', textAlign: 'center', paddingHorizontal: 20 },
+  card: { padding: 16, borderRadius: 18, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 10 },
   cardHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  cardAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#111416', letterSpacing: -0.15 },
+  cardAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15 },
   cardMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
-  cardMeta: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589' },
+  cardMeta: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8' },
   availBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: 'rgba(16,185,129,0.1)', borderWidth: 1, borderColor: 'rgba(16,185,129,0.2)' },
   availBadgeOccupied: { backgroundColor: 'rgba(217,119,6,0.1)', borderColor: 'rgba(217,119,6,0.25)' },
-  availDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' },
+  availDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4E96F0' },
   availDotOccupied: { backgroundColor: '#D97706' },
   availText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#0D7A55' },
   availTextOccupied: { color: '#92400E' },
   heartBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(239,143,122,0.12)', alignItems: 'center', justifyContent: 'center' },
   tagRow: { flexDirection: 'row', gap: 6, marginTop: 10, flexWrap: 'wrap' },
-  tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: 'rgba(17,20,22,0.06)' },
-  tagText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#2F3437' },
+  tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: '#50607A' },
+  tagText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8' },
 });

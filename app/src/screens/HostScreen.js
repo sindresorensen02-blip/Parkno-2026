@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+﻿import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -149,7 +150,7 @@ export default function HostScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 120 }]}
@@ -162,7 +163,7 @@ export default function HostScreen({ navigation }) {
             <Text style={styles.heroSub}>Utleier</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.getParent()?.navigate('Profil')} activeOpacity={0.85} style={styles.avatarWrap}>
-            <LinearGradient colors={['#DCEBDF', '#9ECFE3']} style={[StyleSheet.absoluteFillObject, { borderRadius: 40 }]} />
+            <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 40 }]} />
             <Text style={styles.avatarText}>{initials}</Text>
           </TouchableOpacity>
         </View>
@@ -170,7 +171,7 @@ export default function HostScreen({ navigation }) {
         {SPOTS.length === 0 && !loadingE ? (
           /* ── Onboarding state (no spots yet) ── */
           <View style={styles.onboardCard}>
-            <LinearGradient colors={['#10B981', '#14B8A6', '#2563EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
+            <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
             <View style={styles.onboardBlob} />
             <Text style={styles.onboardTitle}>Lei ut plassen din</Text>
             <Text style={styles.onboardSub}>Tjen penger på parkeringsplassen du ikke bruker — uten noe styr.</Text>
@@ -204,7 +205,7 @@ export default function HostScreen({ navigation }) {
               <Text style={styles.cardLabel}>Inntekt {cur.heading}</Text>
               <View style={styles.cardValueRow}>
                 {loadingE ? (
-                  <ActivityIndicator color="#111416" style={{ marginVertical: 8 }} />
+                  <ActivityIndicator color="#FFFFFF" style={{ marginVertical: 8 }} />
                 ) : (
                   <>
                     <Text style={styles.cardValue}>{fmt(curAmt)}</Text>
@@ -217,13 +218,13 @@ export default function HostScreen({ navigation }) {
               <View style={styles.barsContainer}>
                 {dailyBars.map((h, i) => (
                   <View key={i} style={styles.barWrap}>
-                    <View style={[styles.bar, { height: `${h}%`, backgroundColor: i === 6 ? '#10B981' : 'rgba(17,20,22,0.09)' }]} />
+                    <View style={[styles.bar, { height: `${h}%`, backgroundColor: i === 6 ? '#4E96F0' : 'rgba(17,20,22,0.09)' }]} />
                   </View>
                 ))}
               </View>
               <View style={styles.barLabels}>
                 {BAR_DAYS.map((d, i) => (
-                  <Text key={i} style={[styles.barLabel, { color: i === 6 ? '#10B981' : '#BCC5CB' }]}>{d}</Text>
+                  <Text key={i} style={[styles.barLabel, { color: i === 6 ? '#4E96F0' : '#BCC5CB' }]}>{d}</Text>
                 ))}
               </View>
             </View>
@@ -233,7 +234,7 @@ export default function HostScreen({ navigation }) {
         {/* Payout card */}
         {!payout.loading && (payout.queued > 0 || !profile?.bank_account) && (
           <View style={styles.payoutCard}>
-            <LinearGradient colors={['#10B981', '#14B8A6', '#2563EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
+            <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
             {!profile?.bank_account ? (
               <TouchableOpacity style={styles.payoutSetupRow} activeOpacity={0.85} onPress={() => navigation.getParent()?.navigate('Profil', { screen: 'Betalingsmetoder' })}>
                 <View style={styles.payoutSetupIcon}>
@@ -273,13 +274,13 @@ export default function HostScreen({ navigation }) {
         {/* Inbox shortcut */}
         <TouchableOpacity style={styles.inboxRow} activeOpacity={0.85} onPress={() => navigation.push('Inboks')}>
           <View style={styles.inboxIcon}>
-            <Icon name="bell" size={16} color="#111416" strokeWidth={1.8} />
+            <Icon name="bell" size={16} color="#FFFFFF" strokeWidth={1.8} />
           </View>
           <View style={styles.inboxText}>
             <Text style={styles.inboxLabel}>Innboks</Text>
             <Text style={styles.inboxHint}>Se reservasjoner for plassene dine</Text>
           </View>
-          <Icon name="chevron-right" size={16} color="#C4CACC" strokeWidth={2} />
+          <Icon name="chevron-right" size={16} color="#6E809B" strokeWidth={2} />
         </TouchableOpacity>
 
         {/* My spots */}
@@ -296,7 +297,7 @@ export default function HostScreen({ navigation }) {
               <View style={[styles.statusDot, {
                 backgroundColor: spot.moderation_status === 'pending'  ? '#F59E0B'
                                : spot.moderation_status === 'rejected' ? '#EF4444'
-                               : spot.active ? '#10B981' : '#BCC5CB',
+                               : spot.active ? '#4E96F0' : '#BCC5CB',
               }]} />
             </View>
             <View style={styles.spotInfo}>
@@ -304,13 +305,13 @@ export default function HostScreen({ navigation }) {
               <Text style={[styles.spotSub, spot.moderation_status === 'rejected' && { color: '#EF4444' }]}>{spot.sub}</Text>
             </View>
             <Text style={styles.spotPrice}>{spot.price} kr/t</Text>
-            <Icon name="chevron-right" size={16} color="#C4CACC" />
+            <Icon name="chevron-right" size={16} color="#6E809B" />
           </TouchableOpacity>
         ))}
 
         {/* Add spot CTA */}
         <TouchableOpacity style={styles.cta} activeOpacity={0.85} onPress={() => navigation.push('LeiUt', { isFirst: SPOTS.length === 0 })}>
-          <LinearGradient colors={['#10B981', '#14B8A6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 18 }]} />
+          <LinearGradient colors={['#4E96F0', '#5EA2F5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 18 }]} />
           <Icon name="zap" size={18} color="#fff" strokeWidth={2} />
           <Text style={styles.ctaText}>{SPOTS.length === 0 ? 'Lei ut en plass' : 'Lei ut en plass til'}</Text>
         </TouchableOpacity>
@@ -324,11 +325,11 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20 },
 
   hero: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 22, paddingHorizontal: 2 },
-  avatarWrap: { width: 52, height: 52, borderRadius: 26, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.9)' },
-  avatarText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', zIndex: 1 },
+  avatarWrap: { width: 52, height: 52, borderRadius: 26, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.08)' },
+  avatarText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', zIndex: 1 },
   heroText: { flex: 1 },
-  heroName: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#111416', letterSpacing: -0.36 },
-  heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  heroName: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36 },
+  heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
   onboardCard: { borderRadius: 28, overflow: 'hidden', padding: 24, marginBottom: 20 },
   onboardBlob: { position: 'absolute', width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(255,255,255,0.08)', top: -60, right: -60 },
@@ -340,23 +341,23 @@ const styles = StyleSheet.create({
   onboardRowText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#fff', flex: 1 },
 
   periodRow: { flexDirection: 'row', gap: 6, marginBottom: 14 },
-  periodBtn: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.7)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)' },
-  periodBtnActive: { backgroundColor: '#111416', borderColor: '#111416' },
-  periodText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#111416', letterSpacing: -0.13 },
+  periodBtn: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  periodBtnActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  periodText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#FFFFFF', letterSpacing: -0.13 },
   periodTextActive: { color: '#fff' },
 
   earningsCard: {
     borderRadius: 28, overflow: 'hidden', padding: 22, marginBottom: 20,
-    backgroundColor: 'rgba(255,255,255,0.78)',
+    backgroundColor: '#3A4C68',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.85)',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.07, shadowRadius: 24, elevation: 4,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.07, shadowRadius: 24, elevation: 4,
   },
   cardBlob: { position: 'absolute', width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(16,185,129,0.08)', top: -60, right: -60 },
-  cardLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#7B8589', letterSpacing: 1, textTransform: 'uppercase' },
+  cardLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
   cardValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: 8, marginBottom: 4 },
-  cardValue: { fontFamily: 'System', fontWeight: '800', fontSize: 42, color: '#111416', letterSpacing: -1.26 },
-  cardUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#7B8589' },
-  cardSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginBottom: 20 },
+  cardValue: { fontFamily: 'System', fontWeight: '800', fontSize: 42, color: '#FFFFFF', letterSpacing: -1.26 },
+  cardUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#98B6D8' },
+  cardSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginBottom: 20 },
 
   barsContainer: { flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 60 },
   barWrap: { flex: 1, height: '100%', justifyContent: 'flex-end' },
@@ -378,22 +379,22 @@ const styles = StyleSheet.create({
   payoutSetupTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#fff', letterSpacing: -0.14 },
   payoutSetupSub: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
 
-  inboxRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', marginBottom: 14, shadowColor: '#111416', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
-  inboxIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
+  inboxRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 14, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  inboxIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
   inboxText: { flex: 1 },
-  inboxLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  inboxHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  inboxLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  inboxHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
-  sectionTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
+  sectionTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
 
-  spotRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', marginBottom: 8, shadowColor: '#111416', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  spotRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 8, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
   statusDotWrap: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   statusDot: { width: 10, height: 10, borderRadius: 5 },
   spotInfo: { flex: 1 },
-  spotTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  spotSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginTop: 2 },
-  spotPrice: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#111416' },
+  spotTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  spotSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
+  spotPrice: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
 
-  cta: { height: 56, borderRadius: 18, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, shadowColor: '#10B981', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 6 },
+  cta: { height: 56, borderRadius: 18, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 6 },
   ctaText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.16 },
 });

@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+﻿import React, { useState, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,10 +10,10 @@ import { notifyUser } from '../lib/notify';
 import { useAuth } from '../context/AuthContext';
 
 const STATUS_MAP = {
-  completed: { label: 'Fullført', color: '#1F6B47', bg: 'rgba(63,166,107,0.12)',  dot: '#3FA66B' },
+  completed: { label: 'Fullført', color: '#5EA2F5', bg: 'rgba(63,166,107,0.12)',  dot: '#5EA2F5' },
   cancelled:  { label: 'Avbrutt',  color: '#92400E', bg: 'rgba(217,119,6,0.12)',   dot: '#D97706' },
-  confirmed:  { label: 'Kommende', color: '#1E40AF', bg: 'rgba(37,99,235,0.12)',   dot: '#2563EB' },
-  pending:    { label: 'Venter',   color: '#1E40AF', bg: 'rgba(37,99,235,0.12)',   dot: '#2563EB' },
+  confirmed:  { label: 'Kommende', color: '#1E40AF', bg: 'rgba(37,99,235,0.12)',   dot: '#4E96F0' },
+  pending:    { label: 'Venter',   color: '#1E40AF', bg: 'rgba(37,99,235,0.12)',   dot: '#4E96F0' },
 };
 
 function fmt(iso) {
@@ -84,21 +85,25 @@ export default function ReservasjonshistorikkScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView
         contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={s.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
-          </TouchableOpacity>
+          {navigation.canGoBack() ? (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+              <Icon name="arrow-left" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          ) : (
+            <View style={s.backBtn} />
+          )}
           <Text style={s.headerTitle}>Historikk</Text>
           <View style={s.backBtn} />
         </View>
 
         <View style={s.summaryCard}>
-          <LinearGradient colors={['#2F3437', '#111416']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
+          <LinearGradient colors={['#98B6D8', '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
           <View style={s.blob} />
           <View style={s.summaryInner}>
             <View style={s.summaryBlock}>
@@ -142,14 +147,14 @@ export default function ReservasjonshistorikkScreen({ navigation }) {
                   <TouchableOpacity
                     style={s.item}
                     activeOpacity={0.75}
-                    onPress={() => item.spots && navigation.navigate('Hjem', {
+                    onPress={() => item.spots && navigation.getParent()?.navigate('Kart', {
                       screen: 'LiveSpot',
                       params: { spot: { id: item.spots.id, address: item.spots.address, area: '', price: item.spots.price_per_hour, tags: item.spots.amenities ?? [], until: '', distanceKm: 99, distance: '', walk: '', featured: false, isLive: true } },
                     })}
                   >
                     <View style={s.itemLeft}>
                       <View style={s.itemIconWrap}>
-                        <Icon name="map-pin" size={14} color="#111416" strokeWidth={1.8} />
+                        <Icon name="map-pin" size={14} color="#FFFFFF" strokeWidth={1.8} />
                       </View>
                       <View style={s.itemInfo}>
                         <Text style={s.itemAddress}>{item.spots?.address ?? '—'}</Text>
@@ -183,9 +188,9 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
-  summaryCard: { borderRadius: 22, overflow: 'hidden', padding: 20, marginBottom: 18, shadowColor: '#111416', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 6 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  summaryCard: { borderRadius: 22, overflow: 'hidden', padding: 20, marginBottom: 18, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 6 },
   blob: { position: 'absolute', width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(95,175,211,0.28)', top: -20, right: -20 },
   summaryInner: { flexDirection: 'row', alignItems: 'center' },
   summaryBlock: { flex: 1, alignItems: 'center', gap: 4 },
@@ -193,22 +198,22 @@ const s = StyleSheet.create({
   summaryLabel: { fontFamily: 'System', fontWeight: '500', fontSize: 10, color: 'rgba(255,255,255,0.55)', textAlign: 'center' },
   summaryDivider: { width: 1, height: 32, backgroundColor: 'rgba(255,255,255,0.12)' },
   filterRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  filterBtn: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)' },
-  filterBtnActive: { backgroundColor: '#111416', borderColor: '#111416' },
-  filterText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#7B8589' },
+  filterBtn: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  filterBtnActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  filterText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8' },
   filterTextActive: { color: '#fff' },
   empty: { alignItems: 'center', marginTop: 60 },
-  emptyText: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#7B8589' },
-  list: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden' },
-  divider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)', marginLeft: 66 },
+  emptyText: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#98B6D8' },
+  list: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden' },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 66 },
   item: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, gap: 12 },
   itemLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
-  itemIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
+  itemIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
   itemInfo: { flex: 1 },
-  itemAddress: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  itemMeta: { fontFamily: 'System', fontWeight: '400', fontSize: 11, color: '#7B8589', marginTop: 2 },
+  itemAddress: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  itemMeta: { fontFamily: 'System', fontWeight: '400', fontSize: 11, color: '#98B6D8', marginTop: 2 },
   itemRight: { alignItems: 'flex-end', gap: 5 },
-  itemPrice: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
+  itemPrice: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 },
   statusDot: { width: 5, height: 5, borderRadius: 3 },
   statusText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, letterSpacing: 0.2 },

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, ActivityIndicator, Linking, Alert } from 'react-native';
+﻿import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, Modal, ActivityIndicator, Linking, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { supabase } from '../lib/supabase';
 import { notifyUser } from '../lib/notify';
 import { useAuth } from '../context/AuthContext';
@@ -352,7 +353,7 @@ export default function LiveSpotScreen({ navigation, route }) {
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={['#F8FAF7', '#EAF0EC', '#D8EEF2']}
+        colors={['#2B394C', '#2B394C', '#2B394C']}
         locations={[0, 0.55, 1]}
         style={StyleSheet.absoluteFillObject}
       />
@@ -364,14 +365,14 @@ export default function LiveSpotScreen({ navigation, route }) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Icon name="arrow-left" size={20} color="#17211F" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <View style={styles.headerMid}>
             <Text style={styles.headerSub}>{[spot.area, spot.distance].filter(Boolean).join(' · ')}</Text>
             <Text style={styles.headerTitle}>{spot.address}</Text>
           </View>
           <TouchableOpacity onPress={toggleSave} style={[styles.availBadge, isOccupied && !isSaved && styles.availBadgeOccupied]}>
-            <Icon name="heart" size={14} color={isSaved ? '#EF8F7A' : isOccupied ? '#B45309' : '#2F5D49'} />
+            <Icon name="heart" size={14} color={isSaved ? '#EF8F7A' : isOccupied ? '#B45309' : '#5EA2F5'} />
             <Text style={[styles.availText, isSaved && { color: '#EF8F7A' }, isOccupied && !isSaved && { color: '#B45309' }]}>
               {isSaved ? 'Lagret' : isOccupied ? 'Opptatt' : 'Ledig'}
             </Text>
@@ -381,7 +382,7 @@ export default function LiveSpotScreen({ navigation, route }) {
         {/* Host card — moved to the top so users see who they're booking from first */}
         <View style={styles.hostCard}>
           <View style={styles.hostAvatar}>
-            <LinearGradient colors={['#4EA7B9', '#93D6E3', '#8BCFB0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
+            <LinearGradient colors={['#5EA2F5', '#7FBBF8', '#6FB1F7']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
             <Text style={styles.hostAvatarText}>SH</Text>
           </View>
           <View style={styles.hostInfo}>
@@ -407,7 +408,7 @@ export default function LiveSpotScreen({ navigation, route }) {
           ) : null}
           <View style={styles.metaDivider} />
           <View style={styles.metaItem}>
-            <Icon name="clock" size={12} color={isOccupied ? '#D97706' : '#4EA7B9'} strokeWidth={2.2} />
+            <Icon name="clock" size={12} color={isOccupied ? '#D97706' : '#5EA2F5'} strokeWidth={2.2} />
             <Text style={[styles.metaText, isOccupied && { color: '#D97706' }]} numberOfLines={1}>
               {availUntilText}
             </Text>
@@ -430,7 +431,7 @@ export default function LiveSpotScreen({ navigation, route }) {
             {amenities.map((tag) => (
               <View key={tag} style={styles.amenityCard}>
                 <View style={styles.amenityIcon}>
-                  <Icon name={tagIcon(tag)} size={14} color="#17211F" />
+                  <Icon name={tagIcon(tag)} size={14} color="#FFFFFF" />
                 </View>
                 <Text style={styles.amenityLabel}>{tag}</Text>
               </View>
@@ -478,7 +479,7 @@ export default function LiveSpotScreen({ navigation, route }) {
           activeOpacity={0.88}
           disabled={isOccupied}
         >
-          <LinearGradient colors={['#10B981', '#14B8A6', '#2563EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
+          <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
           <Text style={styles.ctaText}>Velg tid på kart</Text>
           <View style={styles.ctaBadge}>
             <Icon name="map-pin" size={14} color="#fff" strokeWidth={2.4} />
@@ -493,7 +494,7 @@ export default function LiveSpotScreen({ navigation, route }) {
           <TouchableOpacity activeOpacity={1} style={[styles.sheet, { paddingBottom: insets.bottom + 24 }]} onPress={() => {}}>
             <View style={styles.sheetHandle} />
             <View style={styles.confirmIcon}>
-              <LinearGradient colors={['#4EA7B9', '#93D6E3', '#8BCFB0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 32 }]} />
+              <LinearGradient colors={['#5EA2F5', '#7FBBF8', '#6FB1F7']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 32 }]} />
               <Icon name="check" size={26} color="#fff" strokeWidth={2.5} />
             </View>
             <Text style={styles.confirmTitle}>Reservasjon bekreftet!</Text>
@@ -536,144 +537,144 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20 },
 
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
   headerMid: { flex: 1 },
-  headerSub: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#73817D', letterSpacing: 0.2 },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#17211F', letterSpacing: -0.32, marginTop: 1 },
+  headerSub: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8', letterSpacing: 0.2 },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32, marginTop: 1 },
   availBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, backgroundColor: 'rgba(139,207,176,0.25)', borderWidth: 1, borderColor: 'rgba(139,207,176,0.45)' },
   availBadgeOccupied: { backgroundColor: 'rgba(217,119,6,0.12)', borderColor: 'rgba(217,119,6,0.3)' },
-  availText: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#2F5D49' },
+  availText: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#5EA2F5' },
 
   // Compact meta strip — replaces the old hero card (~200px → ~44px)
   metaStrip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 14, paddingVertical: 10,
     borderRadius: 16, marginBottom: 22,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
   },
   metaItem: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  metaValue: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#17211F', letterSpacing: -0.3 },
-  metaUnit: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#73817D', letterSpacing: 0 },
-  metaText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#34413E', letterSpacing: -0.1 },
-  metaDivider: { width: 1, height: 18, backgroundColor: 'rgba(23,33,31,0.10)' },
+  metaValue: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.3 },
+  metaUnit: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#98B6D8', letterSpacing: 0 },
+  metaText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#98B6D8', letterSpacing: -0.1 },
+  metaDivider: { width: 1, height: 18, backgroundColor: 'rgba(255,255,255,0.08)' },
 
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#73817D', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10 },
 
   // "Om plassen" info block
   infoCard: {
-    backgroundColor: 'rgba(255,255,255,0.62)',
+    backgroundColor: '#3A4C68',
     borderRadius: 18,
     padding: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     marginBottom: 18,
   },
   infoBody: {
     fontFamily: 'System', fontWeight: '500', fontSize: 14,
-    color: '#34413E', lineHeight: 21, letterSpacing: -0.1,
+    color: '#98B6D8', lineHeight: 21, letterSpacing: -0.1,
   },
 
   // Collapsible time/duration dropdown
   timeDropdownHeader: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 16, paddingVertical: 14,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     borderRadius: 18,
     marginBottom: 12,
   },
   timeDropdownLabel: {
     fontFamily: 'System', fontWeight: '700', fontSize: 11,
-    color: '#73817D', letterSpacing: 1.2, textTransform: 'uppercase',
+    color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase',
   },
   timeDropdownSummary: {
     fontFamily: 'System', fontWeight: '700', fontSize: 14,
-    color: '#17211F', letterSpacing: -0.2, marginTop: 3,
+    color: '#FFFFFF', letterSpacing: -0.2, marginTop: 3,
   },
   timeDropdownChevron: {
     width: 30, height: 30, borderRadius: 15,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(23,33,31,0.06)',
+    backgroundColor: '#50607A',
   },
   timeDropdownChevronOpen: {
     backgroundColor: 'rgba(78,167,185,0.18)',
     transform: [{ rotate: '180deg' }],
   },
   timeDropdownBody: {
-    backgroundColor: 'rgba(255,255,255,0.5)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: '#3B4C69',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     borderRadius: 22,
     padding: 14, paddingTop: 16,
     marginBottom: 14,
   },
 
   startRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  startBtn: { flex: 1, height: 44, borderRadius: 999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)' },
-  startBtnActive: { backgroundColor: '#17211F', borderColor: '#17211F' },
-  startText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#73817D' },
+  startBtn: { flex: 1, height: 44, borderRadius: 999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  startBtnActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  startText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#98B6D8' },
   startTextActive: { color: '#fff' },
 
-  timePicker: { backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)', borderRadius: 22, padding: 18, marginBottom: 22, gap: 16 },
+  timePicker: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, padding: 18, marginBottom: 22, gap: 16 },
   dateRow: { flexDirection: 'row', gap: 8 },
-  dateChip: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(23,33,31,0.06)', borderWidth: 1, borderColor: 'transparent' },
-  dateChipActive: { backgroundColor: '#17211F', borderColor: '#17211F' },
-  dateChipText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#73817D' },
+  dateChip: { flex: 1, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: '#50607A', borderWidth: 1, borderColor: 'transparent' },
+  dateChipActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  dateChipText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#98B6D8' },
   dateChipTextActive: { color: '#fff' },
   timeStepRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 },
   timeStepper: { alignItems: 'center', gap: 6 },
   stepBtn: { width: 44, height: 36, alignItems: 'center', justifyContent: 'center' },
-  stepValue: { fontFamily: 'System', fontWeight: '800', fontSize: 40, color: '#17211F', letterSpacing: -1, lineHeight: 46 },
-  timePickerColon: { fontFamily: 'System', fontWeight: '800', fontSize: 40, color: '#17211F', letterSpacing: -1, marginBottom: 4 },
+  stepValue: { fontFamily: 'System', fontWeight: '800', fontSize: 40, color: '#FFFFFF', letterSpacing: -1, lineHeight: 46 },
+  timePickerColon: { fontFamily: 'System', fontWeight: '800', fontSize: 40, color: '#FFFFFF', letterSpacing: -1, marginBottom: 4 },
 
   smartChipScroll: { marginBottom: 10 },
   smartChipContent: { gap: 8, paddingRight: 4 },
-  smartChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)' },
+  smartChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   smartChipHighlight: { backgroundColor: 'rgba(78,167,185,0.12)', borderColor: 'rgba(78,167,185,0.32)' },
-  smartChipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4EA7B9' },
-  smartChipText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#17211F' },
-  smartChipTextHighlight: { color: '#2F6573' },
+  smartChipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#5EA2F5' },
+  smartChipText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
+  smartChipTextHighlight: { color: '#5EA2F5' },
 
   durationRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  durationBtn: { flex: 1, paddingVertical: 12, borderRadius: 18, alignItems: 'center', gap: 3, backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)' },
-  durationBtnActive: { backgroundColor: '#17211F', borderColor: '#17211F' },
-  durationText: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#17211F', letterSpacing: -0.3 },
+  durationBtn: { flex: 1, paddingVertical: 12, borderRadius: 18, alignItems: 'center', gap: 3, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  durationBtnActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  durationText: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.3 },
   durationTextActive: { color: '#fff' },
-  durationPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 10, color: '#73817D' },
+  durationPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 10, color: '#98B6D8' },
   durationPriceActive: { color: 'rgba(255,255,255,0.65)' },
 
-  sliderCard: { backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)', borderRadius: 18, padding: 16, marginBottom: 14 },
+  sliderCard: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 18, padding: 16, marginBottom: 14 },
   sliderHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 },
-  sliderDuration: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#17211F', letterSpacing: -0.44 },
-  sliderPrice: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#73817D', letterSpacing: -0.32 },
+  sliderDuration: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44 },
+  sliderPrice: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#98B6D8', letterSpacing: -0.32 },
   slider: { width: '100%', height: 36 },
   sliderLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
-  sliderLabelText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#73817D' },
+  sliderLabelText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8' },
 
   // Single total card — replaces the old multi-row price breakdown.
   // Breakdown collapsed into a single hint line so the eye lands on `total`.
   totalCard: {
-    backgroundColor: 'rgba(255,255,255,0.72)',
+    backgroundColor: '#3A4C68',
     borderRadius: 22, padding: 18, marginBottom: 14,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)',
-    shadowColor: '#17211F', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.07, shadowRadius: 20, elevation: 3,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.07, shadowRadius: 20, elevation: 3,
   },
   totalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  totalLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#73817D', letterSpacing: 0.6, textTransform: 'uppercase' },
-  totalHint: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#34413E', marginTop: 4 },
-  totalHintMuted: { color: '#73817D' },
-  totalHintWaived: { color: '#4EA7B9', fontFamily: 'System', fontWeight: '700' },
-  totalValue: { fontFamily: 'System', fontWeight: '800', fontSize: 28, color: '#17211F', letterSpacing: -0.6 },
+  totalLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#98B6D8', letterSpacing: 0.6, textTransform: 'uppercase' },
+  totalHint: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 4 },
+  totalHintMuted: { color: '#98B6D8' },
+  totalHintWaived: { color: '#5EA2F5', fontFamily: 'System', fontWeight: '700' },
+  totalValue: { fontFamily: 'System', fontWeight: '800', fontSize: 28, color: '#FFFFFF', letterSpacing: -0.6 },
 
   feeWaived: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
-  feeWaivedStrike: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#C6CFC9', textDecorationLine: 'line-through' },
-  feeWaivedNew: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#4EA7B9' },
+  feeWaivedStrike: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#6E809B', textDecorationLine: 'line-through' },
+  feeWaivedNew: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#5EA2F5' },
 
   // Active state — premium-blue → ice-blue, refined check
   savingsBannerActive: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     paddingHorizontal: 14, paddingVertical: 14,
     borderRadius: 18, marginBottom: 14, overflow: 'hidden',
-    shadowColor: '#4EA7B9', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.28, shadowRadius: 16, elevation: 5,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.28, shadowRadius: 16, elevation: 5,
   },
   savingsActiveIcon: {
     width: 26, height: 26, borderRadius: 13,
@@ -692,7 +693,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 18,
     borderRadius: 22, marginBottom: 14,
     overflow: 'hidden',
-    shadowColor: '#17211F', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.30, shadowRadius: 22, elevation: 7,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.30, shadowRadius: 22, elevation: 7,
   },
   savingsOrbBlue: {
     position: 'absolute',
@@ -717,7 +718,7 @@ const styles = StyleSheet.create({
     width: 46, height: 46, borderRadius: 23,
     overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#4EA7B9', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 10, elevation: 5,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 10, elevation: 5,
   },
   savingsUpsellBody: { flex: 1 },
   savingsUpsellBadge: {
@@ -730,9 +731,9 @@ const styles = StyleSheet.create({
   },
   savingsUpsellBadgeDot: {
     width: 5, height: 5, borderRadius: 2.5,
-    backgroundColor: '#93D6E3',
+    backgroundColor: '#7FBBF8',
   },
-  savingsUpsellBadgeText: { fontFamily: 'System', fontWeight: '800', fontSize: 9, color: '#93D6E3', letterSpacing: 1.4 },
+  savingsUpsellBadgeText: { fontFamily: 'System', fontWeight: '800', fontSize: 9, color: '#7FBBF8', letterSpacing: 1.4 },
   savingsUpsellTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#fff', letterSpacing: -0.14, lineHeight: 19 },
   savingsUpsellAmount: { fontFamily: 'System', fontWeight: '800', color: '#EF8F7A' },
   savingsUpsellSub: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 3, letterSpacing: 0.1 },
@@ -743,53 +744,53 @@ const styles = StyleSheet.create({
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.18, shadowRadius: 6, elevation: 3,
   },
 
-  hostCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)', marginBottom: 14 },
+  hostCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 22, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 14 },
   hostAvatar: { width: 44, height: 44, borderRadius: 22, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   hostAvatarText: { fontFamily: 'System', fontWeight: '800', fontSize: 13, color: '#fff', zIndex: 1 },
   hostInfo: { flex: 1 },
-  hostLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#73817D', letterSpacing: 1, textTransform: 'uppercase' },
-  hostName: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#17211F', letterSpacing: -0.14 },
-  hostMeta: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#73817D', marginTop: 2 },
+  hostLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
+  hostName: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  hostMeta: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#98B6D8', marginTop: 2 },
   hostRating: { alignItems: 'flex-end', gap: 2 },
-  hostRatingNum: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#17211F', letterSpacing: -0.36 },
-  hostRatingSub: { fontFamily: 'System', fontWeight: '500', fontSize: 10, color: '#73817D' },
+  hostRatingNum: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36 },
+  hostRatingSub: { fontFamily: 'System', fontWeight: '500', fontSize: 10, color: '#98B6D8' },
 
   amenitiesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 22 },
-  amenityCard: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)' },
-  amenityIcon: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
-  amenityLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#17211F' },
+  amenityCard: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 999, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  amenityIcon: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
+  amenityLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#FFFFFF' },
 
   extendBanner: { borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(78,167,185,0.28)', padding: 16, marginBottom: 14 },
   extendBannerTop: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
-  extendLiveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#4EA7B9' },
-  extendTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#17211F', flex: 1 },
-  extendUntil: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#73817D' },
-  extendSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#73817D', marginBottom: 12, marginLeft: 16 },
+  extendLiveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#5EA2F5' },
+  extendTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', flex: 1 },
+  extendUntil: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#98B6D8' },
+  extendSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginBottom: 12, marginLeft: 16 },
   extendBtns: { flexDirection: 'row', gap: 10 },
   extendBtn: { flex: 1, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 2, backgroundColor: 'rgba(78,167,185,0.12)', borderWidth: 1, borderColor: 'rgba(78,167,185,0.32)' },
-  extendBtnText: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#2F6573', letterSpacing: -0.34 },
-  extendBtnPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#4EA7B9' },
+  extendBtnText: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#5EA2F5', letterSpacing: -0.34 },
+  extendBtnPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#5EA2F5' },
 
-  cta: { height: 56, borderRadius: 999, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, gap: 12, shadowColor: '#10B981', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.36, shadowRadius: 26, elevation: 8 },
+  cta: { height: 56, borderRadius: 999, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, gap: 12, shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.36, shadowRadius: 26, elevation: 8 },
   ctaText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', flex: 1, letterSpacing: -0.16 },
   ctaBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.22)' },
   ctaBadgeText: { fontFamily: 'System', fontWeight: '800', fontSize: 13, color: '#fff' },
 
   overlay: { flex: 1, backgroundColor: 'rgba(17,20,22,0.45)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#F8FAF7', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, alignItems: 'center' },
+  sheet: { backgroundColor: '#263548', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, alignItems: 'center' },
   sheetHandle: { width: 40, height: 4, borderRadius: 999, backgroundColor: 'rgba(17,20,22,0.18)', marginBottom: 24 },
   confirmIcon: { width: 64, height: 64, borderRadius: 32, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
-  confirmTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#17211F', letterSpacing: -0.44, marginBottom: 6 },
-  confirmSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#73817D', marginBottom: 12 },
+  confirmTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44, marginBottom: 6 },
+  confirmSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', marginBottom: 12 },
   refBadge: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 999, backgroundColor: 'rgba(78,167,185,0.12)', borderWidth: 1, borderColor: 'rgba(78,167,185,0.28)', marginBottom: 18 },
-  refText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#2F6573', letterSpacing: 0.4 },
-  confirmRow: { flexDirection: 'row', width: '100%', backgroundColor: 'rgba(23,33,31,0.04)', borderRadius: 18, padding: 16, marginBottom: 22 },
+  refText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#5EA2F5', letterSpacing: 0.4 },
+  confirmRow: { flexDirection: 'row', width: '100%', backgroundColor: '#3B4C69', borderRadius: 18, padding: 16, marginBottom: 22 },
   confirmBlock: { flex: 1, alignItems: 'center', gap: 4 },
-  confirmBlockLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#73817D', letterSpacing: 0.8, textTransform: 'uppercase' },
-  confirmBlockValue: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#17211F', letterSpacing: -0.32 },
+  confirmBlockLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase' },
+  confirmBlockValue: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
   mapsBtn: { width: '100%', height: 52, borderRadius: 999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(78,167,185,0.12)', borderWidth: 1, borderColor: 'rgba(78,167,185,0.28)', marginBottom: 10 },
-  mapsBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#2F6573', letterSpacing: -0.15 },
-  doneBtn: { width: '100%', height: 52, borderRadius: 999, backgroundColor: '#17211F', alignItems: 'center', justifyContent: 'center' },
+  mapsBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#5EA2F5', letterSpacing: -0.15 },
+  doneBtn: { width: '100%', height: 52, borderRadius: 999, backgroundColor: '#5EA2F5', alignItems: 'center', justifyContent: 'center' },
   doneBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#fff', letterSpacing: -0.15 },
 });
 

@@ -1,78 +1,70 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity } from './haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '../theme';
 import Icon from './Icon';
 
-// iOS 26 / iPadOS 26 "Liquid Glass" tab bar:
-// a floating translucent capsule with a detached glass accessory button.
-
 const TABS = [
-  { id: 'Hjem',   icon: 'home', label: 'Hjem' },
-  { id: 'Kart',   icon: 'map',  label: 'Kart' },
-  { id: 'Profil', icon: 'user', label: 'Profil' },
+  { id: 'Kart',      icon: 'map',   label: 'Kart' },
+  { id: 'Aktivitet', icon: 'clock', label: 'Aktivitet' },
+  { id: 'Profil',    icon: 'user',  label: 'Profil' },
 ];
 
-const TINT = '#2563EB'; // app accent — active tab adopts this
-
-export default function BottomNav({ activeTab = 'home', onTabPress, onLeiUtPress }) {
+// Waymo-style nav: no solid bar. Content dissolves into the canvas via a fade
+// gradient, then a row of line-icon + label tabs sits on the bg. Selection is
+// shown by color + stroke weight only — no pill, no gradient.
+export default function BottomNav({ activeTab = 'Kart', onTabPress }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-      {/* Primary tab bar — floating glass capsule */}
-      <BlurView
-        intensity={Platform.OS === 'ios' ? 70 : 90}
-        tint="systemChromeMaterialLight"
-        style={styles.tabBar}
-      >
+    <View style={[styles.container, { paddingBottom: insets.bottom + 8 }]}>
+      {/* Fade overlay — content dissolves into the bar, reaching full nav bg at
+          ~the vertical middle of the tab icons. Multi-stop smoothstep curve so
+          the ramp is eased at both ends (no visible seam, top or bottom). */}
+      <LinearGradient
+        colors={[
+          'rgba(31,42,57,0)',
+          'rgba(31,42,57,0.10)',
+          'rgba(31,42,57,0.28)',
+          'rgba(31,42,57,0.50)',
+          'rgba(31,42,57,0.72)',
+          'rgba(31,42,57,0.90)',
+          'rgba(31,42,57,1)',
+        ]}
+        locations={[0, 0.2, 0.35, 0.5, 0.65, 0.8, 1]}
+        style={styles.fade}
+        pointerEvents="none"
+      />
+      <View style={styles.bar} />
+      <View style={styles.inner}>
         {TABS.map((tab) => {
           const active = tab.id === activeTab;
+          const tint = active ? colors.textPrimary : colors.textSecondary;
           return (
             <TouchableOpacity
               key={tab.id}
               onPress={() => onTabPress && onTabPress(tab.id)}
-              style={[styles.tab, active && styles.tabActive]}
+              style={styles.tab}
               activeOpacity={0.7}
             >
               <Icon
                 name={tab.icon}
-                size={22}
-                color={active ? TINT : 'rgba(17,20,22,0.5)'}
-                strokeWidth={active ? 2.4 : 1.8}
+                size={24}
+                color={tint}
+                strokeWidth={active ? 2 : 1.8}
               />
-              {active && <Text style={styles.tabLabel}>{tab.label}</Text>}
+              <Text style={[styles.tabLabel, { color: tint, fontWeight: active ? '600' : '500' }]}>
+                {tab.label}
+              </Text>
             </TouchableOpacity>
           );
         })}
-      </BlurView>
-
-      {/* Detached glass accessory — iOS 26 tab bar accessory button */}
-      <TouchableOpacity
-        onPress={() => onLeiUtPress && onLeiUtPress()}
-        activeOpacity={0.75}
-        style={styles.accessoryWrap}
-      >
-        <BlurView
-          intensity={Platform.OS === 'ios' ? 70 : 90}
-          tint="systemChromeMaterialLight"
-          style={styles.accessory}
-        >
-          <Icon name="key" size={22} color={TINT} strokeWidth={2.4} />
-        </BlurView>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 }
-
-const HAIRLINE = 'rgba(255,255,255,0.55)';
-const GLASS_SHADOW = {
-  shadowColor: '#111416',
-  shadowOffset: { width: 0, height: 10 },
-  shadowOpacity: 0.16,
-  shadowRadius: 20,
-  elevation: 12,
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -80,61 +72,43 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
     paddingTop: 8,
   },
-  // The floating glass capsule
-  tabBar: {
-    flex: 1,
+  // Fade runs from 40px above the bar down to ~the icon middle (top: 28), where
+  // the solid bar begins — so the dissolve lands on the middle of the symbols.
+  // The longer ramp + eased stops keep the transition soft.
+  fade: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: -40,
+    height: 68,
+  },
+  bar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 28,
+    bottom: 0,
+    backgroundColor: colors.navBg,
+  },
+  inner: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-around',
-    height: 64,
-    paddingHorizontal: 8,
-    borderRadius: 999,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: HAIRLINE,
-    ...GLASS_SHADOW,
+    paddingHorizontal: 16,
+    paddingTop: 6,
   },
   tab: {
-    flexDirection: 'row',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 7,
-    height: 48,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-  },
-  // Active tab gets a soft glass highlight behind it
-  tabActive: {
-    backgroundColor: 'rgba(255,255,255,0.55)',
-    paddingHorizontal: 18,
+    gap: 5,
+    paddingVertical: 2,
   },
   tabLabel: {
     fontFamily: 'System',
-    fontWeight: '600',
-    fontSize: 14,
-    color: TINT,
-    letterSpacing: -0.2,
-  },
-  // Detached accessory button
-  accessoryWrap: {
-    borderRadius: 999,
-    ...GLASS_SHADOW,
-  },
-  accessory: {
-    width: 64,
-    height: 64,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: HAIRLINE,
+    fontSize: 11,
+    letterSpacing: 0.1,
   },
 });

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, Modal, Pressable, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+﻿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, Image, Modal, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { TouchableOpacity, Pressable } from '../components/haptics';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -200,37 +201,32 @@ export default function WelcomeScreen({ navigation, route }) {
     setRatingComment('');
   };
 
-  const firstName = profile?.full_name?.split(' ')[0] ?? 'deg';
   const activeSortLabel = SORT_OPTIONS.find(o => o.id === sortBy)?.label ?? 'Nærmest';
   const hasFilters = activeFilters.size > 0;
 
   return (
     <View style={styles.root}>
-      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#F7F7F2' }]} />
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#2B394C' }]} />
 
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 76 }]}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchSpots} tintColor="#10B981" colors={['#10B981']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchSpots} tintColor="#4E96F0" colors={['#4E96F0']} />}
       >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
-              <Icon name="arrow-left" size={20} color="#111416" strokeWidth={2} />
+              <Icon name="arrow-left" size={20} color="#FFFFFF" strokeWidth={2} />
             </TouchableOpacity>
-            <View style={styles.headerText}>
-              <Text style={styles.greeting}>Hei {firstName}</Text>
-              <Text style={styles.headerTitle}>Finn en plass</Text>
-            </View>
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.heartBtn} onPress={() => navigation.push('Lagret')}>
               <Icon name="heart" size={18} color="#fff" strokeWidth={2.2} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.push('Inboks')}>
-              <Icon name="bell" size={18} color="#111416" />
+              <Icon name="bell" size={18} color="#FFFFFF" />
               <View style={styles.bellDot} />
             </TouchableOpacity>
           </View>
@@ -247,7 +243,7 @@ export default function WelcomeScreen({ navigation, route }) {
           </View>
           <View style={styles.searchText}>
             <Text style={styles.searchLabel}>Hvor skal du?</Text>
-            <TextInput
+            <TextInput keyboardAppearance="dark"
               ref={searchRef}
               style={styles.searchValue}
               value={searchQuery}
@@ -261,10 +257,10 @@ export default function WelcomeScreen({ navigation, route }) {
           </View>
           {searchQuery.length > 0 ? (
             <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={8}>
-              <Icon name="x" size={18} color="#7B8589" strokeWidth={2} />
+              <Icon name="x" size={18} color="#98B6D8" strokeWidth={2} />
             </TouchableOpacity>
           ) : (
-            <Icon name="search" size={18} color="#7B8589" />
+            <Icon name="search" size={18} color="#98B6D8" />
           )}
         </TouchableOpacity>
 
@@ -275,18 +271,18 @@ export default function WelcomeScreen({ navigation, route }) {
             style={[styles.filterDropdown, hasFilters && styles.filterDropdownActive]}
             activeOpacity={0.85}
           >
-            <Icon name="filter" size={15} color={hasFilters ? '#fff' : '#2F3437'} strokeWidth={2} />
+            <Icon name="filter" size={15} color={hasFilters ? '#fff' : '#98B6D8'} strokeWidth={2} />
             <Text style={[styles.filterDropdownText, hasFilters && styles.filterDropdownTextActive]}>
               {hasFilters ? `${activeFilters.size} filter aktive` : 'Filtrer og sorter'}
             </Text>
-            <Icon name="chevron-down" size={16} color={hasFilters ? '#fff' : '#7B8589'} strokeWidth={2} />
+            <Icon name="chevron-down" size={16} color={hasFilters ? '#fff' : '#98B6D8'} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
         {/* Search status banner */}
         {searching && (
           <View style={[styles.searchBanner, styles.searchBannerInfo]}>
-            <ActivityIndicator size="small" color="#10B981" />
+            <ActivityIndicator size="small" color="#4E96F0" />
             <Text style={styles.searchBannerText}>Søker etter parkering i nærheten…</Text>
           </View>
         )}
@@ -312,7 +308,7 @@ export default function WelcomeScreen({ navigation, route }) {
           <Text style={styles.sectionLabel}>{visibleSpots.length} plasser</Text>
           <TouchableOpacity onPress={() => setShowSortModal(true)} style={styles.sortPill} activeOpacity={0.7} hitSlop={6}>
             <Text style={styles.sortPillText}>{activeSortLabel}</Text>
-            <Icon name="chevron-down" size={13} color="#2F3437" strokeWidth={2.2} />
+            <Icon name="chevron-down" size={13} color="#98B6D8" strokeWidth={2.2} />
           </TouchableOpacity>
         </View>
 
@@ -343,7 +339,7 @@ export default function WelcomeScreen({ navigation, route }) {
             {SORT_OPTIONS.map(opt => (
               <TouchableOpacity key={opt.id} onPress={() => { setSortBy(opt.id); }} style={styles.sortOption}>
                 <Text style={[styles.sortOptionText, sortBy === opt.id && styles.sortOptionTextActive]}>{opt.label}</Text>
-                {sortBy === opt.id && <Icon name="check" size={16} color="#10B981" strokeWidth={2.5} />}
+                {sortBy === opt.id && <Icon name="check" size={16} color="#4E96F0" strokeWidth={2.5} />}
               </TouchableOpacity>
             ))}
 
@@ -379,7 +375,7 @@ export default function WelcomeScreen({ navigation, route }) {
           <Pressable style={[styles.ratingSheet, { paddingBottom: insets.bottom + 24 }]}>
             <View style={styles.modalHandle} />
             <View style={styles.ratingIconWrap}>
-              <LinearGradient colors={['#10B981', '#14B8A6', '#2563EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
+              <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]} />
               <Icon name="map-pin" size={22} color="#fff" strokeWidth={2} />
             </View>
             <Text style={styles.ratingTitle}>Hvordan var parkeringen?</Text>
@@ -393,7 +389,7 @@ export default function WelcomeScreen({ navigation, route }) {
               ))}
             </View>
 
-            <TextInput
+            <TextInput keyboardAppearance="dark"
               style={styles.ratingInput}
               placeholder="Legg til kommentar (valgfritt)"
               placeholderTextColor="#BCC5CB"
@@ -409,7 +405,7 @@ export default function WelcomeScreen({ navigation, route }) {
               activeOpacity={0.88}
               disabled={!ratingValue || submitting}
             >
-              <LinearGradient colors={['#10B981', '#14B8A6', '#2563EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
+              <LinearGradient colors={['#4E96F0', '#5EA2F5', '#4E96F0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
               {submitting
                 ? <ActivityIndicator color="#fff" />
                 : <Text style={styles.ratingSubmitText}>Send inn vurdering</Text>
@@ -429,13 +425,7 @@ export default function WelcomeScreen({ navigation, route }) {
 function SpotCard({ spot, onPress }) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.88} style={styles.spotCard}>
-      <LinearGradient
-        colors={['#FFFFFF', '#10B981']}
-        locations={[0.35, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]}
-      />
+      <View style={[StyleSheet.absoluteFillObject, { borderRadius: 22, backgroundColor: '#3A4C68' }]} />
       <View style={styles.spotInner}>
         <View style={styles.spotRow}>
           <View style={styles.spotLeft}>
@@ -448,7 +438,7 @@ function SpotCard({ spot, onPress }) {
               spot.area,
               spot.distanceFromSearchKm != null
                 ? `${formatDistanceKm(spot.distanceFromSearchKm)} fra søk`
-                : (spot.distance && `${spot.distance} · ${spot.walk} gange`),
+                : (spot.distance && spot.distance),
             ].filter(Boolean).join(' · ')}</Text>
             <View style={styles.tagRow}>
               {spot.tags.slice(0, 3).map((tag) => (
@@ -488,66 +478,66 @@ const styles = StyleSheet.create({
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   headerText: { flex: 1 },
   logo: { width: 44, height: 44, borderRadius: 12 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  heartBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#10B981', alignItems: 'center', justifyContent: 'center', shadowColor: '#10B981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 3 },
-  bellBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  bellDot: { position: 'absolute', top: 9, right: 11, width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444', borderWidth: 1.5, borderColor: '#FFFFFF' },
-  greeting: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#7B8589', letterSpacing: 0.8, textTransform: 'uppercase' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#111416', letterSpacing: -0.36 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  heartBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center', shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 3 },
+  bellBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  bellDot: { position: 'absolute', top: 9, right: 11, width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444', borderWidth: 1.5, borderColor: '#2B394C' },
+  greeting: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36 },
 
   searchBar: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 12,
-    borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.72)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', marginBottom: 12,
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.06, shadowRadius: 16, elevation: 3,
+    borderRadius: 18, backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 12,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.06, shadowRadius: 16, elevation: 3,
   },
-  searchPin: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#10B981', alignItems: 'center', justifyContent: 'center' },
+  searchPin: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center' },
   searchText: { flex: 1, minWidth: 0 },
-  searchLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase' },
-  searchValue: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14, padding: 0 },
+  searchLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase' },
+  searchValue: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14, padding: 0 },
 
   filtersWrapper: { marginBottom: 18 },
   filterDropdown: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     paddingHorizontal: 14, height: 44, borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.72)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
   },
-  filterDropdownActive: { backgroundColor: '#10B981', borderColor: '#10B981' },
-  filterDropdownText: { flex: 1, fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#2F3437', letterSpacing: -0.13 },
+  filterDropdownActive: { backgroundColor: '#4E96F0', borderColor: '#4E96F0' },
+  filterDropdownText: { flex: 1, fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#98B6D8', letterSpacing: -0.13 },
   filterDropdownTextActive: { color: '#fff' },
   filterGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8, marginBottom: 4 },
-  filterChip: { height: 34, paddingHorizontal: 14, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(17,20,22,0.05)', borderWidth: 1, borderColor: 'rgba(17,20,22,0.08)' },
-  filterChipActive: { backgroundColor: '#10B981', borderColor: '#10B981' },
-  filterText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#2F3437', letterSpacing: -0.13 },
+  filterChip: { height: 34, paddingHorizontal: 14, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(17,20,22,0.08)' },
+  filterChipActive: { backgroundColor: '#4E96F0', borderColor: '#4E96F0' },
+  filterText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#98B6D8', letterSpacing: -0.13 },
   filterTextActive: { color: '#fff' },
 
   searchBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, marginBottom: 10 },
   searchBannerInfo: { backgroundColor: 'rgba(16,185,129,0.08)' },
   searchBannerWarn: { backgroundColor: 'rgba(245,158,11,0.10)' },
-  searchBannerText: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#2F3437', letterSpacing: -0.12 },
+  searchBannerText: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#98B6D8', letterSpacing: -0.12 },
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase' },
-  sortPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: 'rgba(17,20,22,0.05)' },
-  sortPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#2F3437', letterSpacing: -0.12 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase' },
+  sortPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.07)' },
+  sortPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#98B6D8', letterSpacing: -0.12 },
 
-  spotCard: { borderRadius: 22, marginBottom: 8, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(17,20,22,0.06)', shadowColor: '#111416', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 2 },
+  spotCard: { borderRadius: 22, marginBottom: 8, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.18, shadowRadius: 12, elevation: 2 },
   spotInner: { padding: 14 },
   spotRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   spotLeft: { flex: 1, minWidth: 0 },
   spotRight: { alignItems: 'flex-end', gap: 6 },
 
   statusRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' },
-  untilText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#7B8589', letterSpacing: 1, textTransform: 'uppercase' },
-  addressText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32, marginTop: 4 },
-  metaText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4E96F0' },
+  untilText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
+  addressText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32, marginTop: 4 },
+  metaText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
   tagRow: { flexDirection: 'row', gap: 5, marginTop: 8 },
-  tag: { height: 22, paddingHorizontal: 8, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(17,20,22,0.06)' },
-  tagText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#2F3437', letterSpacing: -0.1 },
+  tag: { height: 22, paddingHorizontal: 8, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: '#50607A' },
+  tagText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: -0.1 },
 
   priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 2 },
   priceNum: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.36 },
@@ -555,32 +545,32 @@ const styles = StyleSheet.create({
   arrowBtn: { width: 32, height: 32, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
 
   emptyState: { alignItems: 'center', paddingVertical: 48 },
-  emptyText: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#7B8589', marginTop: 12, marginBottom: 16 },
+  emptyText: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#98B6D8', marginTop: 12, marginBottom: 16 },
   clearBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 999, backgroundColor: 'rgba(17,20,22,0.08)' },
-  clearBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#111416' },
+  clearBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#FFFFFF' },
 
-  ratingSheet: { backgroundColor: '#F8FAF7', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 24, paddingTop: 12, alignItems: 'center' },
+  ratingSheet: { backgroundColor: '#263548', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 24, paddingTop: 12, alignItems: 'center' },
   ratingIconWrap: { width: 56, height: 56, borderRadius: 28, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  ratingTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#111416', letterSpacing: -0.44, marginBottom: 4, textAlign: 'center' },
-  ratingSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#7B8589', marginBottom: 22, textAlign: 'center' },
+  ratingTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44, marginBottom: 4, textAlign: 'center' },
+  ratingSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', marginBottom: 22, textAlign: 'center' },
   starsRow: { flexDirection: 'row', gap: 8, marginBottom: 22 },
   starBtn: { padding: 4 },
   starChar: { fontSize: 38, color: 'rgba(17,20,22,0.15)' },
   starCharActive: { color: '#F59E0B' },
-  ratingInput: { width: '100%', minHeight: 72, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 12, fontFamily: 'System', fontWeight: '400', fontSize: 14, color: '#111416', marginBottom: 14, textAlignVertical: 'top' },
+  ratingInput: { width: '100%', minHeight: 72, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 12, fontFamily: 'System', fontWeight: '400', fontSize: 14, color: '#FFFFFF', marginBottom: 14, textAlignVertical: 'top' },
   ratingSubmit: { width: '100%', height: 52, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
   ratingSubmitText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#fff', letterSpacing: -0.15 },
   ratingSkip: { paddingVertical: 12 },
-  ratingSkipText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#7B8589' },
+  ratingSkipText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#98B6D8' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.42)', justifyContent: 'flex-end' },
-  modalSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 12 },
-  modalHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#DDE1E4', alignSelf: 'center', marginBottom: 20 },
-  modalTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#111416', letterSpacing: -0.36, marginBottom: 20 },
-  modalSection: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#7B8589', letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: 4 },
+  modalSheet: { backgroundColor: '#3A4C68', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 12 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#50607A', alignSelf: 'center', marginBottom: 20 },
+  modalTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36, marginBottom: 20 },
+  modalSection: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: 4 },
   sortOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(17,20,22,0.06)' },
-  sortOptionText: { fontFamily: 'System', fontWeight: '500', fontSize: 15, color: '#2F3437' },
-  sortOptionTextActive: { fontFamily: 'System', fontWeight: '700', color: '#111416' },
+  sortOptionText: { fontFamily: 'System', fontWeight: '500', fontSize: 15, color: '#98B6D8' },
+  sortOptionTextActive: { fontFamily: 'System', fontWeight: '700', color: '#FFFFFF' },
   clearAllBtn: { marginTop: 16, paddingVertical: 14, alignItems: 'center', borderRadius: 14, backgroundColor: 'rgba(229,62,62,0.08)' },
   clearAllText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#C53030' },
 });

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Linking } from 'react-native';
+﻿import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert, Linking } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -66,12 +67,12 @@ export default function AktivParkeringScreen({ navigation }) {
   if (!booking) {
     return (
       <View style={s.root}>
-        <LinearGradient colors={['#F8FAF7', '#EAF0EC', '#D8EEF2']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFillObject} />
+        <LinearGradient colors={['#2B394C', '#2B394C', '#2B394C']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFillObject} />
         <View style={[s.emptyWrap, { paddingTop: insets.top + 20 }]}>
           <View style={s.header}>
             {navigation.canGoBack() ? (
               <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn} hitSlop={8}>
-                <Icon name="arrow-left" size={20} color="#17211F" />
+                <Icon name="arrow-left" size={20} color="#FFFFFF" />
               </TouchableOpacity>
             ) : (
               <View style={s.iconBtn} />
@@ -109,7 +110,7 @@ export default function AktivParkeringScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F8FAF7', '#EAF0EC', '#D8EEF2']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C', '#2B394C']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFillObject} />
 
       <ScrollView
         contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
@@ -118,7 +119,7 @@ export default function AktivParkeringScreen({ navigation }) {
         <View style={s.header}>
           {navigation.canGoBack() ? (
             <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn} hitSlop={8}>
-              <Icon name="arrow-left" size={20} color="#17211F" />
+              <Icon name="arrow-left" size={20} color="#FFFFFF" />
             </TouchableOpacity>
           ) : (
             <View style={s.iconBtn} />
@@ -135,7 +136,7 @@ export default function AktivParkeringScreen({ navigation }) {
         {/* Big countdown card */}
         <View style={s.countdownCard}>
           <LinearGradient
-            colors={isPending ? ['#4EA7B9', '#93D6E3'] : ['#10B981', '#14B8A6', '#2563EB']}
+            colors={isPending ? ['#5EA2F5', '#7FBBF8'] : ['#4E96F0', '#5EA2F5', '#4E96F0']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 28 }]}
           />
@@ -165,7 +166,7 @@ export default function AktivParkeringScreen({ navigation }) {
             <Text style={s.spotAddress}>{booking.spots?.address ?? 'Reservasjon'}</Text>
           </View>
           <TouchableOpacity style={s.mapsBtn} onPress={openInMaps} activeOpacity={0.85}>
-            <Icon name="map" size={14} color="#17211F" strokeWidth={2} />
+            <Icon name="map" size={14} color="#FFFFFF" strokeWidth={2} />
             <Text style={s.mapsBtnText}>Kart</Text>
           </TouchableOpacity>
         </View>
@@ -202,7 +203,7 @@ export default function AktivParkeringScreen({ navigation }) {
               <Text style={s.actionPillLabel}>Send melding</Text>
               <Text style={s.actionPillHint}>Til utleier</Text>
             </View>
-            <Icon name="chevron-right" size={15} color="#73817D" strokeWidth={2.2} />
+            <Icon name="chevron-right" size={15} color="#98B6D8" strokeWidth={2.2} />
           </TouchableOpacity>
         </View>
 
@@ -262,21 +263,21 @@ const s = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 },
   iconBtn: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center', justifyContent: 'center',
   },
   headerCenter: { alignItems: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#17211F', letterSpacing: -0.32 },
-  liveDotWrap: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.62)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)' },
-  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#10B981' },
-  liveLabel: { fontFamily: 'System', fontWeight: '800', fontSize: 10, color: '#17211F', letterSpacing: 1.2 },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  liveDotWrap: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#4E96F0' },
+  liveLabel: { fontFamily: 'System', fontWeight: '800', fontSize: 10, color: '#FFFFFF', letterSpacing: 1.2 },
 
   // Countdown hero card
   countdownCard: {
     borderRadius: 28, padding: 24, overflow: 'hidden',
     marginBottom: 18,
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 16 },
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.32, shadowRadius: 26, elevation: 8,
   },
   countdownLabel: {
@@ -304,8 +305,8 @@ const s = StyleSheet.create({
   spotCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     padding: 14, borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     marginBottom: 14,
   },
   spotIcon: {
@@ -313,32 +314,32 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(78,167,185,0.14)',
     alignItems: 'center', justifyContent: 'center',
   },
-  spotLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#73817D', letterSpacing: 1.2, textTransform: 'uppercase' },
-  spotAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#17211F', letterSpacing: -0.2, marginTop: 2 },
+  spotLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase' },
+  spotAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.2, marginTop: 2 },
   mapsBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12, paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: 'rgba(23,33,31,0.06)',
+    backgroundColor: '#50607A',
   },
-  mapsBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#17211F', letterSpacing: -0.1 },
+  mapsBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#FFFFFF', letterSpacing: -0.1 },
 
   // Stats
   statsRow: {
     flexDirection: 'row', alignItems: 'center',
     padding: 14, borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     marginBottom: 22,
   },
   statBlock: { flex: 1, alignItems: 'center' },
-  statLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#73817D', letterSpacing: 1.1, textTransform: 'uppercase' },
-  statValue: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#17211F', letterSpacing: -0.34, marginTop: 4 },
-  statDivider: { width: 1, height: 28, backgroundColor: 'rgba(23,33,31,0.10)' },
+  statLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1.1, textTransform: 'uppercase' },
+  statValue: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#FFFFFF', letterSpacing: -0.34, marginTop: 4 },
+  statDivider: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.08)' },
 
   sectionLabel: {
     fontFamily: 'System', fontWeight: '700', fontSize: 11,
-    color: '#73817D', letterSpacing: 1.2, textTransform: 'uppercase',
+    color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase',
     marginBottom: 10, marginLeft: 4,
   },
 
@@ -347,16 +348,16 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 12,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
   },
   actionPillIcon: {
     width: 36, height: 36, borderRadius: 12,
     backgroundColor: 'rgba(78,167,185,0.14)',
     alignItems: 'center', justifyContent: 'center',
   },
-  actionPillLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#17211F', letterSpacing: -0.15 },
-  actionPillHint: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#73817D', marginTop: 1 },
+  actionPillLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.15 },
+  actionPillHint: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#98B6D8', marginTop: 1 },
   extendRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   extendBtn: {
     flex: 1, height: 60, borderRadius: 16,
@@ -364,8 +365,8 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(78,167,185,0.12)',
     borderWidth: 1, borderColor: 'rgba(78,167,185,0.32)',
   },
-  extendBtnText: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#2F6573', letterSpacing: -0.34 },
-  extendBtnPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#4EA7B9' },
+  extendBtnText: { fontFamily: 'System', fontWeight: '800', fontSize: 17, color: '#5EA2F5', letterSpacing: -0.34 },
+  extendBtnPrice: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#5EA2F5' },
 
   endBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -379,8 +380,8 @@ const s = StyleSheet.create({
   // Empty state
   emptyWrap: { flex: 1, paddingHorizontal: 20 },
   emptyCard: {
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     padding: 22, alignItems: 'center', marginTop: 60,
   },
   emptyIcon: {
@@ -388,6 +389,6 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(78,167,185,0.14)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  emptyTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#17211F', letterSpacing: -0.36, marginBottom: 6 },
-  emptySub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#73817D', textAlign: 'center', lineHeight: 19 },
+  emptyTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36, marginBottom: 6 },
+  emptySub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', textAlign: 'center', lineHeight: 19 },
 });

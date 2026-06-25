@@ -42,7 +42,7 @@ export default function SuccessOverlay({ title = 'Reservasjon bekreftet', subtit
   return (
     <Animated.View style={[StyleSheet.absoluteFillObject, styles.root, { opacity: fade }]}>
       <LinearGradient
-        colors={['rgba(15, 56, 38, 0.92)', 'rgba(20, 56, 70, 0.94)', 'rgba(33, 30, 73, 0.92)']}
+        colors={['rgba(31,42,57,0.94)', 'rgba(28,38,52,0.95)', 'rgba(20,28,40,0.94)']}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFillObject}
       />
@@ -67,7 +67,7 @@ export default function SuccessOverlay({ title = 'Reservasjon bekreftet', subtit
           ]}
         >
           <LinearGradient
-            colors={['#10B981', '#14B8A6', '#2563EB']}
+            colors={['#4E96F0', '#5EA2F5', '#6FB1F7']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 80 }]}
           />
@@ -102,17 +102,17 @@ const styles = StyleSheet.create({
   pulse: {
     position: 'absolute',
     width: 160, height: 160, borderRadius: 80,
-    backgroundColor: 'rgba(16, 185, 129, 0.40)',
+    backgroundColor: 'rgba(94, 162, 245, 0.40)',
   },
   ring: {
     width: 160, height: 160, borderRadius: 80,
     alignItems: 'center', justifyContent: 'center',
     overflow: 'hidden',
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 14 },
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 14 },
     shadowOpacity: 0.7, shadowRadius: 30, elevation: 12,
   },
   title: {
-    fontFamily: 'System', fontWeight: '800', fontSize: 24,
+    fontFamily: 'System', fontWeight: '700', fontSize: 24,
     color: '#fff', letterSpacing: -0.5, textAlign: 'center',
   },
   subtitle: {

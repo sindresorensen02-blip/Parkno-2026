@@ -1,56 +1,12 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import Svg, {
   Path, Circle, Rect, Line, Polyline, Polygon,
 } from 'react-native-svg';
-import { SymbolView } from 'expo-symbols';
 
-// Map every icon name used in the app to its SF Symbol equivalent so iOS gets
-// system-rendered glyphs. Android/web fall through to the SVG implementation below.
-const SF_NAMES = {
-  'arrow-left':    'arrow.left',
-  'arrow-right':   'arrow.right',
-  'alert-circle':  'exclamationmark.circle.fill',
-  'bell':          'bell.fill',
-  'camera':        'camera.fill',
-  'car':           'car.fill',
-  'help':          'questionmark.circle.fill',
-  'mail':          'envelope.fill',
-  'map':           'map.fill',
-  'check':         'checkmark',
-  'chevron-down':  'chevron.down',
-  'chevron-left':  'chevron.left',
-  'chevron-right': 'chevron.right',
-  'chevron-up':    'chevron.up',
-  'clock':         'clock.fill',
-  'credit-card':   'creditcard.fill',
-  'filter':        'line.3.horizontal.decrease',
-  'heart':         'heart.fill',
-  'home':          'house.fill',
-  'info':          'info.circle',
-  'key':           'key.fill',
-  'layers':        'square.stack.3d.up.fill',
-  'map-pin':       'mappin',
-  'mic':           'mic.fill',
-  'search':        'magnifyingglass',
-  'shield':        'shield.fill',
-  'star':          'star.fill',
-  'trending-up':   'chart.line.uptrend.xyaxis',
-  'user':          'person.fill',
-  'wallet':        'wallet.pass.fill',
-  'x':             'xmark',
-  'zap':           'bolt.fill',
-};
-
-// Derive an SF Symbol weight from the SVG strokeWidth so existing callsites stay visually consistent.
-function weightFromStroke(sw) {
-  if (sw == null) return 'regular';
-  if (sw >= 2.5) return 'bold';
-  if (sw >= 2)   return 'semibold';
-  if (sw >= 1.7) return 'medium';
-  if (sw >= 1.4) return 'regular';
-  return 'light';
-}
+// Uniform line-icon system (Waymo style): every icon renders as the same outline
+// SVG on iOS and Android, with a consistent stroke weight. We deliberately do NOT
+// use filled SF Symbols on iOS anymore — that produced an inconsistent filled /
+// outline split between platforms.
 
 const ICONS = {
   map: (c, sw) => (
@@ -228,9 +184,25 @@ const ICONS = {
       <Line x1="6"  y1="20" x2="6"  y2="16" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
     </>
   ),
+  'chevron-left': (c, sw) => (
+    <Path d="m15 18-6-6 6-6" stroke={c} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+  ),
+  'alert-circle': (c, sw) => (
+    <>
+      <Circle cx="12" cy="12" r="10" stroke={c} strokeWidth={sw} fill="none"/>
+      <Line x1="12" y1="8" x2="12" y2="12" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+      <Line x1="12" y1="16" x2="12.01" y2="16" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+    </>
+  ),
+  'trending-up': (c, sw) => (
+    <>
+      <Polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke={c} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      <Polyline points="16 7 22 7 22 13" stroke={c} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+    </>
+  ),
 };
 
-function SvgIcon({ name, size, color, strokeWidth, fill }) {
+export default function Icon({ name, size = 24, color = '#FFFFFF', strokeWidth = 1.8, fill }) {
   const draw = ICONS[name];
   if (!draw) return null;
   return (
@@ -238,20 +210,4 @@ function SvgIcon({ name, size, color, strokeWidth, fill }) {
       {draw(color, strokeWidth, fill)}
     </Svg>
   );
-}
-
-export default function Icon({ name, size = 24, color = '#17211F', strokeWidth = 1.5, fill }) {
-  const sfName = SF_NAMES[name];
-  if (Platform.OS === 'ios' && sfName) {
-    return (
-      <SymbolView
-        name={sfName}
-        size={size}
-        tintColor={color}
-        weight={weightFromStroke(strokeWidth)}
-        fallback={<SvgIcon name={name} size={size} color={color} strokeWidth={strokeWidth} fill={fill} />}
-      />
-    );
-  }
-  return <SvgIcon name={name} size={size} color={color} strokeWidth={strokeWidth} fill={fill} />;
 }

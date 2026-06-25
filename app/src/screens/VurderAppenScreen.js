@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, ScrollView, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Polygon } from 'react-native-svg';
@@ -48,10 +49,10 @@ export default function VurderAppenScreen({ navigation }) {
   if (submitted) {
     return (
       <View style={s.root}>
-        <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+        <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
         <View style={s.thankYou}>
           <View style={s.checkCircle}>
-            <LinearGradient colors={['#10B981', '#2563EB']} style={[StyleSheet.absoluteFillObject, { borderRadius: 40 }]} />
+            <LinearGradient colors={['#4E96F0', '#4E96F0']} style={[StyleSheet.absoluteFillObject, { borderRadius: 40 }]} />
             <Icon name="check" size={30} color="#fff" strokeWidth={2.5} />
           </View>
           <Text style={s.thankTitle}>Takk for tilbakemeldingen!</Text>
@@ -66,12 +67,12 @@ export default function VurderAppenScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Vurder appen</Text>
           <View style={s.backBtn} />
@@ -109,11 +110,11 @@ export default function VurderAppenScreen({ navigation }) {
         {/* Comment */}
         <Text style={s.sectionLabel}>Fortell oss mer (valgfritt)</Text>
         <View style={s.commentCard}>
-          <TextInput
+          <TextInput keyboardAppearance="dark"
             value={comment}
             onChangeText={setComment}
             placeholder={rating > 0 && rating <= 2 ? 'Hva kan vi forbedre?' : 'Hva likte du best?'}
-            placeholderTextColor="#C4CACC"
+            placeholderTextColor="#6E809B"
             multiline
             numberOfLines={4}
             style={s.commentInput}
@@ -122,7 +123,7 @@ export default function VurderAppenScreen({ navigation }) {
         </View>
 
         <TouchableOpacity onPress={submit} style={[s.submitBtn, rating === 0 && s.submitBtnDisabled]} activeOpacity={0.88}>
-          <LinearGradient colors={rating > 0 ? ['#10B981', '#14B8A6', '#2563EB'] : ['#E5E7EB', '#E5E7EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
+          <LinearGradient colors={rating > 0 ? ['#4E96F0', '#5EA2F5', '#4E96F0'] : ['#E5E7EB', '#E5E7EB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]} />
           {submitting ? <ActivityIndicator color="#fff" /> : <Text style={[s.submitBtnText, rating === 0 && s.submitBtnTextDisabled]}>Send vurdering</Text>}
         </TouchableOpacity>
       </ScrollView>
@@ -134,29 +135,29 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
   starsSection: { alignItems: 'center', marginBottom: 32 },
-  starsTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: '#111416', letterSpacing: -0.4, marginBottom: 6 },
-  starsSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#7B8589', marginBottom: 20 },
+  starsTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: '#FFFFFF', letterSpacing: -0.4, marginBottom: 6 },
+  starsSub: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', marginBottom: 20 },
   starsRow: { flexDirection: 'row', gap: 8 },
   ratingLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#F59E0B', marginTop: 14, letterSpacing: -0.15 },
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
   tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
-  tagBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)' },
-  tagBtnActive: { backgroundColor: '#111416', borderColor: '#111416' },
-  tagText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#111416' },
+  tagBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  tagBtnActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  tagText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
   tagTextActive: { color: '#fff' },
-  commentCard: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 18, padding: 14, marginBottom: 20 },
-  commentInput: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#111416', minHeight: 90, lineHeight: 21 },
-  submitBtn: { height: 56, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', shadowColor: '#2563EB', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.22, shadowRadius: 18, elevation: 6 },
+  commentCard: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 18, padding: 14, marginBottom: 20 },
+  commentInput: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#FFFFFF', minHeight: 90, lineHeight: 21 },
+  submitBtn: { height: 56, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.22, shadowRadius: 18, elevation: 6 },
   submitBtnDisabled: { shadowOpacity: 0 },
   submitBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.16 },
   submitBtnTextDisabled: { color: '#9CA3AF' },
   thankYou: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
   checkCircle: { width: 80, height: 80, borderRadius: 40, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
-  thankTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#111416', letterSpacing: -0.44, marginBottom: 10, textAlign: 'center' },
-  thankSub: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#7B8589', textAlign: 'center', lineHeight: 21, marginBottom: 32 },
-  doneBtn: { height: 52, paddingHorizontal: 32, borderRadius: 999, backgroundColor: '#111416', alignItems: 'center', justifyContent: 'center' },
+  thankTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44, marginBottom: 10, textAlign: 'center' },
+  thankSub: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: '#98B6D8', textAlign: 'center', lineHeight: 21, marginBottom: 32 },
+  doneBtn: { height: 52, paddingHorizontal: 32, borderRadius: 999, backgroundColor: '#5EA2F5', alignItems: 'center', justifyContent: 'center' },
   doneBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#fff' },
 });

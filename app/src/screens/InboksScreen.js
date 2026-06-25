@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, RefreshControl, Alert,
-} from 'react-native';
+﻿import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -10,9 +9,9 @@ import { notifyUser } from '../lib/notify';
 import { useAuth } from '../context/AuthContext';
 
 const STATUS_META = {
-  confirmed:  { label: 'Bekreftet',  dot: '#10B981', bg: 'rgba(16,185,129,0.1)',  text: '#065F46' },
+  confirmed:  { label: 'Bekreftet',  dot: '#4E96F0', bg: 'rgba(16,185,129,0.1)',  text: '#065F46' },
   pending:    { label: 'Venter',     dot: '#F59E0B', bg: 'rgba(245,158,11,0.1)',  text: '#92400E' },
-  completed:  { label: 'Fullført',   dot: '#7B8589', bg: 'rgba(17,20,22,0.07)',   text: '#2F3437' },
+  completed:  { label: 'Fullført',   dot: '#98B6D8', bg: 'rgba(255,255,255,0.07)',   text: '#98B6D8' },
   cancelled:  { label: 'Kansellert', dot: '#EF4444', bg: 'rgba(239,68,68,0.08)',  text: '#991B1B' },
 };
 
@@ -110,23 +109,23 @@ export default function InboksScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView
         contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 80 }]}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#10B981" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#4E96F0" />}
       >
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Innboks</Text>
           <View style={s.backBtn} />
         </View>
 
         {loading ? (
-          <ActivityIndicator color="#10B981" style={{ marginTop: 60 }} />
+          <ActivityIndicator color="#4E96F0" style={{ marginTop: 60 }} />
         ) : reservations.length === 0 ? (
           <View style={s.empty}>
             <Icon name="bell" size={36} color="#BCC5CB" />
@@ -164,7 +163,7 @@ function ReservationCard({ r, muted = false, onCancel }) {
       {/* Renter avatar + name */}
       <View style={s.cardTop}>
         <View style={s.avatar}>
-          <LinearGradient colors={['#DCEBDF', '#9ECFE3']} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
+          <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]} />
           <Text style={s.avatarText}>{initials(r.renterName)}</Text>
         </View>
         <View style={s.cardInfo}>
@@ -180,15 +179,15 @@ function ReservationCard({ r, muted = false, onCancel }) {
       {/* Date / time / price row */}
       <View style={s.cardMeta}>
         <View style={s.metaItem}>
-          <Icon name="clock" size={12} color="#7B8589" strokeWidth={1.8} />
+          <Icon name="clock" size={12} color="#98B6D8" strokeWidth={1.8} />
           <Text style={s.metaText}>{formatDate(r.starts_at)}</Text>
         </View>
         <View style={s.metaItem}>
-          <Icon name="arrow-right" size={12} color="#7B8589" strokeWidth={1.8} />
+          <Icon name="arrow-right" size={12} color="#98B6D8" strokeWidth={1.8} />
           <Text style={s.metaText}>{formatTime(r.starts_at)} – {formatTime(r.ends_at)}</Text>
         </View>
         <View style={s.metaItem}>
-          <Icon name="wallet" size={12} color="#7B8589" strokeWidth={1.8} />
+          <Icon name="wallet" size={12} color="#98B6D8" strokeWidth={1.8} />
           <Text style={s.metaText}>{r.price_subtotal ?? '—'} kr · {hrs}</Text>
         </View>
       </View>
@@ -208,24 +207,24 @@ const s = StyleSheet.create({
   content: { paddingHorizontal: 20 },
 
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
-  section: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
+  section: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
 
   card: {
-    backgroundColor: 'rgba(255,255,255,0.78)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.85)',
     borderRadius: 22, padding: 16, marginBottom: 10,
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
   cardMuted: { opacity: 0.7 },
 
   cardTop: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
   avatar: { width: 44, height: 44, borderRadius: 22, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  avatarText: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#111416', zIndex: 1 },
+  avatarText: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#FFFFFF', zIndex: 1 },
   cardInfo: { flex: 1, minWidth: 0 },
-  renterName: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#111416', letterSpacing: -0.15 },
-  spotAddr: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  renterName: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15 },
+  spotAddr: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
@@ -233,12 +232,12 @@ const s = StyleSheet.create({
 
   cardMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(17,20,22,0.06)' },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  metaText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589' },
+  metaText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8' },
 
   cancelBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(239,68,68,0.12)' },
   cancelBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#EF4444' },
 
   empty: { alignItems: 'center', paddingTop: 80, gap: 10 },
-  emptyTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
-  emptyHint: { fontFamily: 'System', fontWeight: '400', fontSize: 13, color: '#7B8589' },
+  emptyTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  emptyHint: { fontFamily: 'System', fontWeight: '400', fontSize: 13, color: '#98B6D8' },
 });

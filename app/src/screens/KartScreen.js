@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Image } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import MapView, { Marker } from 'react-native-maps';
-import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
-import { useAuth } from '../context/AuthContext';
 import { usePremium } from '../context/PremiumContext';
+import { useActiveBooking } from '../context/ActiveBookingContext';
 import { supabase } from '../lib/supabase';
 import { BERGEN_SPOTS } from '../data/spots';
 import { BOOKING_FEE_RATE } from '../constants/booking';
@@ -18,6 +18,11 @@ function formatDuration(mins) {
   const h = Math.floor(mins / 60);
   const rem = mins % 60;
   return rem ? `${h} t ${rem} min` : `${h} t`;
+}
+
+function fmtClock(iso) {
+  const d = new Date(iso);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 const PLACEHOLDER_SPOTS = BERGEN_SPOTS;
@@ -38,6 +43,25 @@ const BERGEN = {
   longitudeDelta: 0.04,
 };
 
+// Dark map theme (Google Maps style JSON) so the map blends into the #2B394C
+// canvas — a Waymo-style dark basemap. Applied on Android/Google; on iOS Apple
+// Maps we also pass userInterfaceStyle="dark".
+const DARK_MAP = [
+  { elementType: 'geometry', stylers: [{ color: '#2b394c' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#2b394c' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#98b6d8' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#3a4a5e' }] },
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#243042' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#3b4c69' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#3a4c68' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6e809b' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#50607a' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#162232' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#4a5a6e' }] },
+];
+
 export default function KartScreen({ navigation, route }) {
   const fromChooser = route?.params?.fromChooser;
   // KartScreen is rendered in two stacks: as "KartRoot" inside KartStack (prefixed
@@ -50,16 +74,16 @@ export default function KartScreen({ navigation, route }) {
     aktivParkering: inKartStack ? 'KartAktivParkering'   : 'AktivParkering',
   };
   const insets = useSafeAreaInsets();
-  const { user } = useAuth();
   const { isPremium } = usePremium();
+  // Single source of truth for the user's current session — covers both real
+  // reservations and "demo" bookings made by reserving a placeholder spot.
+  const { booking } = useActiveBooking();
   const mapRef = useRef(null);
   const [selected, setSelected] = useState(null);
   const [spots, setSpots] = useState(PLACEHOLDER_SPOTS);
   const [loading, setLoading] = useState(true);
-  const [activeBooking, setActiveBooking] = useState(null);
   const [countdownText, setCountdownText] = useState('');
   const [activeFilter, setActiveFilter] = useState(null);
-  const [stayMins, setStayMins] = useState(60); // how long the user wants to stay (slider value)
 
   useEffect(() => {
     supabase
@@ -90,65 +114,31 @@ export default function KartScreen({ navigation, route }) {
       .catch(() => setLoading(false));
   }, []);
 
-  // Fetch the next/active booking within 24 h and subscribe to changes
+  // Recompute the live countdown label every 30 s while a booking is active.
+  // Expiry is handled by ActiveBookingContext, so we only format the label here.
   useEffect(() => {
-    if (!user) return;
-
-    const fetch = async () => {
-      const now = new Date().toISOString();
-      const in24h = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      const { data } = await supabase
-        .from('reservations')
-        .select('id, starts_at, ends_at, spots(id, address, price_per_hour, amenities)')
-        .eq('renter_id', user.id)
-        .in('status', ['confirmed', 'pending'])
-        .gte('ends_at', now)
-        .lte('starts_at', in24h)
-        .order('starts_at', { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      setActiveBooking(data ?? null);
-    };
-
-    fetch();
-
-    const channel = supabase
-      .channel(`kart-booking-${user.id}-${Date.now()}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations', filter: `renter_id=eq.${user.id}` }, fetch)
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [user]);
-
-  // Recompute countdown label every 30 s
-  useEffect(() => {
-    if (!activeBooking) { setCountdownText(''); return; }
+    if (!booking) { setCountdownText(''); return; }
 
     const update = () => {
       const now = Date.now();
-      const start = new Date(activeBooking.starts_at).getTime();
-      const end = new Date(activeBooking.ends_at).getTime();
+      const start = new Date(booking.starts_at).getTime();
+      const end = new Date(booking.ends_at).getTime();
 
       const fmtMins = (ms) => {
-        const m = Math.round(ms / 60000);
+        const m = Math.max(0, Math.round(ms / 60000));
         if (m < 60) return `${m} min`;
         const h = Math.floor(m / 60), rem = m % 60;
         return rem ? `${h} t ${rem} min` : `${h} t`;
       };
 
-      if (now < start) {
-        setCountdownText(`Starter om ${fmtMins(start - now)}`);
-      } else if (now <= end) {
-        setCountdownText(`Aktiv · ${fmtMins(end - now)} igjen`);
-      } else {
-        setActiveBooking(null);
-      }
+      if (now < start) setCountdownText(`Starter om ${fmtMins(start - now)}`);
+      else setCountdownText(`${fmtMins(end - now)} igjen`);
     };
 
     update();
     const timer = setInterval(update, 30000);
     return () => clearInterval(timer);
-  }, [activeBooking]);
+  }, [booking]);
 
   const focusSpot = (spot) => {
     setSelected(spot);
@@ -188,33 +178,13 @@ export default function KartScreen({ navigation, route }) {
   // skipping LiveSpot entirely. Uses the slider's duration as the booking
   // window starting now.
   const openCheckout = (spot) => {
-    const hours = stayMins / 60;
-    const subtotal = Math.round(spot.price * hours);
-    const standardFee = Math.round(subtotal * BOOKING_FEE_RATE);
-    const bookingFee = isPremium ? 0 : standardFee;
-    const total = subtotal + bookingFee;
-
-    const now = new Date();
-    const endsAt = new Date(now.getTime() + stayMins * 60_000);
-    const startStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    const endStr = `${pad(endsAt.getHours())}:${pad(endsAt.getMinutes())}`;
-
+    // Duration (and therefore the total) is now chosen on the payment page, so
+    // we just hand over the spot facts + price per hour.
     navigation.push(screen.checkout, {
-      // pricing
-      total,
-      subtotal,
-      bookingFee,
-      // display
-      durationStr: formatDuration(stayMins),
-      startStr,
-      endStr,
+      pricePerHour: spot.price,
       address: spot.address,
       area: spot.area,
-      // booking facts (for the actual reservation insert on payment)
       spotId: spot.id,
-      startsAtIso: now.toISOString(),
-      endsAtIso:  endsAt.toISOString(),
-      durationMins: stayMins,
     });
   };
 
@@ -228,6 +198,8 @@ export default function KartScreen({ navigation, route }) {
         ref={mapRef}
         style={StyleSheet.absoluteFillObject}
         initialRegion={BERGEN}
+        customMapStyle={DARK_MAP}
+        userInterfaceStyle="dark"
         showsUserLocation
         showsMyLocationButton={false}
         showsCompass={false}
@@ -237,9 +209,24 @@ export default function KartScreen({ navigation, route }) {
           <Marker
             key={spot.id}
             coordinate={{ latitude: spot.latitude, longitude: spot.longitude }}
-            onPress={() => focusSpot(spot)}
+            onPress={() => {
+              // Center the pin in the visible area above the payment sheet, then
+              // open the payment screen directly (skipping the spot card).
+              mapRef.current?.animateToRegion({
+                latitude: spot.latitude - 0.006,
+                longitude: spot.longitude,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02,
+              }, 350);
+              openCheckout(spot);
+            }}
             anchor={{ x: 0.5, y: 1 }}
             tracksViewChanges={false}
+            // Order pins by latitude so the one lower on screen (further south)
+            // draws on top. Each pin's shadow extends downward, so this keeps a
+            // shadow tucked behind the neighbouring pin instead of over it. A
+            // selected pin is bumped above everything.
+            zIndex={(selected?.id === spot.id ? 1e9 : 0) + Math.round((100 - spot.latitude) * 100000)}
           >
             <View style={styles.pin3dWrap}>
               {/* soft floor shadow — the disc the pin "stands on" */}
@@ -279,160 +266,113 @@ export default function KartScreen({ navigation, route }) {
         ))}
       </MapView>
 
-      {/* Top overlay: search bar + filter chips + booking banner */}
+      {/* Top overlay: while a booking is active a hero card (~2× the search bar)
+          takes the search bar's place; otherwise the search bar is shown. */}
       <View style={[styles.topOverlay, { top: insets.top + 12 }]}>
-        <View style={styles.searchRow}>
-          {fromChooser && (
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
-              <Icon name="arrow-left" size={18} color="#111416" strokeWidth={2} />
-            </TouchableOpacity>
-          )}
+        {booking?.spots ? (
           <TouchableOpacity
-            style={[styles.searchBar, { flex: 1 }]}
-            activeOpacity={0.85}
-            onPress={() => fromChooser
-              ? navigation.push('Welcome', { focusSearch: true })
-              : navigation.navigate('Hjem', { screen: 'Welcome', params: { focusSearch: true } })}
-          >
-            <Image
-              source={require('../../assets/parkno-logo.png')}
-              style={styles.searchLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.searchValue}>Bergen, Norge</Text>
-            {loading ? (
-              <ActivityIndicator size="small" color="#7B8589" />
-            ) : (
-              <Icon name="search" size={16} color="#7B8589" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterScroll}
-          contentContainerStyle={styles.filterContent}
-        >
-          {MAP_FILTERS.map((f) => (
-            <TouchableOpacity
-              key={f.key}
-              onPress={() => setActiveFilter(activeFilter === f.key ? null : f.key)}
-              style={[styles.filterChip, activeFilter === f.key && styles.filterChipActive]}
-              activeOpacity={0.85}
-            >
-              <Text style={[styles.filterChipText, activeFilter === f.key && styles.filterChipTextActive]}>
-                {f.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {activeBooking?.spots && (
-          <TouchableOpacity
-            style={styles.bookingBanner}
-            activeOpacity={0.88}
+            style={styles.hero}
+            activeOpacity={0.9}
             onPress={() => navigation.push(screen.aktivParkering)}
           >
             <LinearGradient
-              colors={['#10B981', '#14B8A6', '#2563EB']}
+              colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[StyleSheet.absoluteFillObject, { borderRadius: 14 }]}
+              end={{ x: 1, y: 1 }}
+              style={[StyleSheet.absoluteFillObject, { borderRadius: 22 }]}
             />
-            <View style={styles.bookingBannerDot} />
-            <View style={styles.bookingBannerBody}>
-              <Text style={styles.bookingBannerCountdown}>{countdownText}</Text>
-              <Text style={styles.bookingBannerAddress} numberOfLines={1}>{activeBooking.spots.address}</Text>
+            <View style={styles.heroTopRow}>
+              <View style={styles.heroStatus}>
+                <View style={styles.heroDot} />
+                <Text style={styles.heroStatusText}>AKTIV PARKERING</Text>
+              </View>
+              <Text style={styles.heroCountdown}>{countdownText}</Text>
             </View>
-            <Icon name="arrow-right" size={16} color="rgba(255,255,255,0.85)" />
+            <Text style={styles.heroAddress} numberOfLines={1}>{booking.spots.address}</Text>
+            <View style={styles.heroBottomRow}>
+              <Text style={styles.heroSub}>Avsluttes {fmtClock(booking.ends_at)}</Text>
+              <View style={styles.heroCta}>
+                <Text style={styles.heroCtaText}>Vis parkering</Text>
+                <Icon name="arrow-right" size={15} color="#FFFFFF" strokeWidth={2.4} />
+              </View>
+            </View>
           </TouchableOpacity>
+        ) : (
+          <View style={styles.searchRow}>
+            {fromChooser && (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
+                <Icon name="arrow-left" size={18} color="#FFFFFF" strokeWidth={2} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[styles.searchBar, { flex: 1 }]}
+              activeOpacity={0.85}
+              onPress={() => navigation.push('Welcome', { focusSearch: true })}
+            >
+              <View style={styles.searchIconWrap}>
+                <Icon name="search" size={18} color="#5EA2F5" strokeWidth={2.2} />
+              </View>
+              <Text style={styles.searchValue}>Hvor vil du parkere?</Text>
+              {loading ? (
+                <ActivityIndicator size="small" color="#98B6D8" />
+              ) : (
+                <Icon name="arrow-right" size={16} color="#6E809B" strokeWidth={2.2} />
+              )}
+            </TouchableOpacity>
+          </View>
         )}
       </View>
 
-      {/* Bottom spot card with duration slider */}
-      {selected && (() => {
-        const hours = stayMins / 60;
-        const subtotal = Math.round(selected.price * hours);
-        const total = Math.round(subtotal * (1 + BOOKING_FEE_RATE));
-        return (
-          <View style={[styles.spotCard, { bottom: insets.bottom + 90 }]}>
-            <View style={[StyleSheet.absoluteFillObject, { borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.97)' }]} />
-            <View style={styles.spotCardInner}>
-              <View style={styles.spotCardLeft}>
+      {/* Bottom spot card */}
+      {selected && (
+        <View style={[styles.spotCard, { bottom: insets.bottom + 90 }]}>
+          <View style={[StyleSheet.absoluteFillObject, { borderRadius: 24, backgroundColor: '#3A4C68' }]} />
+          <View style={styles.spotCardInner}>
+            <View style={styles.spotCardLeft}>
+              {selected.isLive && (
                 <View style={styles.statusRow}>
-                  <View style={[styles.statusDot, { backgroundColor: selected.available ? '#8BCFB0' : '#73817D' }]} />
-                  <Text style={styles.statusText}>{selected.available ? 'Ledig nå' : 'Opptatt'}</Text>
-                  {selected.isLive && (
-                    <View style={styles.liveBadge}>
-                      <Text style={styles.liveBadgeText}>LIVE</Text>
-                    </View>
-                  )}
+                  <View style={styles.liveBadge}>
+                    <Text style={styles.liveBadgeText}>LIVE</Text>
+                  </View>
                 </View>
-                <Text style={styles.spotAddress} numberOfLines={1}>{selected.address}</Text>
-                {selected.area ? <Text style={styles.spotArea}>{selected.area}</Text> : null}
-              </View>
-              <View style={styles.spotCardRight}>
-                <Text style={styles.spotPrice}>{selected.price}</Text>
-                <Text style={styles.spotUnit}>kr/t</Text>
-              </View>
+              )}
+              <Text style={styles.spotAddress} numberOfLines={1}>{selected.address}</Text>
+              {selected.area ? <Text style={styles.spotArea}>{selected.area}</Text> : null}
             </View>
-
-            {/* Duration slider — pick how long to stay */}
-            <View style={styles.sliderBlock}>
-              <View style={styles.sliderHeader}>
-                <Text style={styles.sliderLabel}>Hvor lenge?</Text>
-                <Text style={styles.sliderDuration}>{formatDuration(stayMins)}</Text>
-              </View>
-              <Slider
-                style={styles.slider}
-                minimumValue={30}
-                maximumValue={480}
-                step={30}
-                value={stayMins}
-                onValueChange={setStayMins}
-                minimumTrackTintColor="#4EA7B9"
-                maximumTrackTintColor="rgba(78,167,185,0.20)"
-                thumbTintColor="#4EA7B9"
-              />
-              <View style={styles.sliderTicks}>
-                <Text style={styles.sliderTickText}>30m</Text>
-                <Text style={styles.sliderTickText}>8 t</Text>
-              </View>
-            </View>
-
-            <View style={styles.actionRow}>
-              {/* Info button — opens LiveSpot as a read-only information page */}
-              <TouchableOpacity
-                style={styles.infoBtn}
-                activeOpacity={0.85}
-                onPress={() => openInfo(selected)}
-              >
-                <Icon name="info" size={18} color="#17211F" strokeWidth={2} />
-              </TouchableOpacity>
-
-              {/* Primary action — bypasses LiveSpot and jumps straight to checkout */}
-              <TouchableOpacity
-                style={styles.reserveBtn}
-                activeOpacity={0.88}
-                onPress={() => openCheckout(selected)}
-                disabled={!selected.available}
-              >
-                <LinearGradient
-                  colors={selected.available ? ['#10B981', '#14B8A6', '#2563EB'] : ['#C6CFC9', '#C6CFC9']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={[StyleSheet.absoluteFillObject, { borderRadius: 14 }]}
-                />
-                <Text style={styles.reserveBtnText}>Reserver</Text>
-                <View style={styles.reserveBtnBadge}>
-                  <Text style={styles.reserveBtnBadgeText}>{total} kr</Text>
-                </View>
-              </TouchableOpacity>
+            <View style={styles.spotCardRight}>
+              <Text style={styles.spotPrice}>{selected.price}</Text>
+              <Text style={styles.spotUnit}>kr/t</Text>
             </View>
           </View>
-        );
-      })()}
+
+          <View style={styles.actionRow}>
+            {/* Info button — opens LiveSpot as a read-only information page */}
+            <TouchableOpacity
+              style={styles.infoBtn}
+              activeOpacity={0.85}
+              onPress={() => openInfo(selected)}
+            >
+              <Icon name="info" size={18} color="#FFFFFF" strokeWidth={2} />
+            </TouchableOpacity>
+
+            {/* Primary action — duration + total are now chosen on the payment page */}
+            <TouchableOpacity
+              style={styles.reserveBtn}
+              activeOpacity={0.88}
+              onPress={() => openCheckout(selected)}
+              disabled={!selected.available}
+            >
+              <LinearGradient
+                colors={selected.available ? ['#4E96F0', '#5EA2F5', '#4E96F0'] : ['#6E809B', '#6E809B']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[StyleSheet.absoluteFillObject, { borderRadius: 14 }]}
+              />
+              <Text style={styles.reserveBtnText}>Reserver</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -444,40 +384,45 @@ const styles = StyleSheet.create({
   searchRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   backBtn: {
     width: 42, height: 42, borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
   },
   searchBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingHorizontal: 12, paddingVertical: 10,
-    borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.95)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.9)',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingHorizontal: 14, paddingVertical: 13,
+    borderRadius: 18, backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.18, shadowRadius: 14, elevation: 4,
   },
-  searchPin: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#10B981', alignItems: 'center', justifyContent: 'center' },
-  searchLogo: { width: 32, height: 32 },
-  searchValue: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
+  searchPin: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center' },
+  searchIconWrap: {
+    width: 34, height: 34, borderRadius: 17,
+    backgroundColor: 'rgba(94,162,245,0.14)',
+    borderWidth: 1, borderColor: 'rgba(94,162,245,0.32)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  searchValue: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.2 },
 
   filterScroll: { marginTop: 8 },
   filterContent: { gap: 6, paddingRight: 4 },
   filterChip: {
     height: 32, paddingHorizontal: 13, borderRadius: 999,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.9)',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3,
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3,
   },
-  filterChipActive: { backgroundColor: '#111416', borderColor: '#111416' },
-  filterChipText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#111416' },
+  filterChipActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
+  filterChipText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#FFFFFF' },
   filterChipTextActive: { color: '#fff' },
 
   locBtn: {
     position: 'absolute', right: 16,
     width: 48, height: 48, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
   },
 
   // ── Pseudo-3D logo pin ───────────────────────────────────────────────
@@ -506,25 +451,29 @@ const styles = StyleSheet.create({
   },
   pin3dLogo: { width: 42, height: 42 },
   pin3dLogoSelected: { width: 52, height: 52 },
+  // Soft floor shadow beneath the pin. Drawn as a flat dark ellipse (not a native
+  // shadow) because react-native-maps snapshots markers to a bitmap, which strips
+  // shadowOpacity/elevation — a real View is captured, so the pin reads grounded.
   pin3dShadow: {
     position: 'absolute',
-    width: 0, height: 0, borderRadius: 0,
-    backgroundColor: 'transparent',
-    bottom: -3, alignSelf: 'center',
-    transform: [{ scaleX: 1.4 }],
+    bottom: 3, alignSelf: 'center',
+    width: 16, height: 5, borderRadius: 3,
+    backgroundColor: 'rgba(6,14,26,0.42)',
+    transform: [{ scaleX: 1.5 }],
   },
   pin3dShadowSelected: {
-    width: 0, height: 0,
-    backgroundColor: 'transparent',
+    bottom: 2,
+    width: 20, height: 6, borderRadius: 3,
+    backgroundColor: 'rgba(6,14,26,0.50)',
   },
   pin3dPrice: {
     marginTop: 6, paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 999, backgroundColor: '#17211F',
+    borderRadius: 999, backgroundColor: '#5EA2F5',
     shadowColor: '#0F2138', shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.30, shadowRadius: 4, elevation: 5,
   },
   pin3dPriceSelected: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#4E96F0',
   },
   pin3dPriceText: {
     fontFamily: 'System', fontWeight: '800', fontSize: 11,
@@ -534,41 +483,49 @@ const styles = StyleSheet.create({
   spotCard: {
     position: 'absolute', left: 16, right: 16,
     borderRadius: 24, overflow: 'hidden',
-    shadowColor: '#111416', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 24, elevation: 6,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.30, shadowRadius: 24, elevation: 8,
   },
   spotCardInner: { flexDirection: 'row', alignItems: 'flex-start', padding: 16, paddingBottom: 12 },
   spotCardLeft: { flex: 1 },
   statusRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#7B8589', letterSpacing: 0.8, textTransform: 'uppercase' },
-  liveBadge: { backgroundColor: '#10B981', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
+  statusText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase' },
+  liveBadge: { backgroundColor: '#4E96F0', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
   liveBadgeText: { fontFamily: 'System', fontWeight: '700', fontSize: 9, color: '#fff', letterSpacing: 0.5 },
-  spotAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
-  spotArea: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  spotAddress: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  spotArea: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
   spotCardRight: { flexDirection: 'row', alignItems: 'baseline', gap: 2 },
-  spotPrice: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#111416', letterSpacing: -0.44 },
-  spotUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#7B8589' },
+  spotPrice: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44 },
+  spotUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8' },
 
   // Duration slider inside the spot card
   sliderBlock: {
     marginHorizontal: 16, marginTop: 4, marginBottom: 12,
-    paddingHorizontal: 14, paddingTop: 10, paddingBottom: 6,
-    borderRadius: 14,
-    backgroundColor: 'rgba(78,167,185,0.06)',
-    borderWidth: 1, borderColor: 'rgba(78,167,185,0.16)',
+    paddingTop: 6, paddingBottom: 4,
   },
   sliderHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   sliderLabel: {
     fontFamily: 'System', fontWeight: '700', fontSize: 10,
-    color: '#73817D', letterSpacing: 1, textTransform: 'uppercase',
+    color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase',
   },
   sliderDuration: {
     fontFamily: 'System', fontWeight: '800', fontSize: 17,
-    color: '#17211F', letterSpacing: -0.34,
+    color: '#FFFFFF', letterSpacing: -0.34,
   },
-  slider: { width: '100%', height: 30, marginTop: 2 },
+  dsTouch: { height: 34, justifyContent: 'center', marginTop: 8, marginBottom: 2 },
+  dsTrack: { height: 5, borderRadius: 3, backgroundColor: 'rgba(94,162,245,0.20)' },
+  dsFill: { height: 5, borderRadius: 3, backgroundColor: '#5EA2F5' },
+  dsThumb: {
+    position: 'absolute',
+    top: '50%', marginTop: -8, marginLeft: -8,
+    width: 16, height: 16, borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 3, borderColor: '#5EA2F5',
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.25, shadowRadius: 3, elevation: 3,
+  },
   sliderTicks: { flexDirection: 'row', justifyContent: 'space-between', marginTop: -2 },
-  sliderTickText: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#73817D' },
+  sliderTickText: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#98B6D8' },
 
   actionRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
@@ -577,42 +534,63 @@ const styles = StyleSheet.create({
   infoBtn: {
     width: 48, height: 48, borderRadius: 14,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(78,167,185,0.10)',
-    borderWidth: 1, borderColor: 'rgba(78,167,185,0.30)',
+    backgroundColor: 'transparent',
   },
   reserveBtn: {
     flex: 1, height: 48,
     borderRadius: 14, overflow: 'hidden',
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 14, gap: 10,
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.32, shadowRadius: 14, elevation: 6,
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.32, shadowRadius: 14, elevation: 6,
   },
   reserveBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#fff', letterSpacing: -0.15 },
   reserveBtnBadge: {
-    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: 2, paddingVertical: 4,
+    backgroundColor: 'transparent',
   },
   reserveBtnBadgeText: { fontFamily: 'System', fontWeight: '800', fontSize: 13, color: '#fff', letterSpacing: -0.1 },
 
-  bookingBanner: {
-    marginTop: 8,
-    height: 56, borderRadius: 14, overflow: 'hidden',
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 14, gap: 10,
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3, shadowRadius: 16, elevation: 6,
+  // ── Active-booking hero (replaces the search bar, ~2× its height) ─────
+  hero: {
+    minHeight: 120, borderRadius: 22, overflow: 'hidden',
+    paddingHorizontal: 18, paddingVertical: 16,
+    justifyContent: 'space-between',
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.34, shadowRadius: 20, elevation: 9,
   },
-  bookingBannerDot: {
-    width: 8, height: 8, borderRadius: 4,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+  heroTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  heroStatus: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  heroDot: {
+    width: 9, height: 9, borderRadius: 5, backgroundColor: '#FFFFFF',
+    shadowColor: '#FFFFFF', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.9, shadowRadius: 4,
   },
-  bookingBannerBody: { flex: 1 },
-  bookingBannerCountdown: {
-    fontFamily: 'System', fontWeight: '700', fontSize: 10,
-    color: 'rgba(255,255,255,0.8)', letterSpacing: 0.3, textTransform: 'uppercase',
+  heroStatusText: {
+    fontFamily: 'System', fontWeight: '800', fontSize: 11,
+    color: 'rgba(255,255,255,0.92)', letterSpacing: 1.2,
   },
-  bookingBannerAddress: {
-    fontFamily: 'System', fontWeight: '700', fontSize: 13,
-    color: '#fff', letterSpacing: -0.13, marginTop: 1,
+  heroCountdown: {
+    fontFamily: 'System', fontWeight: '800', fontSize: 13,
+    color: '#FFFFFF', letterSpacing: -0.1,
+  },
+  heroAddress: {
+    fontFamily: 'System', fontWeight: '800', fontSize: 22,
+    color: '#FFFFFF', letterSpacing: -0.5, marginTop: 12,
+  },
+  heroBottomRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginTop: 12,
+  },
+  heroSub: {
+    fontFamily: 'System', fontWeight: '600', fontSize: 13,
+    color: 'rgba(255,255,255,0.85)', letterSpacing: -0.1,
+  },
+  heroCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999,
+  },
+  heroCtaText: {
+    fontFamily: 'System', fontWeight: '700', fontSize: 12.5,
+    color: '#FFFFFF', letterSpacing: -0.1,
   },
 });

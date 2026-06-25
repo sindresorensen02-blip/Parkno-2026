@@ -9,11 +9,11 @@
     "splash": {
       "image": "./assets/parkno-logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#1F2A39"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "eu.minplass.app",
+      "bundleIdentifier": "no.parkno.app",
       "buildNumber": "1",
       "appleTeamId": "C52D5TBW47",
       "infoPlist": {
@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/parkno-logo.png",
         "backgroundColor": "#F4F3F2"
       },
-      "package": "eu.minplass.app",
+      "package": "no.parkno.app",
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",

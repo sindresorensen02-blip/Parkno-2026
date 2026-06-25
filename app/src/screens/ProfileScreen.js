@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+﻿import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -84,7 +85,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 }]}
@@ -92,72 +93,22 @@ export default function ProfileScreen({ navigation }) {
       >
         {/* Header */}
         <View style={styles.header}>
-          {navigation.canGoBack() ? (
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Icon name="arrow-left" size={20} color="#111416" />
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.backBtn} />
-          )}
+          <View style={{ width: 40 }} />
           <Text style={styles.headerTitle}>Min profil</Text>
-          <View style={styles.backBtn} />
+          <View style={{ width: 40 }} />
         </View>
 
         {/* Avatar + name */}
         <View style={styles.heroSection}>
           <View style={styles.avatarOuter}>
-            <LinearGradient colors={['#DCEBDF', '#9ECFE3']} style={[StyleSheet.absoluteFillObject, { borderRadius: 52 }]} />
+            <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 52 }]} />
             <Text style={styles.avatarText}>{initials}</Text>
           </View>
           <Text style={styles.heroName}>{profile?.full_name ?? '—'}</Text>
           <Text style={styles.heroEmail}>{user?.email ?? ''}</Text>
-          <View style={styles.memberBadge}>
-            <View style={styles.memberDot} />
-            <Text style={styles.memberText}>Medlem siden {memberYear}</Text>
-          </View>
+
         </View>
 
-        <TouchableOpacity
-          style={styles.rentCard}
-          activeOpacity={0.88}
-          onPress={() => {
-            if (showHostInsights) navigation.getParent()?.navigate('Hjem', { screen: 'Host' });
-            else navigation.getParent()?.navigate('Hjem', { screen: 'LeiUt', params: { isFirst: false } });
-          }}
-        >
-          <LinearGradient
-            colors={showHostInsights ? ['#10B981', '#14B8A6', '#2563EB'] : ['#17211F', '#2F5D49']}
-            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-            style={[StyleSheet.absoluteFillObject, { borderRadius: 24 }]}
-          />
-          <View style={styles.rentOrbA} />
-          <View style={styles.rentOrbB} />
-          <Image
-            source={require('../../assets/parkno-logo.png')}
-            style={styles.rentLogo}
-            resizeMode="contain"
-          />
-          <View style={styles.rentText}>
-            <Text style={styles.rentEyebrow}>{showHostInsights ? 'PUBLISERT' : 'TILGJENGELIG'}</Text>
-            <Text style={styles.rentTitle}>{showHostInsights ? 'Innsikt' : 'Lei ut plassen din'}</Text>
-            <Text style={styles.rentHint}>
-              {showHostInsights
-                ? 'Se inntekt, reservasjoner og utbetalinger for plassene dine.'
-                : 'Publiser parkeringsplassen og tjen penger når den står ledig.'}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.rentChip}
-            activeOpacity={0.78}
-            onPress={(event) => {
-              event.stopPropagation?.();
-              setDemoHasSpot(v => !v);
-            }}
-          >
-            <Text style={styles.rentChipText}>{showHostInsights ? 'På' : 'Av'}</Text>
-          </TouchableOpacity>
-          <Icon name="arrow-right" size={18} color="rgba(255,255,255,0.9)" strokeWidth={2.4} />
-        </TouchableOpacity>
 
         {/* Active parkings — only when user has live/upcoming bookings */}
         {activeBookings.length > 0 && (
@@ -182,10 +133,10 @@ export default function ProfileScreen({ navigation }) {
                   key={b.id}
                   style={styles.activeCard}
                   activeOpacity={0.92}
-                  onPress={() => navigation.getParent()?.navigate('Hjem', { screen: 'AktivParkering' })}
+                  onPress={() => navigation.getParent()?.navigate('Kart', { screen: 'AktivParkering' })}
                 >
                   <LinearGradient
-                    colors={isLive ? ['#10B981', '#14B8A6', '#2563EB'] : ['#4EA7B9', '#93D6E3']}
+                    colors={isLive ? ['#4E96F0', '#5EA2F5', '#4E96F0'] : ['#5EA2F5', '#7FBBF8']}
                     start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                     style={[StyleSheet.absoluteFillObject, { borderRadius: 18 }]}
                   />
@@ -202,11 +153,11 @@ export default function ProfileScreen({ navigation }) {
         )}
 
         {/* Premium card — vivid multi-stop gradient, accent orbs, brand logo */}
-        <TouchableOpacity activeOpacity={0.88} onPress={() => navigation.navigate('ParknoPremium')} style={styles.premiumCard}>
+        <TouchableOpacity activeOpacity={0.88} onPress={() => navigation.navigate('Premium')} style={styles.premiumCard}>
           <LinearGradient
             colors={isPremium
-              ? ['#10B981', '#14B8A6', '#2563EB', '#7C3AED']
-              : ['#FF8A5B', '#EF4444', '#7C3AED', '#2563EB']}
+              ? ['#4E96F0', '#5EA2F5', '#4E96F0', '#4E96F0']
+              : ['#4E96F0', '#5EA2F5', '#6FB1F7', '#7FBBF8']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 24 }]}
           />
@@ -226,7 +177,6 @@ export default function ProfileScreen({ navigation }) {
               {isPremium ? 'Ingen bookingavgift på reservasjoner' : 'Slipp bookingavgiften · 49 kr/mnd'}
             </Text>
           </View>
-          <Icon name="chevron-right" size={18} color="rgba(255,255,255,0.85)" strokeWidth={2.4} />
         </TouchableOpacity>
 
         {/* Sections */}
@@ -238,7 +188,7 @@ export default function ProfileScreen({ navigation }) {
                 <React.Fragment key={row.label}>
                   <TouchableOpacity style={styles.row} activeOpacity={0.7} onPress={() => row.screen && navigation.navigate(row.screen)}>
                     <View style={styles.rowIconWrap}>
-                      <Icon name={row.icon} size={15} color="#111416" strokeWidth={1.8} />
+                      <Icon name={row.icon} size={15} color="#FFFFFF" strokeWidth={1.8} />
                     </View>
                     <View style={styles.rowText}>
                       <Text style={styles.rowLabel}>{row.label}</Text>
@@ -247,7 +197,7 @@ export default function ProfileScreen({ navigation }) {
                     {row.balanceRow ? (
                       <Text style={styles.rowBalance}>{balance} kr</Text>
                     ) : (
-                      <Icon name="chevron-right" size={16} color="#C4CACC" strokeWidth={2} />
+                      <Icon name="chevron-right" size={16} color="#6E809B" strokeWidth={2} />
                     )}
                   </TouchableOpacity>
                   {i < section.rows.length - 1 && <View style={styles.rowDivider} />}
@@ -272,22 +222,22 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20 },
 
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
   heroSection: { alignItems: 'center', marginBottom: 24 },
-  avatarOuter: { width: 104, height: 104, borderRadius: 52, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.95)', marginBottom: 14, shadowColor: '#111416', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 6 },
-  avatarText: { fontFamily: 'System', fontWeight: '800', fontSize: 34, color: '#111416', zIndex: 1 },
-  heroName: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#111416', letterSpacing: -0.44, marginBottom: 4 },
-  heroEmail: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#7B8589', marginBottom: 10 },
+  avatarOuter: { width: 104, height: 104, borderRadius: 52, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 14, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 6 },
+  avatarText: { fontFamily: 'System', fontWeight: '800', fontSize: 34, color: '#FFFFFF', zIndex: 1 },
+  heroName: { fontFamily: 'System', fontWeight: '800', fontSize: 22, color: '#FFFFFF', letterSpacing: -0.44, marginBottom: 4 },
+  heroEmail: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', marginBottom: 10 },
   memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 999, backgroundColor: 'rgba(159,214,180,0.2)', borderWidth: 1, borderColor: 'rgba(159,214,180,0.4)' },
-  memberDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#3FA66B' },
-  memberText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#1F6B47' },
+  memberDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#5EA2F5' },
+  memberText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#5EA2F5' },
 
   rentCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     borderRadius: 24, padding: 18, marginBottom: 28, overflow: 'hidden',
-    shadowColor: '#2F5D49', shadowOffset: { width: 0, height: 14 },
+    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 14 },
     shadowOpacity: 0.36, shadowRadius: 22, elevation: 8,
   },
   rentOrbA: {
@@ -314,14 +264,14 @@ const styles = StyleSheet.create({
   activeWrap: { marginBottom: 16, gap: 8 },
   activeSectionLabel: {
     fontFamily: 'System', fontWeight: '700', fontSize: 11,
-    color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase',
+    color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase',
     marginBottom: 4, marginLeft: 4,
   },
   activeCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 14,
     borderRadius: 18, overflow: 'hidden',
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 8 },
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.30, shadowRadius: 14, elevation: 6,
   },
   activeLiveDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#fff' },
@@ -332,7 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 14,
     padding: 18, borderRadius: 24, overflow: 'hidden',
     marginBottom: 24,
-    shadowColor: '#7C3AED', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.36, shadowRadius: 22, elevation: 8,
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.36, shadowRadius: 22, elevation: 8,
   },
   premiumOrbA: {
     position: 'absolute',
@@ -351,21 +301,23 @@ const styles = StyleSheet.create({
   premiumEyebrow: { fontFamily: 'System', fontWeight: '700', fontSize: 9, color: 'rgba(255,255,255,0.7)', letterSpacing: 1.2 },
   premiumTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#fff', letterSpacing: -0.32, marginTop: 2 },
   premiumSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2 },
+  premiumChip: { backgroundColor: 'rgba(255,255,255,0.18)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 },
+  premiumChipText: { fontFamily: 'System', fontWeight: '800', fontSize: 10, color: '#fff', letterSpacing: 0.5 },
 
   section: { marginBottom: 20 },
-  sectionTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
-  sectionCard: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden', shadowColor: '#111416', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 },
+  sectionTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  sectionCard: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden', shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 },
 
   row: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  rowIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
+  rowIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
   rowText: { flex: 1 },
-  rowLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  rowHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 1 },
-  rowBalance: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#10B981', letterSpacing: -0.2 },
-  rowDivider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)', marginLeft: 66 },
+  rowLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  rowHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 1 },
+  rowBalance: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#4E96F0', letterSpacing: -0.2 },
+  rowDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 66 },
 
   logoutBtn: { height: 52, borderRadius: 999, backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   logoutText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#DC2626', letterSpacing: -0.15 },
 
-  version: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#C4CACC', textAlign: 'center', marginBottom: 8 },
+  version: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#6E809B', textAlign: 'center', marginBottom: 8 },
 });

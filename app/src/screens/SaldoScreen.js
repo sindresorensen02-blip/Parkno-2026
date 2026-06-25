@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+﻿import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -51,7 +52,7 @@ export default function SaldoScreen({ navigation }) {
   return (
     <View style={s.root}>
       <LinearGradient
-        colors={['#F8FAF7', '#EAF0EC', '#D8EEF2']}
+        colors={['#2B394C', '#2B394C', '#2B394C']}
         locations={[0, 0.55, 1]}
         style={StyleSheet.absoluteFillObject}
       />
@@ -61,7 +62,7 @@ export default function SaldoScreen({ navigation }) {
       >
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn} hitSlop={8}>
-            <Icon name="arrow-left" size={20} color="#17211F" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Saldo</Text>
           <View style={s.iconBtn} />
@@ -70,7 +71,7 @@ export default function SaldoScreen({ navigation }) {
         {/* Balance hero card */}
         <View style={s.balanceCard}>
           <LinearGradient
-            colors={['#10B981', '#14B8A6', '#2563EB']}
+            colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 24 }]}
           />
@@ -85,11 +86,11 @@ export default function SaldoScreen({ navigation }) {
         {/* Redeem */}
         <Text style={s.sectionLabel}>Løs inn gavekort</Text>
         <View style={s.redeemRow}>
-          <TextInput
+          <TextInput keyboardAppearance="dark"
             value={code}
             onChangeText={t => setCode(t.toUpperCase())}
             placeholder="Skriv inn kode"
-            placeholderTextColor="#C6CFC9"
+            placeholderTextColor="#6E809B"
             style={s.input}
             autoCapitalize="characters"
             autoCorrect={false}
@@ -102,7 +103,7 @@ export default function SaldoScreen({ navigation }) {
             activeOpacity={0.88}
           >
             <LinearGradient
-              colors={['#10B981', '#14B8A6', '#2563EB']}
+              colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               style={[StyleSheet.absoluteFillObject, { borderRadius: 14 }]}
             />
@@ -124,7 +125,7 @@ export default function SaldoScreen({ navigation }) {
                       {t.ref ? ` · ${t.ref}` : ''}
                     </Text>
                   </View>
-                  <Text style={[s.txAmount, t.amount < 0 && { color: '#73817D' }]}>
+                  <Text style={[s.txAmount, t.amount < 0 && { color: '#98B6D8' }]}>
                     {t.amount > 0 ? '+' : ''}{t.amount} kr
                   </Text>
                 </View>
@@ -148,15 +149,15 @@ const s = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 },
   iconBtn: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.62)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center', justifyContent: 'center',
   },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#17211F', letterSpacing: -0.32 },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
   balanceCard: {
     borderRadius: 24, padding: 22, overflow: 'hidden', marginBottom: 24,
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 14 },
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 14 },
     shadowOpacity: 0.32, shadowRadius: 24, elevation: 6,
   },
   balanceLabel: {
@@ -170,36 +171,36 @@ const s = StyleSheet.create({
 
   sectionLabel: {
     fontFamily: 'System', fontWeight: '700', fontSize: 11,
-    color: '#73817D', letterSpacing: 1.2, textTransform: 'uppercase',
+    color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase',
     marginBottom: 8, marginLeft: 4,
   },
 
   redeemRow: { flexDirection: 'row', gap: 10 },
   input: {
     flex: 1, height: 50, borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.72)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: '#3A4C68',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     paddingHorizontal: 16,
-    fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#17211F', letterSpacing: 2,
+    fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: 2,
   },
   redeemBtn: {
     height: 50, paddingHorizontal: 22, borderRadius: 14, overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#10B981', shadowOffset: { width: 0, height: 6 },
+    shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.30, shadowRadius: 12, elevation: 5,
   },
   redeemBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 14, color: '#fff', letterSpacing: -0.15 },
 
   txList: {
-    backgroundColor: 'rgba(255,255,255,0.62)', borderRadius: 18,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: '#3A4C68', borderRadius: 18,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     paddingHorizontal: 16,
   },
   txRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, gap: 12 },
-  txRowBorder: { borderTopWidth: 1, borderTopColor: 'rgba(23,33,31,0.06)' },
-  txLabel:  { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#17211F', letterSpacing: -0.14 },
-  txMeta:   { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#73817D', marginTop: 2 },
-  txAmount: { fontFamily: 'System', fontWeight: '800', fontSize: 14, color: '#17211F', letterSpacing: -0.14 },
+  txRowBorder: { borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)' },
+  txLabel:  { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  txMeta:   { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#98B6D8', marginTop: 2 },
+  txAmount: { fontFamily: 'System', fontWeight: '800', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
 
-  emptyHint: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#73817D', textAlign: 'center', marginTop: 12 },
+  emptyHint: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: '#98B6D8', textAlign: 'center', marginTop: 12 },
 });

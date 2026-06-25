@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 import { BOOKING_FEE_RATE } from '../constants/booking';
+import { scheduleReminder, presentActiveParkingNotice, cancelNotif } from '../lib/parkingNotifications';
 
 /**
  * ActiveBookingContext — one source of truth for the user's current parking
@@ -82,6 +84,47 @@ export function ActiveBookingProvider({ children }) {
     }, 30_000);
     return () => clearInterval(t);
   }, []);
+
+  // ── Local notifications for the active session ──────────────────────
+  // Ids of the currently-scheduled reminder and the presented lock-screen notice
+  // so we can cancel/replace them as the booking changes.
+  const reminderIdRef = useRef(null);
+  const activeNoticeIdRef = useRef(null);
+
+  // (Re)schedule the "15 minutes left" reminder whenever the active booking or
+  // its end time changes; clear everything when the booking goes away.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await cancelNotif(reminderIdRef.current);
+      reminderIdRef.current = null;
+      if (!booking) {
+        await cancelNotif(activeNoticeIdRef.current);
+        activeNoticeIdRef.current = null;
+        return;
+      }
+      const id = await scheduleReminder(booking);
+      if (cancelled) { await cancelNotif(id); return; }
+      reminderIdRef.current = id;
+    })();
+    return () => { cancelled = true; };
+  }, [booking?.id, booking?.ends_at]);
+
+  // Mirror the on-map active-parking hero to the lock screen: when the phone is
+  // backgrounded during a live booking, present the notice; clear it the moment
+  // the app returns to the foreground (where the on-screen hero takes over).
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', async (state) => {
+      if (state === 'active') {
+        await cancelNotif(activeNoticeIdRef.current);
+        activeNoticeIdRef.current = null;
+      } else if (state === 'background' && booking) {
+        await cancelNotif(activeNoticeIdRef.current);
+        activeNoticeIdRef.current = await presentActiveParkingNotice(booking);
+      }
+    });
+    return () => sub.remove();
+  }, [booking?.id, booking?.ends_at]);
 
   // ── Demo bookings: callers write directly ───────────────────────────
   const setDemoBooking = useCallback((b) => {

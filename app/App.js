@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { NavigationContainer, TabActions, StackActions, getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { NavigationContainer, TabActions, StackActions, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -46,10 +46,11 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { PremiumProvider } from './src/context/PremiumContext';
 import { BalanceProvider } from './src/context/BalanceContext';
 import { ActiveBookingProvider } from './src/context/ActiveBookingContext';
-import ParknoPremiumScreen from './src/screens/ParknoPremiumScreen';
 import SaldoScreen from './src/screens/SaldoScreen';
 import AktivParkeringScreen from './src/screens/AktivParkeringScreen';
+import PremiumScreen from './src/screens/PremiumScreen';
 import AuthScreen from './src/screens/AuthScreen';
+import AktivitetScreen from './src/screens/AktivitetScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,9 +93,10 @@ const WWrappedKart                   = wrap(KartScreen);
 const WWrappedLagret                 = wrap(LagretScreen);
 const WWrappedHjem                   = wrap(HjemScreen);
 const WWrappedBetalingPaakrevd       = wrap(BetalingPaakrevdScreen);
-const WWrappedParknoPremium          = wrap(ParknoPremiumScreen);
 const WWrappedSaldo                  = wrap(SaldoScreen);
 const WWrappedAktivParkering         = wrap(AktivParkeringScreen);
+const WWrappedPremium                = wrap(PremiumScreen);
+const WWrappedAktivitet              = wrap(AktivitetScreen);
 
 // Each tab is its own independent stack. Routes are owned by exactly one tab
 // to avoid ambiguous `navigation.navigate(name)` resolution. Cross-tab jumps
@@ -102,7 +104,7 @@ const WWrappedAktivParkering         = wrap(AktivParkeringScreen);
 
 function HjemStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: '#2B394C' } }}>
       <Stack.Screen name="HjemRoot"         component={WWrappedHjem} />
       <Stack.Screen name="Welcome"          component={WWrappedWelcome} />
       <Stack.Screen name="LiveSpot"         component={WWrappedLiveSpot} />
@@ -111,29 +113,24 @@ function HjemStack() {
       <Stack.Screen name="Host"             component={WWrappedHost} />
       <Stack.Screen name="LeiUt"            component={WWrappedLeiUt} />
       <Stack.Screen name="RedigerPlass"     component={WWrappedRedigerPlass} />
-      <Stack.Screen name="BetalingPaakrevd" component={WWrappedBetalingPaakrevd} />
+      <Stack.Screen name="BetalingPaakrevd" component={WWrappedBetalingPaakrevd} options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', contentStyle: { backgroundColor: 'transparent' } }} />
       <Stack.Screen name="AktivParkering"   component={WWrappedAktivParkering} />
     </Stack.Navigator>
   );
 }
 
-function KartStack() {
-  // Routes get a "Kart" prefix so they don't collide with the same screens
-  // registered in HjemStack — React Navigation otherwise warns about
-  // ambiguous navigate() targets and behaves oddly on push().
+// Activity tab — the user's reservation history / activity feed.
+function AktivitetStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-      <Stack.Screen name="KartRoot"             component={WWrappedKart} />
-      <Stack.Screen name="KartLiveSpot"         component={WWrappedLiveSpot} />
-      <Stack.Screen name="KartBetalingPaakrevd" component={WWrappedBetalingPaakrevd} />
-      <Stack.Screen name="KartAktivParkering"   component={WWrappedAktivParkering} />
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: '#2B394C' } }}>
+      <Stack.Screen name="AktivitetRoot" component={WWrappedAktivitet} />
     </Stack.Navigator>
   );
 }
 
 function ProfilStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: '#2B394C' } }}>
       <Stack.Screen name="Profile"               component={WWrappedProfile} />
       <Stack.Screen name="Saldo"                 component={WWrappedSaldo} />
       <Stack.Screen name="RedigerProfil"         component={WWrappedRedigerProfil} />
@@ -144,28 +141,34 @@ function ProfilStack() {
       <Stack.Screen name="HjelpFAQ"              component={WWrappedHjelpFAQ} />
       <Stack.Screen name="KontaktOss"            component={WWrappedKontaktOss} />
       <Stack.Screen name="VurderAppen"           component={WWrappedVurderAppen} />
-      <Stack.Screen name="ParknoPremium"         component={WWrappedParknoPremium} />
+      <Stack.Screen name="Premium"               component={WWrappedPremium} />
     </Stack.Navigator>
   );
 }
+
+// Walk into nested navigator state to find the currently-focused leaf route.
+function getLeafRouteName(route) {
+  let r = route;
+  while (r?.state) {
+    const st = r.state;
+    r = st.routes[st.index ?? st.routes.length - 1];
+  }
+  return r?.name;
+}
+
+// Routes that present as an immersive bottom sheet — hide the tab bar for these.
+const TABBAR_HIDDEN_ROUTES = ['BetalingPaakrevd', 'KartBetalingPaakrevd'];
 
 function CustomTabBar({ state, navigation }) {
   const tabNames = state.routes.map(route => route.name);
   const activeTab = state.routes[state.index]?.name;
 
-  // Screens that should render full-bleed without the floating tab bar.
-  const HIDE_ON = ['ParknoPremium'];
-  const focusedRoute = getFocusedRouteNameFromRoute(state.routes[state.index]);
-  if (focusedRoute && HIDE_ON.includes(focusedRoute)) {
-    return null;
-  }
+  const leaf = getLeafRouteName(state.routes[state.index]);
+  if (TABBAR_HIDDEN_ROUTES.includes(leaf)) return null;
 
   return (
     <BottomNav
       activeTab={activeTab}
-      onLeiUtPress={() => {
-        navigation.navigate('Hjem', { screen: 'LeiUt' });
-      }}
       onTabPress={(tabId) => {
         const index = tabNames.indexOf(tabId);
         if (index === -1) return;
@@ -217,19 +220,23 @@ function RootNavigator() {
     })();
   }, [user?.id]);
 
-  // Navigate to LiveSpot when user taps a proximity notification
+  // Route notification taps: proximity → LiveSpot; active-parking / reminder →
+  // the live AktivParkering dashboard.
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(response => {
-      const spot = response.notification.request.content.data?.spot;
-      if (spot && navRef.current) {
-        navRef.current.navigate('Hjem', { screen: 'LiveSpot', params: { spot } });
+      const data = response.notification.request.content.data ?? {};
+      if (!navRef.current) return;
+      if (data.spot) {
+        navRef.current.navigate('Kart', { screen: 'LiveSpot', params: { spot: data.spot } });
+      } else if (data.type === 'active-parking' || data.type === 'parking-reminder') {
+        navRef.current.navigate('Kart', { screen: 'AktivParkering' });
       }
     });
     return () => sub.remove();
   }, []);
 
   if (loading) {
-    return <View style={{ flex: 1, backgroundColor: '#F4F3F2', alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color="#4EA7B9" /></View>;
+    return <View style={{ flex: 1, backgroundColor: '#2B394C', alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color="#5EA2F5" /></View>;
   }
 
   if (!user && !devBypass) {
@@ -238,16 +245,16 @@ function RootNavigator() {
 
   return (
     <SpotsProvider>
-      <NavigationContainer ref={navRef}>
-        <StatusBar style="dark" />
+      <NavigationContainer ref={navRef} theme={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: '#2B394C', card: '#2B394C' } }}>
+        <StatusBar style="light" />
         <Tab.Navigator
           tabBar={(props) => <CustomTabBar {...props} />}
-          screenOptions={{ headerShown: false }}
+          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#2B394C' } }}
           backBehavior="initialRoute"
         >
-          <Tab.Screen name="Hjem"   component={HjemStack} />
-          <Tab.Screen name="Kart"   component={KartStack} />
-          <Tab.Screen name="Profil" component={ProfilStack} />
+          <Tab.Screen name="Kart"      component={HjemStack} />
+          <Tab.Screen name="Aktivitet" component={AktivitetStack} />
+          <Tab.Screen name="Profil"    component={ProfilStack} />
         </Tab.Navigator>
       </NavigationContainer>
     </SpotsProvider>

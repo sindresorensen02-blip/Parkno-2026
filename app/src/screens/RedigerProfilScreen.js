@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator, Alert, Image } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, ScrollView, TextInput, StyleSheet, ActivityIndicator, Alert, Image } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -99,7 +100,7 @@ export default function RedigerProfilScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView
         contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
         showsVerticalScrollIndicator={false}
@@ -107,7 +108,7 @@ export default function RedigerProfilScreen({ navigation }) {
       >
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Rediger profil</Text>
           <View style={s.backBtn} />
@@ -118,7 +119,7 @@ export default function RedigerProfilScreen({ navigation }) {
           <TouchableOpacity style={s.avatarWrap} onPress={changePhoto} activeOpacity={0.85}>
             {profile?.avatar_url
               ? <Image source={{ uri: profile.avatar_url }} style={StyleSheet.absoluteFillObject} />
-              : <LinearGradient colors={['#DCEBDF', '#9ECFE3']} style={[StyleSheet.absoluteFillObject, { borderRadius: 52 }]} />
+              : <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 52 }]} />
             }
             {!profile?.avatar_url && <Text style={s.avatarText}>{initials}</Text>}
             <View style={s.avatarOverlay}>
@@ -139,7 +140,7 @@ export default function RedigerProfilScreen({ navigation }) {
           <Field label="Fullt navn" value={navn} onChangeText={setNavn} placeholder="Ditt navn" icon="user" />
           <View style={s.divider} />
           <View style={s.fieldWrap}>
-            <View style={s.fieldIcon}><Icon name="bell" size={14} color="#7B8589" strokeWidth={1.8} /></View>
+            <View style={s.fieldIcon}><Icon name="bell" size={14} color="#98B6D8" strokeWidth={1.8} /></View>
             <View style={s.fieldBody}>
               <Text style={s.fieldLabel}>E-postadresse</Text>
               <Text style={s.fieldReadOnly}>{user?.email ?? '—'}</Text>
@@ -153,12 +154,12 @@ export default function RedigerProfilScreen({ navigation }) {
         <Text style={s.sectionLabel}>Sikkerhet</Text>
         <View style={s.card}>
           <TouchableOpacity style={s.secRow} onPress={sendPasswordReset} activeOpacity={0.75}>
-            <View style={s.secIcon}><Icon name="shield" size={15} color="#111416" strokeWidth={1.8} /></View>
+            <View style={s.secIcon}><Icon name="shield" size={15} color="#FFFFFF" strokeWidth={1.8} /></View>
             <View style={s.secText}>
               <Text style={s.secLabel}>Endre passord</Text>
               <Text style={s.secHint}>Sendes til {user?.email}</Text>
             </View>
-            <Icon name="chevron-right" size={16} color="#C4CACC" strokeWidth={2} />
+            <Icon name="chevron-right" size={16} color="#6E809B" strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
@@ -171,7 +172,7 @@ export default function RedigerProfilScreen({ navigation }) {
           disabled={!hasChanges || saving}
         >
           <LinearGradient
-            colors={['#10B981', '#14B8A6', '#2563EB']}
+            colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: 999 }]}
@@ -190,14 +191,14 @@ export default function RedigerProfilScreen({ navigation }) {
 function Field({ label, value, onChangeText, placeholder, icon, keyboardType }) {
   return (
     <View style={s.fieldWrap}>
-      <View style={s.fieldIcon}><Icon name={icon} size={14} color="#7B8589" strokeWidth={1.8} /></View>
+      <View style={s.fieldIcon}><Icon name={icon} size={14} color="#98B6D8" strokeWidth={1.8} /></View>
       <View style={s.fieldBody}>
         <Text style={s.fieldLabel}>{label}</Text>
-        <TextInput
+        <TextInput keyboardAppearance="dark"
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#C4CACC"
+          placeholderTextColor="#6E809B"
           style={s.fieldInput}
           keyboardType={keyboardType || 'default'}
           autoCapitalize="none"
@@ -211,38 +212,38 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
   avatarSection: { alignItems: 'center', marginBottom: 28 },
-  avatarWrap: { width: 90, height: 90, borderRadius: 45, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.95)', marginBottom: 12 },
-  avatarText: { fontFamily: 'System', fontWeight: '800', fontSize: 28, color: '#111416', zIndex: 1 },
+  avatarWrap: { width: 90, height: 90, borderRadius: 45, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 12 },
+  avatarText: { fontFamily: 'System', fontWeight: '800', fontSize: 28, color: '#FFFFFF', zIndex: 1 },
   avatarOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, backgroundColor: 'rgba(17,20,22,0.45)', alignItems: 'center', justifyContent: 'center' },
-  changePhotoBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(17,20,22,0.15)', backgroundColor: 'rgba(255,255,255,0.72)' },
-  changePhotoText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#111416' },
+  changePhotoBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(17,20,22,0.15)', backgroundColor: '#3A4C68' },
+  changePhotoText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
 
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
-  card: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden', marginBottom: 22 },
-  divider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)', marginLeft: 56 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  card: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden', marginBottom: 22 },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 56 },
 
   fieldWrap: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
-  fieldIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(17,20,22,0.05)', alignItems: 'center', justifyContent: 'center' },
+  fieldIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.07)', alignItems: 'center', justifyContent: 'center' },
   fieldBody: { flex: 1 },
-  fieldLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#7B8589', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 3 },
-  fieldInput: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#111416', letterSpacing: -0.15, padding: 0 },
-  fieldReadOnly: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#7B8589', letterSpacing: -0.15 },
-  readOnlyBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(17,20,22,0.06)' },
-  readOnlyText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#7B8589', letterSpacing: 0.4 },
+  fieldLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 3 },
+  fieldInput: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15, padding: 0 },
+  fieldReadOnly: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#98B6D8', letterSpacing: -0.15 },
+  readOnlyBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: '#50607A' },
+  readOnlyText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 0.4 },
 
   secRow: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  secIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
+  secIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
   secText: { flex: 1 },
-  secLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  secHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 1 },
+  secLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  secHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 1 },
 
   errorText: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#C53030', textAlign: 'center', marginBottom: 12 },
 
-  saveBtn: { height: 56, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginTop: 4, shadowColor: '#2563EB', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 20, elevation: 6 },
+  saveBtn: { height: 56, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginTop: 4, shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 20, elevation: 6 },
   saveBtnDisabled: { opacity: 0.5 },
   saveBtnText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.16 },
 });

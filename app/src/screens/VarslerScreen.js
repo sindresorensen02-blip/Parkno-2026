@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, Switch, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -118,21 +119,21 @@ export default function VarslerScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView
         contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Varsler</Text>
           <View style={s.backBtn} />
         </View>
 
         {loading ? (
-          <ActivityIndicator color="#10B981" style={{ marginTop: 60 }} />
+          <ActivityIndicator color="#4E96F0" style={{ marginTop: 60 }} />
         ) : (
           <>
             <View style={s.masterCard}>
@@ -143,7 +144,7 @@ export default function VarslerScreen({ navigation }) {
               <Switch
                 value={allOn}
                 onValueChange={toggleAll}
-                trackColor={{ false: '#E5E7EB', true: '#10B981' }}
+                trackColor={{ false: '#E5E7EB', true: '#4E96F0' }}
                 thumbColor="#fff"
               />
             </View>
@@ -163,7 +164,7 @@ export default function VarslerScreen({ navigation }) {
                         <Switch
                           value={toggles[row.id]}
                           onValueChange={() => toggle(row.id)}
-                          trackColor={{ false: '#E5E7EB', true: '#10B981' }}
+                          trackColor={{ false: '#E5E7EB', true: '#4E96F0' }}
                           thumbColor="#fff"
                         />
                       </View>
@@ -183,18 +184,18 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
-  masterCard: { flexDirection: 'row', alignItems: 'center', padding: 18, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, marginBottom: 24 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  masterCard: { flexDirection: 'row', alignItems: 'center', padding: 18, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, marginBottom: 24 },
   masterLeft: { flex: 1 },
-  masterLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#111416', letterSpacing: -0.15 },
-  masterHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  masterLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15 },
+  masterHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 2 },
   section: { marginBottom: 20 },
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
-  card: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden' },
-  divider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)', marginLeft: 16 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  card: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden' },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 16 },
   row: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
   rowText: { flex: 1 },
-  rowLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  rowHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 1 },
+  rowLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  rowHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 1 },
 });

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+﻿import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -52,12 +53,12 @@ export default function BetalingsmetodeScreen({ navigation }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#F7F7F2', '#F7F7F2']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
       <ScrollView contentContainerStyle={[s.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} showsVerticalScrollIndicator={false}>
 
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Icon name="arrow-left" size={20} color="#111416" />
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Betalingsmetoder</Text>
           <View style={s.backBtn} />
@@ -68,16 +69,16 @@ export default function BetalingsmetodeScreen({ navigation }) {
         <View style={s.cardList}>
           <View style={s.cardRow}>
             <View style={[s.cardIcon, { backgroundColor: 'rgba(16,185,129,0.1)' }]}>
-              <Icon name="trending-up" size={16} color="#10B981" strokeWidth={2} />
+              <Icon name="trending-up" size={16} color="#4E96F0" strokeWidth={2} />
             </View>
             <View style={s.cardInfo}>
               <Text style={s.cardNumber}>Bankkonto</Text>
               {editingBank ? (
-                <TextInput
+                <TextInput keyboardAppearance="dark"
                   value={bankInput}
                   onChangeText={v => setBankInput(formatBankAccount(v))}
                   placeholder="XXXX.XX.XXXXX"
-                  placeholderTextColor="#C4CACC"
+                  placeholderTextColor="#6E809B"
                   keyboardType="number-pad"
                   style={s.bankInput}
                   autoFocus
@@ -92,8 +93,8 @@ export default function BetalingsmetodeScreen({ navigation }) {
             {editingBank ? (
               <TouchableOpacity onPress={saveBank} style={s.actionBtn} disabled={savingBank}>
                 {savingBank
-                  ? <ActivityIndicator size="small" color="#10B981" />
-                  : <Text style={[s.actionBtnText, { color: '#10B981' }]}>Lagre</Text>
+                  ? <ActivityIndicator size="small" color="#4E96F0" />
+                  : <Text style={[s.actionBtnText, { color: '#4E96F0' }]}>Lagre</Text>
                 }
               </TouchableOpacity>
             ) : (
@@ -146,7 +147,7 @@ export default function BetalingsmetodeScreen({ navigation }) {
         <View style={s.cardList}>
           <View style={s.cardRow}>
             <View style={[s.cardIcon, { backgroundColor: 'rgba(255,91,36,0.12)' }]}>
-              <Text style={[s.cardTypeText, { color: '#FF5B24', fontSize: 11 }]}>Vipps</Text>
+              <Text style={[s.cardTypeText, { color: '#4E96F0', fontSize: 11 }]}>Vipps</Text>
             </View>
             <View style={s.cardInfo}>
               <Text style={s.cardNumber}>Vipps</Text>
@@ -167,9 +168,9 @@ export default function BetalingsmetodeScreen({ navigation }) {
             [{ text: 'OK' }],
           )}
         >
-          <View style={s.addBtnIcon}><Icon name="wallet" size={16} color="#111416" strokeWidth={1.8} /></View>
+          <View style={s.addBtnIcon}><Icon name="wallet" size={16} color="#FFFFFF" strokeWidth={1.8} /></View>
           <Text style={s.addBtnText}>Legg til nytt kort</Text>
-          <Icon name="chevron-right" size={16} color="#7B8589" strokeWidth={2} />
+          <Icon name="chevron-right" size={16} color="#98B6D8" strokeWidth={2} />
         </TouchableOpacity>
 
         <View style={s.secureNote}>
@@ -185,32 +186,32 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#111416', letterSpacing: -0.32 },
-  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#7B8589', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
-  cardList: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, overflow: 'hidden', marginBottom: 22 },
-  divider: { height: 1, backgroundColor: 'rgba(17,20,22,0.05)', marginLeft: 66 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
+  sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  cardList: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden', marginBottom: 22 },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 66 },
   cardRow: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  cardIcon: { width: 44, height: 30, borderRadius: 6, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
-  cardTypeText: { fontFamily: 'System', fontWeight: '800', fontSize: 10, color: '#111416', letterSpacing: 0.5 },
+  cardIcon: { width: 44, height: 30, borderRadius: 6, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
+  cardTypeText: { fontFamily: 'System', fontWeight: '800', fontSize: 10, color: '#FFFFFF', letterSpacing: 0.5 },
   cardInfo: { flex: 1 },
   cardTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  cardNumber: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', letterSpacing: -0.14 },
-  cardExpiry: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#7B8589', marginTop: 2 },
+  cardNumber: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
+  cardExpiry: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 2 },
   defaultBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: 'rgba(63,166,107,0.15)', borderWidth: 1, borderColor: 'rgba(63,166,107,0.3)' },
-  defaultText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#1F6B47' },
+  defaultText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#5EA2F5' },
   cardActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   actionBtn: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(17,20,22,0.15)' },
-  actionBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#111416' },
+  actionBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#FFFFFF' },
   removeBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(239,68,68,0.08)', alignItems: 'center', justifyContent: 'center' },
   vippsToggle: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(17,20,22,0.15)' },
   vippsToggleActive: { backgroundColor: 'rgba(239,68,68,0.08)', borderColor: 'rgba(239,68,68,0.2)' },
-  vippsToggleText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#111416' },
+  vippsToggleText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#FFFFFF' },
   vippsToggleTextActive: { color: '#DC2626' },
-  addBtn: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.8)', borderRadius: 22, marginBottom: 16 },
-  addBtnIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(17,20,22,0.06)', alignItems: 'center', justifyContent: 'center' },
-  addBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', flex: 1 },
-  bankInput: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#111416', padding: 0, marginTop: 2, letterSpacing: 1 },
+  addBtn: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, marginBottom: 16 },
+  addBtnIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
+  addBtnText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', flex: 1 },
+  bankInput: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', padding: 0, marginTop: 2, letterSpacing: 1 },
   secureNote: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 4 },
-  secureText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#7B8589', flex: 1, lineHeight: 17 },
+  secureText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', flex: 1, lineHeight: 17 },
 });

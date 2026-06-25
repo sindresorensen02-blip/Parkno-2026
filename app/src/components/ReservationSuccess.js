@@ -48,9 +48,9 @@ export default function ReservationSuccess({
   subtitle         = 'Plassen er din',
   pendingTitle     = 'Sikrer plassen…',
   pendingSubtitle,
-  accentColor      = '#34C759',                     // Apple system green
-  accentGradient   = ['#30D158', '#34C759', '#28A745'],
-  backdropColors   = ['rgba(8, 12, 20, 0.86)', 'rgba(15, 22, 36, 0.92)'],
+  accentColor      = '#5EA2F5',                     // Parkno accent blue
+  accentGradient   = ['#4E96F0', '#5EA2F5', '#6FB1F7'],
+  backdropColors   = ['rgba(20, 28, 40, 0.90)', 'rgba(31, 42, 57, 0.94)'],
   size             = 140,
   timings          = DEFAULT_TIMINGS,
 }) {

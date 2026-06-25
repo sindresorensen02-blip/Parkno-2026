@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Alert,
-} from 'react-native';
+﻿import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, Image, Alert } from 'react-native';
+import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
@@ -67,7 +66,7 @@ export default function ParknoPremiumScreen({ navigation }) {
           <Header navigation={navigation} />
           <View style={s.activeCard}>
             <LinearGradient
-              colors={['#10B981', '#14B8A6', '#2563EB']}
+              colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               style={[StyleSheet.absoluteFillObject, { borderRadius: radii.card }]}
             />
@@ -98,7 +97,7 @@ export default function ParknoPremiumScreen({ navigation }) {
         {/* Hero */}
         <View style={s.hero}>
           <LinearGradient
-            colors={['#10B981', '#14B8A6', '#2563EB']}
+            colors={['#4E96F0', '#5EA2F5', '#4E96F0']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={[StyleSheet.absoluteFillObject, { borderRadius: radii.hero }]}
           />
@@ -211,7 +210,7 @@ export default function ParknoPremiumScreen({ navigation }) {
       {/* Sticky bottom CTA with billing terms visible (not hidden in fine print) */}
       <View style={[s.ctaBar, { paddingBottom: insets.bottom + 12 }]}>
         <LinearGradient
-          colors={['rgba(247,247,242,0)', '#F7F7F2']}
+          colors={['rgba(31,42,57,0)', '#2B394C']}
           style={s.ctaFade}
           pointerEvents="none"
         />
@@ -299,7 +298,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.bgCardSolid,
     borderRadius: radii.md,
     padding: spacing.s4,
-    borderWidth: 1, borderColor: 'rgba(17,20,22,0.05)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
   },
   benefitIcon: {
     width: 38, height: 38, borderRadius: 19,
@@ -319,7 +318,7 @@ const s = StyleSheet.create({
   },
   planCardSelected: {
     borderColor: colors.accentBlue,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#3A4C68',
     ...shadow(2),
   },
   planTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.s3 },
@@ -335,7 +334,7 @@ const s = StyleSheet.create({
   planName: { ...typography.h3, fontSize: 16, color: colors.fg1 },
   planValue: { ...typography.caption, color: colors.fg3, marginTop: 2 },
   planBadge: {
-    backgroundColor: 'rgba(17,20,22,0.06)',
+    backgroundColor: '#50607A',
     borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3,
   },
   planBadgeSelected: { backgroundColor: 'rgba(78,167,185,0.16)' },
@@ -365,7 +364,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.bgCardSolid,
     borderRadius: radii.md,
     padding: spacing.s4,
-    borderWidth: 1, borderColor: 'rgba(17,20,22,0.05)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
   },
   faqQRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.s3 },
   faqQ: { ...typography.h3, fontSize: 15, color: colors.fg1, flex: 1 },
@@ -381,7 +380,7 @@ const s = StyleSheet.create({
   ctaBar: {
     position: 'absolute', left: 0, right: 0, bottom: 0,
     paddingHorizontal: spacing.s5, paddingTop: spacing.s4,
-    backgroundColor: '#F7F7F2',
+    backgroundColor: '#2B394C',
   },
   ctaFade: {
     position: 'absolute', left: 0, right: 0, top: -28, height: 28,
