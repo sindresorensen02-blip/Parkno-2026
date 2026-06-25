@@ -7,6 +7,12 @@ import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import {
+  useFonts,
+  HankenGrotesk_600SemiBold,
+  HankenGrotesk_700Bold,
+  HankenGrotesk_800ExtraBold,
+} from '@expo-google-fonts/hanken-grotesk';
 
 // Must be imported at app root so TaskManager.defineTask runs before any task fires
 import './src/tasks/geofenceTask';
@@ -204,6 +210,12 @@ function RootNavigator() {
   const { user, loading, devBypass } = useAuth();
   const navRef = useRef(null);
 
+  const [fontsLoaded] = useFonts({
+    HankenGrotesk_600SemiBold,
+    HankenGrotesk_700Bold,
+    HankenGrotesk_800ExtraBold,
+  });
+
   useProximityAlerts();
 
   // Register push token for this user so others can notify them
@@ -235,7 +247,7 @@ function RootNavigator() {
     return () => sub.remove();
   }, []);
 
-  if (loading) {
+  if (loading || !fontsLoaded) {
     return <View style={{ flex: 1, backgroundColor: '#2B394C', alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color="#5EA2F5" /></View>;
   }
 

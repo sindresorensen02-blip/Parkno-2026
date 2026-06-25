@@ -10,6 +10,7 @@
     "test": "node --test __tests__/search.test.js"
   },
   "dependencies": {
+    "@expo-google-fonts/hanken-grotesk": "^0.4.3",
     "@expo-google-fonts/inter": "^0.2.3",
     "@react-native-community/slider": "5.0.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
