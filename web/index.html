@@ -95,7 +95,7 @@
     }
     .nav-brand {
       display: inline-flex; align-items: center; gap: 8px;
-      font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: #111416;
+      font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: #0284FC;
       padding-right: 10px;
       text-decoration: none;
     }
@@ -104,7 +104,7 @@
       display: block; object-fit: contain; object-position: center;
       margin: -34px -10px -34px -16px;
     }
-    .nav-brand .pl { color: #00EBA7; }
+    .nav-brand .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .nav-link {
       background: transparent; border: 0; cursor: pointer;
       padding: 10px 14px; border-radius: 999px;
@@ -850,8 +850,8 @@
     }
     .foot-brand-row { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
     .foot-logo { width: 40px; height: 40px; object-fit: contain; display: block; }
-    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #fff; }
-    .foot-wordmark .pl { color: #00EBA7; }
+    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #0284FC; }
+    .foot-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .foot-row {
       width: 100%; margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
@@ -1050,17 +1050,22 @@
     .app-soon-card {
       position: relative;
       width: 100%; max-width: 420px;
-      padding: 32px 32px 28px;
       border-radius: 28px;
       background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 6px 16px rgba(0,0,0,0.08);
       text-align: left;
+      overflow: hidden;
       font: 600 16px/1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
       animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
     }
     .app-soon-card * { font-family: inherit; }
+    .app-soon-header {
+      position: relative;
+      display: flex; align-items: center;
+      padding: 28px 32px 0;
+    }
+    .app-soon-body { padding: 16px 32px 28px; }
     .app-soon-close {
       position: absolute; top: 14px; right: 14px;
       width: 36px; height: 36px; border-radius: 999px;
@@ -1071,13 +1076,17 @@
       transition: background 160ms ease;
     }
     .app-soon-close:hover { background: rgba(0,0,0,0.10); }
-    .app-soon-logo {
-      display: block; width: 120px; height: 120px;
-      object-fit: contain; object-position: center;
-      margin: -16px 0 -8px -22px;
+    .app-soon-brand {
+      display: inline-flex; align-items: center; gap: 12px;
     }
+    .app-soon-logo {
+      display: block; width: 40px; height: 40px;
+      object-fit: contain; object-position: center;
+    }
+    .app-soon-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #0284FC; }
+    .app-soon-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .app-soon-card h2 {
-      margin: 4px 0 0;
+      margin: 0;
       color: #111416;
       font: 600 26px/1.1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
@@ -1142,12 +1151,21 @@
       display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center;
     }
     .shero-left { position: relative; display: flex; flex-direction: column; gap: 26px; max-width: 760px; transform: translate(-30px, 10px); }
-    .shero-logo {
+    .shero-brand {
       position: absolute; left: -34px; top: -200px;
+      display: inline-flex; align-items: center; gap: 14px;
+    }
+    .shero-logo {
       width: 168px; height: 168px;
       display: block; object-fit: contain; object-position: left center;
       filter: drop-shadow(0 14px 26px rgba(17,33,31,0.18));
     }
+    .shero-wordmark {
+      font: 800 56px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.04em; color: #0284FC;
+      margin-left: -34px;
+    }
+    .shero-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .shero-badge {
       align-self: flex-start;
       display: inline-flex; align-items: center; gap: 8px;
@@ -1418,7 +1436,10 @@
 
         <!-- left column -->
         <div class="shero-left">
-          <img class="shero-logo shero-anim shero-d1" src="assets/parkno-logo-icon.png" alt="Parkno" width="96" height="96">
+          <div class="shero-brand shero-anim shero-d1">
+            <img class="shero-logo" src="assets/parkno-logo-icon.png" alt="" width="96" height="96">
+            <span class="shero-wordmark">park<span class="pl">no</span></span>
+          </div>
 
           <h1 class="shero-title shero-anim shero-d2" id="shero-title">
             Innkjørselen din,<br>
@@ -1663,19 +1684,23 @@
   <!-- "Last ned appen" coming-soon popup -->
   <div class="app-soon-overlay" id="app-soon-overlay" role="dialog" aria-modal="true" aria-labelledby="app-soon-title" hidden>
     <div class="app-soon-card">
-      <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
-      <div class="app-soon-brand">
-        <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="">
-        <span class="app-soon-wordmark">park<span class="pl">no</span></span>
+      <div class="app-soon-header">
+        <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
+        <div class="app-soon-brand">
+          <img class="app-soon-logo" src="assets/parkno-logo-clean.png" alt="">
+          <span class="app-soon-wordmark">park<span class="pl">no</span></span>
+        </div>
       </div>
-      <h2 id="app-soon-title">Appen kommer snart!</h2>
-      <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
-      <div class="app-soon-actions">
-        <button class="shero-btn app-soon-ok--ghost" type="button" id="app-soon-ok">Lukk</button>
-        <button class="shero-btn shero-btn--primary js-open-register" type="button" id="app-soon-host">
-          Bli Vert
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
+      <div class="app-soon-body">
+        <h2 id="app-soon-title">Appen kommer snart!</h2>
+        <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
+        <div class="app-soon-actions">
+          <button class="shero-btn app-soon-ok--ghost" type="button" id="app-soon-ok">Lukk</button>
+          <button class="shero-btn shero-btn--primary js-open-register" type="button" id="app-soon-host">
+            Bli Vert
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
