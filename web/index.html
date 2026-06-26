@@ -1023,6 +1023,16 @@
         box-shadow:
           0 16px 36px rgba(0,235,167,0.30),
           0 6px 14px rgba(0,0,0,0.22);
+        /* hidden until scrolled past the hero, and while a modal is open */
+        opacity: 0;
+        transform: translateY(120%);
+        pointer-events: none;
+        transition: opacity 220ms ease, transform 260ms cubic-bezier(.2,.7,.2,1);
+      }
+      body.cta-visible:not(.modal-open) .mobile-sticky-cta {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
       }
     }
 
@@ -1046,8 +1056,11 @@
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 6px 16px rgba(0,0,0,0.08);
       text-align: left;
+      font: 600 16px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
       animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
     }
+    .app-soon-card * { font-family: inherit; }
     .app-soon-close {
       position: absolute; top: 14px; right: 14px;
       width: 36px; height: 36px; border-radius: 999px;
@@ -1066,44 +1079,29 @@
     .app-soon-card h2 {
       margin: 4px 0 0;
       color: #111416;
-      font: 800 26px/1.1 Inter, system-ui, sans-serif;
-      letter-spacing: -0.03em;
+      font: 600 26px/1.1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
     }
     .app-soon-card p {
       margin: 12px 0 0;
       color: rgba(17,20,22,0.65);
-      font: 500 15px/1.5 Inter, system-ui, sans-serif;
+      font: 600 15px/1.5 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
     }
     .app-soon-card a { color: #00A87A; text-decoration: underline; }
     .app-soon-actions {
       display: flex; gap: 10px;
       margin-top: 22px;
     }
-    .app-soon-ok {
-      flex: 1; height: 52px;
-      margin-top: 0;
-      border: 0; border-radius: 999px;
-      cursor: pointer;
-      font: 700 14px/1 Inter, system-ui, sans-serif;
-      letter-spacing: -0.01em;
-      transition: transform 200ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1), background 160ms ease;
-    }
-    .app-soon-ok--primary {
-      background: linear-gradient(135deg, #00EBA7 0%, #0583FF 100%);
-      color: #23233C;
-      box-shadow: 0 12px 28px rgba(0,235,167,0.28);
-    }
-    .app-soon-ok--primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 36px rgba(0,235,167,0.34);
-    }
+    .app-soon-actions .shero-btn { flex: 1; }
     .app-soon-ok--ghost {
-      background: rgba(0,0,0,0.06);
-      color: rgba(17,20,22,0.75);
+      background: rgba(0,0,0,0.16);
+      color: rgba(17,20,22,0.85);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.08);
     }
     .app-soon-ok--ghost:hover {
-      background: rgba(0,0,0,0.10);
-      transform: translateY(-1px);
+      background: rgba(0,0,0,0.22);
+      transform: translateY(-2px);
     }
     @keyframes appSoonFadeIn {
       from { opacity: 0; }
@@ -1666,12 +1664,18 @@
   <div class="app-soon-overlay" id="app-soon-overlay" role="dialog" aria-modal="true" aria-labelledby="app-soon-title" hidden>
     <div class="app-soon-card">
       <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
-      <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="Parkno">
+      <div class="app-soon-brand">
+        <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="">
+        <span class="app-soon-wordmark">park<span class="pl">no</span></span>
+      </div>
       <h2 id="app-soon-title">Appen kommer snart!</h2>
       <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
       <div class="app-soon-actions">
-        <button class="app-soon-ok app-soon-ok--primary js-open-register" type="button" id="app-soon-host">Bli Vert</button>
-        <button class="app-soon-ok app-soon-ok--ghost" type="button" id="app-soon-ok">Greit, jeg venter</button>
+        <button class="shero-btn app-soon-ok--ghost" type="button" id="app-soon-ok">Lukk</button>
+        <button class="shero-btn shero-btn--primary js-open-register" type="button" id="app-soon-host">
+          Bli Vert
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -1753,6 +1757,7 @@
       const link = document.getElementById('download-app-link');
       const closeBtn = document.getElementById('app-soon-close');
       const okBtn = document.getElementById('app-soon-ok');
+      const hostBtn = document.getElementById('app-soon-host');
       if (!overlay || !link) return;
 
       let lastFocus = null;
@@ -1761,17 +1766,21 @@
         lastFocus = document.activeElement;
         overlay.hidden = false;
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
         (okBtn || closeBtn || overlay).focus();
       }
       function close() {
         overlay.hidden = true;
         document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
         if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
       }
 
       link.addEventListener('click', open);
       if (closeBtn) closeBtn.addEventListener('click', close);
       if (okBtn) okBtn.addEventListener('click', close);
+      // "Bli Vert" opens the register modal (via .js-open-register); close this popup too.
+      if (hostBtn) hostBtn.addEventListener('click', close);
       overlay.addEventListener('click', (event) => {
         if (event.target === overlay) close();
       });
@@ -1793,12 +1802,14 @@
         lastFocus = document.activeElement;
         overlay.hidden = false;
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
         const firstField = overlay.querySelector('input, select');
         (firstField || closeBtn || overlay).focus();
       }
       function close() {
         overlay.hidden = true;
         document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
         if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
       }
 
@@ -1810,6 +1821,27 @@
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !overlay.hidden) close();
       });
+    })();
+
+    // Sticky "Lei ut plassen din" CTA: reveal only after scrolling past the hero.
+    (function initStickyCta() {
+      const hero = document.getElementById('hjem');
+      if (!hero) return;
+      let ticking = false;
+      function update() {
+        ticking = false;
+        // Show once the hero is mostly scrolled past (its bottom rises above 40% of the viewport).
+        const past = hero.getBoundingClientRect().bottom < window.innerHeight * 0.4;
+        document.body.classList.toggle('cta-visible', past);
+      }
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
     })();
 
     // Custom country-code dropdown for the phone field
