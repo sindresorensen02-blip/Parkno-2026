@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Parkno — Innkjørselen din, tjener stille.</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Lei ut parkeringsplassen din i Bergen når du ikke bruker den. Parkno gir verifiserte sjåfører, automatiske utbetalinger og enkel administrasjon.">
   <meta name="theme-color" content="#f3f4f5">
   <link rel="canonical" href="https://parkno.no/">
@@ -38,8 +38,15 @@
     }
   </script>
   <style>
+    html {
+      /* clip is more reliable than hidden on iOS Safari for taming 100vw children
+         and it does not create a scroll container that breaks position: sticky */
+      overflow-x: clip;
+      -webkit-text-size-adjust: 100%; /* stop iOS from auto-inflating text on rotate */
+    }
     html, body {
-      margin: 0; min-height: 100%; overflow-x: hidden;
+      margin: 0; min-height: 100%;
+      overflow-x: hidden;
       background: #2B394C;
       font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       color: #111416;
@@ -247,6 +254,9 @@
     .section-overline {
       font: 600 13.2px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: #00EBA7;
     }
+    /* Scroll-spy overlines: gray when their section is not the active one in view */
+    .spy-overline { color: rgba(152,170,200,0.45); transition: color 280ms ease; }
+    .spy-overline.is-active { color: #00EBA7; }
     .section-title {
       font: 700 56px/1.04 Inter, system-ui, sans-serif;
       letter-spacing: -0.035em; color: #FFFFFF; margin: 14px 0 0;
@@ -306,7 +316,7 @@
       list-style: none; cursor: pointer;
       display: inline-flex; align-items: center; gap: 12px;
       padding: 14px 0;
-      font: 700 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em; color: #FFFFFF;
+      font: 700 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em; color: #98B6D8;
       transition: transform 180ms ease;
     }
     .steps-toggle > summary::-webkit-details-marker { display: none; }
@@ -343,7 +353,7 @@
     .trust-master-label {
       font: 700 15px/1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
-      color: #FFFFFF;
+      color: #98B6D8;
     }
     .trust-master > summary .chev {
       width: 20px; height: 20px; flex: none; color: #5EA2F5;
@@ -517,7 +527,8 @@
       background: #ffffff;
       color: #111416;
       padding: 0 14px;
-      font: 700 14px/1 Inter, system-ui, sans-serif;
+      /* 16px minimum prevents iOS Safari from auto-zooming the page on focus */
+      font: 700 16px/1 Inter, system-ui, sans-serif;
       outline: none;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
     }
@@ -635,7 +646,7 @@
     }
     .phone-input input:focus { box-shadow: none !important; }
     .host-form select option { background: #ffffff; color: #111416; }
-    .host-form button {
+    .host-form button[type="submit"] {
       min-height: 54px;
       border: 0;
       border-radius: 999px;
@@ -664,33 +675,12 @@
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
     }
-    .faq-master > summary {
-      list-style: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .faq-master > summary::-webkit-details-marker { display: none; }
-    .faq-master > summary::after {
-      content: '';
-      width: 12px;
-      height: 12px;
-      border-right: 2px solid #98B6D8;
-      border-bottom: 2px solid #98B6D8;
-      transform: rotate(45deg);
-      flex: 0 0 auto;
-      transition: transform 200ms ease;
-    }
-    .faq-master[open] > summary::after { transform: rotate(225deg); }
     .faq-list {
       display: grid;
       gap: 10px;
       margin-top: 22px;
     }
     .faq-list details {
-      border-bottom: 1px solid rgba(255,255,255,0.10);
       overflow: hidden;
     }
     .faq-list summary {
@@ -702,23 +692,20 @@
       color: #98B6D8;
       letter-spacing: -0.02em;
       display: flex;
+      width: fit-content;
+      min-width: min(100%, 27em);
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      justify-content: flex-start;
+      gap: 12px;
+      /* underline runs to a shared width matching the longest question */
+      border-bottom: 1px solid rgba(255,255,255,0.10);
     }
     .faq-list summary::-webkit-details-marker { display: none; }
-    .faq-list summary::after {
-      content: '';
-      width: 10px;
-      height: 10px;
-      border-right: 2px solid #98B6D8;
-      border-bottom: 2px solid #98B6D8;
-      transform: rotate(45deg);
-      margin-right: 8px;
-      flex: 0 0 auto;
-      transition: transform 200ms ease;
+    .faq-list summary .chev {
+      width: 20px; height: 20px; flex: none; color: #5EA2F5;
+      transition: transform 220ms cubic-bezier(.2,.7,.2,1);
     }
-    .faq-list details[open] summary::after { transform: rotate(225deg); }
+    .faq-list details[open] summary .chev { transform: rotate(180deg); }
     .faq-list p {
       margin: 0;
       padding: 0 20px 20px;
@@ -848,17 +835,40 @@
 
     /* footer */
     .foot {
-      margin-top: 64px; padding: 40px 0 8px;
-      display: flex; align-items: center; justify-content: space-between;
-      font: 500 12px/1.4 Inter; color: rgba(255,255,255,0.55); gap: 24px; flex-wrap: wrap;
+      margin-top: 80px;
+      /* full-bleed darker band so the footer is clearly distinct, flush to page bottom */
+      width: 100vw;
+      margin-left: calc(50% - 50vw); margin-bottom: -80px;
+      background: #0E1726;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 56px clamp(40px, 6vw, 96px) 60px;
+      /* keep footer content clear of the iPhone home-indicator with viewport-fit=cover */
+      padding-bottom: calc(60px + env(safe-area-inset-bottom));
+      padding-left: max(clamp(40px, 6vw, 96px), env(safe-area-inset-left));
+      padding-right: max(clamp(40px, 6vw, 96px), env(safe-area-inset-right));
     }
-    .foot .links { display: flex; gap: 20px; flex-wrap: wrap; }
-    .foot a {
-      min-height: 32px;
-      display: inline-flex;
-      align-items: center;
-      color: rgba(255,255,255,0.70);
-      text-decoration: none;
+    .foot-brand-row { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
+    .foot-logo { width: 40px; height: 40px; object-fit: contain; display: block; }
+    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #fff; }
+    .foot-wordmark .pl { color: #00EBA7; }
+    .foot-row {
+      width: 100%; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px clamp(40px, 8vw, 120px); flex-wrap: wrap;
+    }
+    .foot-links {
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(28px, 4vw, 56px); flex-wrap: wrap; flex: 1;
+    }
+    .foot-links a {
+      font: 500 15px/1.3 Inter, system-ui, sans-serif;
+      color: rgba(255,255,255,0.72); text-decoration: none;
+      transition: color 160ms ease;
+    }
+    .foot-links a:hover { color: #fff; }
+    .foot-meta {
+      font: 500 13px/1.5 Inter, system-ui, sans-serif;
+      color: rgba(255,255,255,0.45); flex: none;
     }
     .mobile-sticky-cta { display: none; }
 
@@ -990,8 +1000,8 @@
         font-size: clamp(16px, 5vw, 20px);
         overflow-wrap: anywhere;
       }
-      .foot { align-items: flex-start; flex-direction: column; padding-bottom: 24px; }
-      .foot .links { gap: 14px; }
+      .foot { padding-bottom: 24px; }
+      .foot-row { flex-direction: column; align-items: flex-start; gap: 16px; }
       .mobile-sticky-cta {
         position: fixed;
         left: 14px;
@@ -1248,6 +1258,8 @@
     @media (max-width: 900px) {
       .shero { padding: 56px 18px 96px; }
       .shero-inner { grid-template-columns: 1fr; gap: 30px; }
+      /* drop the desktop nudge so hero content stays aligned to the column on mobile */
+      .shero-left { transform: none; max-width: 100%; }
     }
     @media (max-width: 640px) {
       .shero-ctas { width: 100%; }
@@ -1355,15 +1367,17 @@
       animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
     }
     .register-close {
-      position: absolute; top: 14px; right: 14px;
+      position: absolute; top: 14px; right: 14px; z-index: 5;
       width: 36px; height: 36px; border-radius: 999px;
-      border: 0; background: rgba(0,0,0,0.06); color: rgba(17,20,22,0.55);
+      border: 0; background: rgba(255,255,255,0.85); color: rgba(17,20,22,0.55);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
       font: 500 22px/1 Inter, system-ui, sans-serif; cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
       transition: background 160ms ease;
     }
     .register-close:hover { background: rgba(0,0,0,0.10); }
     .register-intro {
+      margin-top: 34px;
       padding: 22px 22px 24px;
       border-radius: 24px;
       background: #f3f4f5;
@@ -1432,12 +1446,7 @@
         <div class="register-intro">
           <div class="section-overline">Tidlig tilgang for utleiere</div>
         <h2 id="host-intake-title">Fortell oss hvor plassen er. Vi svarer personlig.</h2>
-        <p>Ingen tung registrering før produktet er klart. Send en kort interesse fra siden, så tar Parkno kontakt med neste steg for Bergen-lanseringen.</p>
-        <div class="intake-steps" aria-label="Neste steg">
-          <div><span>1</span>Du sender område og type plass.</div>
-          <div><span>2</span>Vi vurderer etterspørsel i nabolaget.</div>
-          <div><span>3</span>Du får personlig svar før plassen åpnes.</div>
-        </div>
+        <p>Ingen tung registrering før produktet er klart. Send en kort interesse fra siden, så tar Parkno kontakt med neste steg.</p>
       </div>
 
       <form class="host-form" id="host-intake-form">
@@ -1497,7 +1506,7 @@
     <section class="parkno-content-section" aria-label="I tall og slik fungerer det" data-site-section="3">
 
       <div class="section" id="how">
-        <div class="section-overline">Slik fungerer det</div>
+        <div class="section-overline spy-overline" data-spy="how">Slik fungerer det</div>
         <h2 class="section-title">Annonsér én gang. Tjen mens du er på jobb, sover eller er bortreist.</h2>
         <p class="section-lede">En tom plass tjener ingenting. Annonsér på fem minutter og la sjåfører reservere på telefonen — du bestemmer selv når den er tilgjengelig.</p>
 
@@ -1534,8 +1543,8 @@
 
     <!-- Section 6: Conversion -->
     <section class="parkno-content-section" aria-label="Utleiere og start" data-site-section="6">
-      <section class="trust-panel" aria-labelledby="trust-title">
-        <div class="section-overline">Trygghet først</div>
+      <section class="trust-panel" id="trygghet" aria-labelledby="trust-title">
+        <div class="section-overline spy-overline" data-spy="trygghet">Trygghet først</div>
         <h2 class="section-title" id="trust-title">Bygget for å fjerne den lille tvilen før den blir stor.</h2>
         <p class="section-lede">Parkno skal føles enkelt, men aldri tilfeldig. Hver reservasjon har tydelig sjåfør, bil, betaling og tidsvindu.</p>
 
@@ -1546,7 +1555,7 @@
           </summary>
           <div class="trust-grid">
             <div class="trust-item">
-              <div class="mark mark--img"><img src="assets/bankid.png" alt="BankID" width="34" height="34"></div>
+              <div class="mark mark--img"><img src="assets/bankid-round.png" alt="BankID" width="34" height="34"></div>
               <h3>Verifiserte brukere</h3>
               <p>BankID er planlagt for konto og vertsgodkjenning, med bil og skiltnummer knyttet til reservasjonen.</p>
             </div>
@@ -1566,38 +1575,34 @@
 
       </section>
 
-      <section class="faq-panel" aria-labelledby="faq-title">
-        <details class="faq-master">
-          <summary>
-            <div>
-              <div class="section-overline">Vanlige spørsmål</div>
-              <h2 class="section-title" id="faq-title">Det du lurer på før du sier ja.</h2>
-            </div>
-          </summary>
+      <section class="faq-panel" id="faq" aria-labelledby="faq-title">
+        <div class="faq-head">
+          <div class="section-overline spy-overline" data-spy="faq">Vanlige spørsmål</div>
+          <h2 class="section-title" id="faq-title">Det du lurer på før du sier ja.</h2>
+        </div>
           <div class="faq-list">
           <details>
-            <summary>Må jeg være tilgjengelig når noen parkerer?</summary>
+            <summary><span>Må jeg være tilgjengelig når noen parkerer?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary>
             <p>Nei. Poenget er at sjåføren reserverer et tydelig tidsvindu, betaler før ankomst og ser instruksjonene i appen. Du bestemmer når plassen er ledig.</p>
           </details>
           <details>
-            <summary>Hva skjer hvis sjåføren blir stående for lenge?</summary>
+            <summary><span>Hva skjer hvis sjåføren blir stående for lenge?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary>
             <p>Reservasjoner er tidsstyrte. Neste produktsteg er varsler, overtidshåndtering og en tydelig historikk slik at verten slipper å følge opp manuelt.</p>
           </details>
           <details>
-            <summary>Hvordan vet jeg hvem som bruker plassen?</summary>
+            <summary><span>Hvordan vet jeg hvem som bruker plassen?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary>
             <p>Parkno er designet rundt verifiserte kontoer, bilinformasjon og skiltnummer på reservasjonen. Verten skal alltid se hvem som har booket.</p>
           </details>
           <details>
-            <summary>Koster det noe å legge ut plassen?</summary>
+            <summary><span>Koster det noe å legge ut plassen?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary>
             <p>Nei. Modellen er gratis annonsering og 12 % Parkno-gebyr på fullførte reservasjoner. Det gjør terskelen lav for tidlige Bergen-verter.</p>
           </details>
           </div>
-        </details>
       </section>
 
       <section class="contact-card" id="kontakt" aria-labelledby="kontakt-title">
         <div>
-          <div class="section-overline">Kontakt</div>
+          <div class="section-overline spy-overline" data-spy="kontakt">Kontakt</div>
           <h2 id="kontakt-title">Snakk med Parkno.</h2>
           <p>Har du spørsmål om utleie, reservasjoner eller samarbeid, kan du kontakte oss direkte på e-post.</p>
         </div>
@@ -1608,7 +1613,21 @@
       </section>
 
       <footer class="foot">
-        <div>Org.nr 937690908 · Bergen, Norway</div>
+        <div class="foot-row">
+          <a class="foot-brand-row" href="#hjem" aria-label="Parkno – til toppen">
+            <img class="foot-logo" src="assets/parkno-logo-clean.png" alt="">
+            <span class="foot-wordmark">park<span class="pl">no</span></span>
+          </a>
+
+          <nav class="foot-links" aria-label="Innhold">
+            <a href="#how">Slik fungerer det</a>
+            <a href="#trygghet">For utleiere</a>
+            <a href="#kontakt" class="js-kontakt-link">Kontakt</a>
+            <a href="#" id="download-app-link">Last ned appen</a>
+          </nav>
+
+          <div class="foot-meta">© <span id="foot-year">2026</span> Parkno · Org.nr 937 690 908 · Bergen, Norge</div>
+        </div>
       </footer>
     </section>
   </main>
@@ -1626,11 +1645,50 @@
   </div>
 
   <script>
-    function scrollToId(id) {
+    // Keep footer copyright year current
+    (function () {
+      var y = document.getElementById('foot-year');
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+
+    // Scroll-spy: highlight the overline of the section currently centered in view.
+    (function initOverlineSpy() {
+      const overlines = Array.from(document.querySelectorAll('.spy-overline[data-spy]'));
+      if (!overlines.length) return;
+      const sections = overlines
+        .map((ol) => ({ ol, el: document.getElementById(ol.dataset.spy) }))
+        .filter((s) => s.el);
+
+      function update() {
+        const mid = window.innerHeight / 2;
+        let best = null, bestDist = Infinity;
+        sections.forEach((s) => {
+          const r = s.el.getBoundingClientRect();
+          // only consider sections at least partly on screen
+          if (r.bottom < 0 || r.top > window.innerHeight) return;
+          const center = r.top + r.height / 2;
+          const dist = Math.abs(center - mid);
+          if (dist < bestDist) { bestDist = dist; best = s; }
+        });
+        sections.forEach((s) => s.ol.classList.toggle('is-active', s === best));
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    })();
+
+    function scrollToId(id, block = 'start') {
       const el = document.getElementById(id);
       if (!el) return;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block });
     }
 
     function flashKontakt() {
@@ -1782,7 +1840,9 @@
         const id = link.getAttribute('href').slice(1);
         if (!id) return;
         event.preventDefault();
-        scrollToId(id);
+        // Footer links center the target on screen; other anchors align to top.
+        const block = link.closest('.foot') ? 'center' : 'start';
+        scrollToId(id, block);
         window.history.pushState(null, '', `#${id}`);
       });
     });
