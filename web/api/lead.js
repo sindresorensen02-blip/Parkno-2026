@@ -47,10 +47,15 @@ function validate(role, b) {
     required('vehicle', 'bil');
     required('plate', 'skiltnummer');
   } else if (role === 'host') {
-    required('space_address', 'adresse for plassen');
-    required('space_type', 'type plass');
-    required('availability', 'tilgjengelighet');
-    required('expected_price', 'ønsket pris');
+    // The landing-page modal (source 'index-hero') is a lightweight interest
+    // capture — name/email/phone only. The full register.html host form still
+    // requires the spot details so we have enough to verify and list it.
+    if (b.source !== 'index-hero') {
+      required('space_address', 'adresse for plassen');
+      required('space_type', 'type plass');
+      required('availability', 'tilgjengelighet');
+      required('expected_price', 'ønsket pris');
+    }
   } else {
     errors.push('kontotype');
   }

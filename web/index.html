@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://flagcdn.com" crossorigin>
   <link rel="stylesheet" href="colors_and_type.css">
   <link rel="icon" href="assets/parkno-logo-icon.png">
   <script type="application/ld+json">
@@ -39,7 +40,7 @@
   <style>
     html, body {
       margin: 0; min-height: 100%; overflow-x: hidden;
-      background: #f3f4f5;
+      background: #2B394C;
       font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       color: #111416;
       -webkit-font-smoothing: antialiased;
@@ -142,14 +143,6 @@
     .page {
       position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 80px;
     }
-    .parkno-content-section,
-    .trust-panel,
-    .host-intake,
-    .contact-card,
-    .foot {
-      content-visibility: auto;
-      contain-intrinsic-size: 1px 720px;
-    }
 
     .hero {
       display: grid; grid-template-columns: 1fr;
@@ -244,25 +237,29 @@
 
     /* — Section style — */
     .section { padding: 80px 0 24px; }
+    .section#how {
+      padding: 34px 36px;
+      margin-top: 56px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
     .section-overline {
-      font: 600 11px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: #00EBA7;
+      font: 600 13.2px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: #00EBA7;
     }
     .section-title {
       font: 700 56px/1.04 Inter, system-ui, sans-serif;
-      letter-spacing: -0.035em; color: #111416; margin: 14px 0 0;
+      letter-spacing: -0.035em; color: #FFFFFF; margin: 14px 0 0;
       max-width: 760px; text-wrap: balance;
     }
     .section-lede {
-      font: 500 18px/1.5 Inter; color: rgba(17,20,22,0.65); margin: 18px 0 0; max-width: 560px;
+      font: 500 18px/1.5 Inter; color: rgba(255,255,255,0.65); margin: 18px 0 0; max-width: 560px;
     }
 
     /* Stat band */
     .stats {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
-      margin-top: 48px; padding: 28px 32px; border-radius: 28px;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      margin-top: 48px; padding: 28px 0;
     }
     .stat { padding: 0 18px; border-left: 1px solid rgba(0,0,0,0.08); }
     .stat:first-child { border-left: 0; padding-left: 0; }
@@ -277,26 +274,24 @@
     /* — How it works — */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
     .step {
-      padding: 28px; border-radius: 28px;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      padding: 28px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       position: relative; overflow: hidden;
       min-height: 240px; display: flex; flex-direction: column;
     }
-    .step.mist { background: rgba(5,131,255,0.06); border-color: rgba(5,131,255,0.12); }
-    .step.silver { background: rgba(0,235,167,0.05); border-color: rgba(0,235,167,0.10); }
     .step .num {
       width: 36px; height: 36px; border-radius: 999px; background: #00EBA7; color: #23233C;
       display: inline-flex; align-items: center; justify-content: center;
       font: 800 16px/1 Inter; letter-spacing: -0.04em;
     }
     .step h3 {
-      font: 700 22px/1.2 Inter; letter-spacing: -0.025em; color: #111416;
+      font: 700 22px/1.2 Inter; letter-spacing: -0.025em; color: #FFFFFF;
       margin: 22px 0 0;
     }
     .step p {
-      font: 500 14px/1.5 Inter; color: rgba(17,20,22,0.65); margin: 10px 0 0;
+      font: 500 14px/1.5 Inter; color: #98B6D8; margin: 10px 0 0;
     }
     .step .meta {
       margin-top: auto; padding-top: 16px;
@@ -305,27 +300,68 @@
       display: inline-flex; align-items: center; gap: 6px;
     }
 
+    /* steps disclosure (dropdown) */
+    .steps-toggle { margin-top: 32px; }
+    .steps-toggle > summary {
+      list-style: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 14px 0;
+      font: 700 15px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em; color: #FFFFFF;
+      transition: transform 180ms ease;
+    }
+    .steps-toggle > summary::-webkit-details-marker { display: none; }
+    .steps-toggle > summary:hover { transform: translateY(-1px); }
+    .steps-toggle > summary .chev {
+      width: 20px; height: 20px; flex: none; color: #5EA2F5;
+      transition: transform 220ms cubic-bezier(.2,.7,.2,1);
+    }
+    .steps-toggle[open] > summary .chev { transform: rotate(180deg); }
+    .steps-toggle .steps { margin-top: 22px; }
+
     /* conversion system */
     .trust-panel {
       margin: 56px 0 0;
-      padding: 34px;
-      border-radius: 34px;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      padding: 34px 36px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
     }
+    .trust-master {
+      margin-top: 24px;
+    }
+    .trust-master > summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      transition: transform 180ms ease;
+    }
+    .trust-master > summary::-webkit-details-marker { display: none; }
+    .trust-master > summary:hover { transform: translateY(-1px); }
+    .trust-master-label {
+      font: 700 15px/1 Inter, system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+    }
+    .trust-master > summary .chev {
+      width: 20px; height: 20px; flex: none; color: #5EA2F5;
+      transition: transform 220ms cubic-bezier(.2,.7,.2,1);
+    }
+    .trust-master[open] > summary .chev { transform: rotate(180deg); }
     .trust-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
-      margin-top: 24px;
+      margin-top: 12px;
     }
     .trust-item {
       min-height: 148px;
-      padding: 20px;
+      padding: 22px 20px;
       border-radius: 24px;
-      background: #f3f4f5;
-      border: 1px solid rgba(0,0,0,0.07);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
     }
     .trust-item .mark {
       width: 34px;
@@ -338,16 +374,32 @@
       color: #23233C;
       font: 800 15px/1 Inter, system-ui, sans-serif;
     }
+    .trust-item .mark--img {
+      overflow: hidden;
+      padding: 0;
+    }
+    .trust-item .mark--img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 999px;
+      display: block;
+    }
+    .trust-item .mark--icon svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
     .trust-item h3 {
       margin: 16px 0 0;
       font: 800 17px/1.15 Inter, system-ui, sans-serif;
       letter-spacing: -0.025em;
-      color: #111416;
+      color: #FFFFFF;
     }
     .trust-item p {
       margin: 8px 0 0;
       font: 500 13px/1.45 Inter, system-ui, sans-serif;
-      color: rgba(17,20,22,0.65);
+      color: #98B6D8;
     }
     .launch-strip {
       margin-top: 18px;
@@ -475,6 +527,113 @@
       box-shadow: 0 0 0 4px rgba(0,235,167,0.12);
     }
     .host-form input::placeholder { color: rgba(17,20,22,0.30); }
+    .phone-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+    /* country-code custom dropdown */
+    .phone-cc { position: relative; flex: 0 0 auto; }
+    .phone-cc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 50px;
+      padding: 0 12px;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 16px;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .phone-cc-btn:focus-visible {
+      border-color: rgba(0,235,167,0.60);
+      box-shadow: 0 0 0 4px rgba(0,235,167,0.12);
+      outline: none;
+    }
+    .phone-cc-flag {
+      width: 22px; height: 16px;
+      border-radius: 3px;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .phone-cc-chev {
+      width: 16px; height: 16px; color: rgba(17,20,22,0.45);
+      transition: transform 200ms ease;
+    }
+    .phone-cc-btn[aria-expanded="true"] .phone-cc-chev { transform: rotate(180deg); }
+    .phone-cc-list {
+      position: absolute;
+      z-index: 10;
+      top: calc(100% + 6px);
+      left: 0;
+      margin: 0;
+      padding: 6px;
+      list-style: none;
+      width: 240px;
+      max-height: 260px;
+      overflow-y: auto;
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.10);
+    }
+    .phone-cc-list[hidden] { display: none; }
+    .phone-cc-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font: 700 13px/1 Inter, system-ui, sans-serif;
+      color: #111416;
+    }
+    .phone-cc-list li:hover,
+    .phone-cc-list li[aria-selected="true"] { background: rgba(0,235,167,0.12); }
+    .phone-cc-list li img {
+      width: 22px; height: 16px;
+      border-radius: 3px;
+      object-fit: cover;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .phone-cc-list li .name { flex: 1 1 auto; }
+    .phone-cc-list li .code { color: rgba(17,20,22,0.50); font-weight: 800; }
+    /* number box with locked dial-code prefix */
+    .phone-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .phone-input:focus-within {
+      border-color: rgba(0,235,167,0.60);
+      box-shadow: 0 0 0 4px rgba(0,235,167,0.12);
+    }
+    .phone-prefix {
+      flex: 0 0 auto;
+      padding: 0 4px 0 14px;
+      font: 800 14px/1 Inter, system-ui, sans-serif;
+      color: rgba(17,20,22,0.55);
+      user-select: none;
+    }
+    .phone-input input {
+      flex: 1 1 auto;
+      min-width: 0;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      padding-left: 6px;
+    }
+    .phone-input input:focus { box-shadow: none !important; }
     .host-form select option { background: #ffffff; color: #111416; }
     .host-form button {
       min-height: 54px;
@@ -500,21 +659,38 @@
     }
     .faq-panel {
       margin: 42px 0 0;
-      padding: 30px;
-      border-radius: 34px;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      padding: 34px 36px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
     }
+    .faq-master > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .faq-master > summary::-webkit-details-marker { display: none; }
+    .faq-master > summary::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-right: 2px solid #98B6D8;
+      border-bottom: 2px solid #98B6D8;
+      transform: rotate(45deg);
+      flex: 0 0 auto;
+      transition: transform 200ms ease;
+    }
+    .faq-master[open] > summary::after { transform: rotate(225deg); }
     .faq-list {
       display: grid;
       gap: 10px;
       margin-top: 22px;
     }
     .faq-list details {
-      border-radius: 22px;
-      background: #f3f4f5;
-      border: 1px solid rgba(0,0,0,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
       overflow: hidden;
     }
     .faq-list summary {
@@ -523,7 +699,7 @@
       cursor: pointer;
       list-style: none;
       font: 800 15px/1.25 Inter, system-ui, sans-serif;
-      color: #111416;
+      color: #98B6D8;
       letter-spacing: -0.02em;
       display: flex;
       align-items: center;
@@ -532,23 +708,22 @@
     }
     .faq-list summary::-webkit-details-marker { display: none; }
     .faq-list summary::after {
-      content: '+';
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #00EBA7;
-      color: #23233C;
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid #98B6D8;
+      border-bottom: 2px solid #98B6D8;
+      transform: rotate(45deg);
+      margin-right: 8px;
       flex: 0 0 auto;
+      transition: transform 200ms ease;
     }
-    .faq-list details[open] summary::after { content: '-'; }
+    .faq-list details[open] summary::after { transform: rotate(225deg); }
     .faq-list p {
       margin: 0;
       padding: 0 20px 20px;
       font: 500 14px/1.5 Inter, system-ui, sans-serif;
-      color: rgba(17,20,22,0.65);
+      color: #6E809B;
       max-width: 760px;
     }
 
@@ -610,11 +785,10 @@
     .contact-card {
       scroll-margin-top: 96px;
       margin: 36px 0 0;
-      padding: 34px 40px;
-      border-radius: 34px;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      padding: 34px 36px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -625,34 +799,10 @@
       animation: kontaktFlash 1.7s cubic-bezier(.2,.7,.2,1);
     }
     @keyframes kontaktFlash {
-      0% {
-        box-shadow:
-          0 0 0 0 rgba(0,235,167,0),
-          0 4px 16px rgba(0,0,0,0.07);
-        border-color: rgba(0,0,0,0.07);
-        transform: scale(1);
-      }
-      18% {
-        box-shadow:
-          0 0 0 10px rgba(0,235,167,0.28),
-          0 24px 48px rgba(5,131,255,0.22);
-        border-color: rgba(0,235,167,0.55);
-        transform: scale(1.012);
-      }
-      55% {
-        box-shadow:
-          0 0 0 22px rgba(5,131,255,0.0),
-          0 18px 38px rgba(5,131,255,0.14);
-        border-color: rgba(5,131,255,0.4);
-        transform: scale(1.005);
-      }
-      100% {
-        box-shadow:
-          0 0 0 0 rgba(0,235,167,0),
-          0 4px 16px rgba(0,0,0,0.07);
-        border-color: rgba(0,0,0,0.07);
-        transform: scale(1);
-      }
+      0% { transform: scale(1); opacity: 1; }
+      18% { transform: scale(1.012); opacity: 0.75; }
+      55% { transform: scale(1.005); opacity: 0.9; }
+      100% { transform: scale(1); opacity: 1; }
     }
     @media (prefers-reduced-motion: reduce) {
       .contact-card.is-kontakt-flash { animation: none; }
@@ -661,26 +811,26 @@
     .contact-card h2 {
       font: 700 36px/1.08 Inter, system-ui, sans-serif;
       letter-spacing: -0.035em;
-      color: #111416;
+      color: #FFFFFF;
       margin: 10px 0 0;
     }
     .contact-card p {
       font: 500 15px/1.5 Inter, system-ui, sans-serif;
-      color: rgba(17,20,22,0.65);
+      color: #98B6D8;
       margin: 10px 0 0;
       max-width: 460px;
     }
     .contact-card a {
-      color: #111416;
+      color: #FFFFFF;
       text-decoration: none;
     }
     .contact-email {
       flex-shrink: 0;
       min-width: min(100%, 300px);
       padding: 20px 22px;
-      border-radius: 24px;
-      background: rgba(0,235,167,0.12);
-      border: 1px solid rgba(0,235,167,0.20);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
     }
     .contact-email .label {
       font: 700 10px/1.2 Inter, system-ui, sans-serif;
@@ -693,21 +843,21 @@
       margin-top: 8px;
       font: 800 20px/1.15 Inter, system-ui, sans-serif;
       letter-spacing: -0.025em;
-      color: #111416;
+      color: #FFFFFF;
     }
 
     /* footer */
     .foot {
       margin-top: 64px; padding: 40px 0 8px;
       display: flex; align-items: center; justify-content: space-between;
-      font: 500 12px/1.4 Inter; color: rgba(17,20,22,0.45); gap: 24px; flex-wrap: wrap;
+      font: 500 12px/1.4 Inter; color: rgba(255,255,255,0.55); gap: 24px; flex-wrap: wrap;
     }
     .foot .links { display: flex; gap: 20px; flex-wrap: wrap; }
     .foot a {
       min-height: 32px;
       display: inline-flex;
       align-items: center;
-      color: rgba(17,20,22,0.60);
+      color: rgba(255,255,255,0.70);
       text-decoration: none;
     }
     .mobile-sticky-cta { display: none; }
@@ -746,7 +896,7 @@
         grid-template-columns: 1fr;
       }
       .zone-list { justify-content: flex-start; }
-      .contact-card { align-items: flex-start; flex-direction: column; padding: 28px 24px; }
+      .contact-card { align-items: flex-start; flex-direction: column; padding: 28px 24px; border-radius: 28px; }
       .contact-card h2 { font-size: 30px; }
     }
     @media (max-width: 640px) {
@@ -811,6 +961,7 @@
       .stat:first-child { border-top: 0; padding-top: 4px; }
       .stat .v { font-size: 31px; }
       .trust-panel,
+      .section#how,
       .host-intake {
         margin-top: 42px;
         padding: 24px 18px;
@@ -948,12 +1099,172 @@
       .bg-blobs span { will-change: auto; }
     }
 
+    /* — Full-screen splash hero (light mint glass) — */
+    .shero {
+      position: relative; z-index: 1;
+      width: 100vw;
+      margin: 0 calc(50% - 50vw);
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex; align-items: center;
+      padding: 64px 24px 84px;
+      overflow: hidden;
+      background:
+        radial-gradient(900px 520px at 12% 0%, rgba(0,235,167,0.13), transparent 60%),
+        radial-gradient(820px 540px at 92% 16%, rgba(5,131,255,0.10), transparent 60%),
+        linear-gradient(180deg, #F8FAF7 0%, #EAF0EC 58%, #D8EEF2 100%);
+    }
+    .shero-inner {
+      width: 100%; max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center;
+    }
+    .shero-left { position: relative; display: flex; flex-direction: column; gap: 26px; max-width: 760px; transform: translate(-30px, 10px); }
+    .shero-logo {
+      position: absolute; left: -34px; top: -200px;
+      width: 168px; height: 168px;
+      display: block; object-fit: contain; object-position: left center;
+      filter: drop-shadow(0 14px 26px rgba(17,33,31,0.18));
+    }
+    .shero-badge {
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(255,255,255,0.62);
+      -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.6); box-shadow: var(--shadow-1, 0 2px 4px rgba(17,20,22,0.08));
+      font: 700 11px/1 Inter, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: #34413E;
+    }
+    .shero-badge svg { width: 14px; height: 14px; color: #00C58E; fill: #00EBA7; }
+    .shero-title {
+      margin: 0;
+      font: 700 clamp(40px, 6.4vw, 76px)/1.02 Inter, -apple-system, system-ui, sans-serif;
+      letter-spacing: -0.03em; color: #17211F;
+    }
+    .shero-title .grad {
+      background: linear-gradient(120deg, #00C58E 0%, #00EBA7 55%, #2BD3B0 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .shero-sub {
+      margin: 0; max-width: 30em;
+      font: 400 clamp(17px, 2.2vw, 20px)/1.5 Inter, system-ui, sans-serif;
+      color: #34413E; text-wrap: balance;
+    }
+    .shero-ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+    .shero-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 52px; padding: 0 26px; border-radius: 999px;
+      font: 600 16px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+      transition: transform 180ms var(--ease-spring, ease), background 180ms ease, box-shadow 180ms ease;
+    }
+    .shero-btn svg { width: 18px; height: 18px; }
+    .shero-btn--primary {
+      background: #00EBA7; color: #23233C;
+      box-shadow: 0 10px 24px rgba(0,235,167,0.34), 0 2px 6px rgba(0,0,0,0.10);
+    }
+    .shero-btn--primary svg { transition: transform 180ms ease; }
+    .shero-btn--primary:hover { background: #06FFBA; transform: translateY(-2px); }
+    .shero-btn--primary:hover svg { transform: translateX(3px); }
+    .shero-btn--ghost {
+      background: rgba(255,255,255,0.6); color: #17211F; border-color: rgba(17,33,31,0.12);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    }
+    .shero-btn--ghost:hover { background: rgba(255,255,255,0.85); transform: translateY(-2px); }
+
+    .shero-right { display: flex; flex-direction: column; gap: 18px; }
+    .shero-duo {
+      display: block; width: 100%; height: auto;
+      max-width: 640px; margin-left: auto;
+      filter: drop-shadow(0 36px 60px rgba(17,33,31,0.22)) drop-shadow(0 10px 20px rgba(17,33,31,0.12));
+    }
+    .shero-card {
+      position: relative; overflow: hidden; border-radius: 28px;
+      background: rgba(255,255,255,0.62);
+      -webkit-backdrop-filter: blur(26px) saturate(150%); backdrop-filter: blur(26px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.65);
+      box-shadow: var(--shadow-3, 0 22px 44px rgba(17,20,22,0.16), 0 6px 14px rgba(17,20,22,0.08));
+    }
+    .shero-stats { padding: 28px; }
+    .shero-stats::after {
+      content: ""; position: absolute; top: -60px; right: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(0,235,167,0.16); pointer-events: none;
+    }
+    .shero-stat-head { position: relative; display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
+    .shero-stat-icon {
+      width: 48px; height: 48px; border-radius: 16px; flex: none;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,235,167,0.16); color: #00A87A;
+    }
+    .shero-stat-icon svg { width: 24px; height: 24px; }
+    .shero-stat-num { font: 800 30px/1 Inter, system-ui, sans-serif; letter-spacing: -0.02em; color: #17211F; }
+    .shero-stat-label { margin-top: 4px; font: 500 14px/1 Inter, system-ui, sans-serif; color: #73817D; }
+    .shero-prog { position: relative; margin-bottom: 24px; }
+    .shero-prog-row { display: flex; justify-content: space-between; margin-bottom: 10px; font: 500 14px/1 Inter, system-ui, sans-serif; }
+    .shero-prog-row .k { color: #73817D; }
+    .shero-prog-row .v { color: #17211F; font-weight: 600; }
+    .shero-prog-track { height: 8px; border-radius: 999px; background: rgba(17,33,31,0.08); overflow: hidden; }
+    .shero-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #00C58E, #00EBA7); }
+    .shero-divider { position: relative; height: 1px; background: rgba(17,33,31,0.10); margin-bottom: 20px; }
+    .shero-mini { position: relative; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; }
+    .shero-mini-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .shero-mini-item .v { font: 700 18px/1 Inter, system-ui, sans-serif; color: #17211F; }
+    .shero-mini-item .l { font: 600 10px/1.2 Inter, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: #73817D; }
+    .shero-mini-sep { width: 1px; height: 32px; background: rgba(17,33,31,0.10); margin: 0 auto; }
+    .shero-pills { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .shero-pill {
+      display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.6); border: 1px solid rgba(17,33,31,0.08);
+      font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: #34413E;
+    }
+    .shero-pill svg { width: 12px; height: 12px; color: #00A87A; }
+    .shero-dot { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 8px; height: 8px; }
+    .shero-dot::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #00EBA7; animation: sheroPing 1.6s cubic-bezier(0,0,0.2,1) infinite; }
+    .shero-dot::after { content: ""; position: relative; width: 8px; height: 8px; border-radius: 50%; background: #00C58E; }
+    .shero-marquee { padding: 22px 0; }
+    .shero-marquee h3 { margin: 0 0 16px; padding: 0 28px; font: 600 13px/1 Inter, system-ui, sans-serif; color: #73817D; }
+    .shero-marquee-track {
+      position: relative; display: flex; overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+    }
+    .shero-marquee-row { display: flex; gap: 36px; white-space: nowrap; padding: 0 18px; animation: sheroMarquee 36s linear infinite; }
+    .shero-chip { display: inline-flex; align-items: center; gap: 7px; color: #34413E; font: 700 16px/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em; opacity: 0.62; transition: opacity 180ms ease; }
+    .shero-chip:hover { opacity: 1; }
+    .shero-chip svg { width: 16px; height: 16px; color: #00A87A; }
+    .shero-scroll {
+      position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+      display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+      color: #73817D; font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    }
+    .shero-scroll svg { width: 20px; height: 20px; animation: sheroBob 1.8s ease-in-out infinite; }
+    .shero-anim { opacity: 0; animation: sheroFade 0.8s var(--ease-standard, ease-out) forwards; }
+    .shero-d1 { animation-delay: 0.05s; } .shero-d2 { animation-delay: 0.15s; }
+    .shero-d3 { animation-delay: 0.25s; } .shero-d4 { animation-delay: 0.35s; } .shero-d5 { animation-delay: 0.45s; }
+    @keyframes sheroFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes sheroMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes sheroPing { 75%, 100% { transform: scale(2.4); opacity: 0; } }
+    @keyframes sheroBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    @media (max-width: 900px) {
+      .shero { padding: 56px 18px 96px; }
+      .shero-inner { grid-template-columns: 1fr; gap: 30px; }
+    }
+    @media (max-width: 640px) {
+      .shero-ctas { width: 100%; }
+      .shero-btn { flex: 1; }
+      .shero-title { font-size: clamp(34px, 11vw, 50px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .shero-anim { animation: none; opacity: 1; transform: none; }
+      .shero-marquee-row, .shero-scroll svg, .shero-dot::before { animation: none; }
+    }
+
     /* — Apple-style hero — */
     .phero {
       position: relative; z-index: 1;
       width: 100vw;
       margin: 0 calc(50% - 50vw);
-      background: #ffffff;
+      background: linear-gradient(180deg, #09090b 0%, #000000 100%);
       text-align: center;
       padding: 52px 0 0;
     }
@@ -966,13 +1277,13 @@
       margin: 0;
       font: 700 clamp(40px, 7vw, 64px)/1.04 Inter, -apple-system, system-ui, sans-serif;
       letter-spacing: -0.025em;
-      color: #1d1d1f;
+      color: #ffffff;
     }
     .phero-sub {
       margin: 10px 0 0;
       font: 500 clamp(19px, 3.4vw, 28px)/1.25 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
-      color: #1d1d1f;
+      color: #a1a1aa;
       text-wrap: balance;
     }
     .phero-ctas {
@@ -1028,7 +1339,7 @@
       display: flex; align-items: center; justify-content: center;
       padding: 20px;
       background: rgba(0, 0, 0, 0.65);
-      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
       animation: appSoonFadeIn 240ms cubic-bezier(.2,.7,.2,1);
       overflow-y: auto;
     }
@@ -1052,6 +1363,12 @@
       transition: background 160ms ease;
     }
     .register-close:hover { background: rgba(0,0,0,0.10); }
+    .register-intro {
+      padding: 22px 22px 24px;
+      border-radius: 24px;
+      background: #f3f4f5;
+      border: 1px solid rgba(0,0,0,0.07);
+    }
     .register-intro h2 {
       margin: 10px 0 0; color: #111416;
       font: 800 26px/1.12 Inter, system-ui, sans-serif; letter-spacing: -0.03em;
@@ -1064,30 +1381,48 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Hopp til innhold</a>
   <div class="bg-blobs"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
 
   <main class="page parkno-page" id="main-content" data-screen-label="Parkno · landing">
-    <nav class="nav" aria-label="Hovedmeny">
-      <div class="nav-inner">
-        <a class="nav-link" href="#how">Slik fungerer det</a>
-        <a class="nav-link js-kontakt-link" href="#kontakt">Kontakt</a>
-        <a class="nav-link" href="#bedrift">Bedrift</a>
-        <a class="nav-link" href="login.html">Logg inn</a>
-        <span class="download-zone" id="download-app-zone"><a class="nav-link is-primary" href="#" id="download-app-link">Last ned appen</a></span>
-      </div>
-    </nav>
 
-    <!-- Apple-style hero -->
-    <section class="phero" aria-labelledby="phero-title" data-site-section="0">
-      <div class="phero-inner">
-        <h1 class="phero-title" id="phero-title">Parkno</h1>
-        <p class="phero-sub">Lei ut plassen din. Tjen på den som står tom.</p>
-        <div class="phero-ctas">
-          <button type="button" class="phero-btn phero-btn--primary js-open-register">Registrer</button>
-          <a class="phero-btn phero-btn--ghost" href="#how">Les mer</a>
+    <!-- Full-screen splash hero -->
+    <section class="shero" id="hjem" aria-labelledby="shero-title">
+      <div class="shero-inner">
+
+        <!-- left column -->
+        <div class="shero-left">
+          <img class="shero-logo shero-anim shero-d1" src="assets/parkno-logo-icon.png" alt="Parkno" width="96" height="96">
+
+          <h1 class="shero-title shero-anim shero-d2" id="shero-title">
+            Innkjørselen din,<br>
+            <span class="grad">tjener stille.</span>
+          </h1>
+
+          <p class="shero-sub shero-anim shero-d3">
+            Lei ut parkeringsplassen din når du ikke bruker den — verifiserte sjåfører,
+            automatiske utbetalinger og null styr.
+          </p>
+
+          <div class="shero-ctas shero-anim shero-d4">
+            <a class="shero-btn shero-btn--ghost" href="#how">Slik fungerer det</a>
+            <button type="button" class="shero-btn shero-btn--primary js-open-register">
+              Bli utleier
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
+
+        <!-- right column -->
+        <div class="shero-right shero-anim shero-d4">
+          <img class="shero-duo" src="assets/parkno-duo.png" alt="Parkno-appen vist på to iPhone-skjermer: kart og inntekt" loading="eager" width="4034" height="4095">
+        </div>
+
       </div>
+
+      <a class="shero-scroll" href="#how" aria-label="Bla ned">
+        Bla ned
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
     </section>
 
     <!-- Tidlig tilgang for utleiere — modal bak «Registrer»-knappen -->
@@ -1108,49 +1443,51 @@
       <form class="host-form" id="host-intake-form">
         <div class="form-row">
           <label>
-            Navn
-            <input name="name" autocomplete="name" placeholder="Sondre" required>
+            Fornavn
+            <input name="firstName" autocomplete="given-name" placeholder="Espen" required>
           </label>
           <label>
-            E-post
-            <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="navn@eksempel.no" required>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            Område
-            <select name="area" required>
-              <option value="">Velg område</option>
-              <option>Møhlenpris</option>
-              <option>Sandviken</option>
-              <option>Sentrum</option>
-              <option>Bryggen</option>
-              <option>Bergen Storsenter</option>
-              <option>Annet sted i Bergen</option>
-            </select>
-          </label>
-          <label>
-            Type plass
-            <select name="space" required>
-              <option value="">Velg type</option>
-              <option>Innkjørsel</option>
-              <option>Garasje</option>
-              <option>Reservert plass</option>
-              <option>Flere plasser</option>
-            </select>
+            Etternavn
+            <input name="lastName" autocomplete="family-name" placeholder="Askeladden" required>
           </label>
         </div>
         <label>
-          Når er plassen ofte ledig?
-          <select name="availability">
-            <option>Hverdager på dagtid</option>
-            <option>Kvelder</option>
-            <option>Helger</option>
-            <option>Fleksibelt / varierer</option>
-          </select>
+          E-post
+          <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="navn@eksempel.no" required>
+        </label>
+        <label>
+          Telefonnummer
+          <span class="phone-row" data-phone>
+            <input type="hidden" name="phoneCode" value="+47">
+            <div class="phone-cc">
+              <button type="button" class="phone-cc-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Velg landskode">
+                <img class="phone-cc-flag" src="https://flagcdn.com/no.svg" alt="" width="22" height="16">
+                <svg class="phone-cc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <ul class="phone-cc-list" role="listbox" aria-label="Landskode" hidden>
+                <li role="option" data-cc="no" data-code="+47"><img src="https://flagcdn.com/no.svg" alt="" width="22" height="16"><span class="name">Norge</span><span class="code">+47</span></li>
+                <li role="option" data-cc="se" data-code="+46"><img src="https://flagcdn.com/se.svg" alt="" width="22" height="16"><span class="name">Sverige</span><span class="code">+46</span></li>
+                <li role="option" data-cc="dk" data-code="+45"><img src="https://flagcdn.com/dk.svg" alt="" width="22" height="16"><span class="name">Danmark</span><span class="code">+45</span></li>
+                <li role="option" data-cc="fi" data-code="+358"><img src="https://flagcdn.com/fi.svg" alt="" width="22" height="16"><span class="name">Finland</span><span class="code">+358</span></li>
+                <li role="option" data-cc="is" data-code="+354"><img src="https://flagcdn.com/is.svg" alt="" width="22" height="16"><span class="name">Island</span><span class="code">+354</span></li>
+                <li role="option" data-cc="gb" data-code="+44"><img src="https://flagcdn.com/gb.svg" alt="" width="22" height="16"><span class="name">Storbritannia</span><span class="code">+44</span></li>
+                <li role="option" data-cc="de" data-code="+49"><img src="https://flagcdn.com/de.svg" alt="" width="22" height="16"><span class="name">Tyskland</span><span class="code">+49</span></li>
+                <li role="option" data-cc="fr" data-code="+33"><img src="https://flagcdn.com/fr.svg" alt="" width="22" height="16"><span class="name">Frankrike</span><span class="code">+33</span></li>
+                <li role="option" data-cc="es" data-code="+34"><img src="https://flagcdn.com/es.svg" alt="" width="22" height="16"><span class="name">Spania</span><span class="code">+34</span></li>
+                <li role="option" data-cc="it" data-code="+39"><img src="https://flagcdn.com/it.svg" alt="" width="22" height="16"><span class="name">Italia</span><span class="code">+39</span></li>
+                <li role="option" data-cc="nl" data-code="+31"><img src="https://flagcdn.com/nl.svg" alt="" width="22" height="16"><span class="name">Nederland</span><span class="code">+31</span></li>
+                <li role="option" data-cc="pl" data-code="+48"><img src="https://flagcdn.com/pl.svg" alt="" width="22" height="16"><span class="name">Polen</span><span class="code">+48</span></li>
+                <li role="option" data-cc="us" data-code="+1"><img src="https://flagcdn.com/us.svg" alt="" width="22" height="16"><span class="name">USA</span><span class="code">+1</span></li>
+              </ul>
+            </div>
+            <div class="phone-input">
+              <span class="phone-prefix" data-phone-prefix>+47</span>
+              <input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="400 00 000" required>
+            </div>
+          </span>
         </label>
         <button type="submit">Send interesse</button>
-        <p class="form-note">Åpner en ferdig utfylt e-post. Ingen data sendes til en server ennå.</p>
+        <p class="form-note">Vi lagrer kun navn, e-post og telefon for å ta kontakt om Bergen-lanseringen.</p>
         <p class="form-status" id="host-form-status" aria-live="polite"></p>
       </form>
       </div>
@@ -1164,26 +1501,33 @@
         <h2 class="section-title">Annonsér én gang. Tjen mens du er på jobb, sover eller er bortreist.</h2>
         <p class="section-lede">En tom plass tjener ingenting. Annonsér på fem minutter og la sjåfører reservere på telefonen — du bestemmer selv når den er tilgjengelig.</p>
 
-        <div class="steps">
-          <div class="step">
-            <div class="num">1</div>
-            <h3>Ta bilder av plassen.</h3>
-            <p>Tre bilder, adressen, når den er ledig. Vi verifiserer innen én time.</p>
-            <div class="meta">~5 min oppsett</div>
+        <details class="steps-toggle">
+          <summary>
+            Se de tre stegene
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+
+          <div class="steps">
+            <div class="step">
+              <div class="num">1</div>
+              <h3>Ta bilder av plassen.</h3>
+              <p>Tre bilder, adressen, når den er ledig. Vi verifiserer innen én time.</p>
+              <div class="meta">~5 min oppsett</div>
+            </div>
+            <div class="step mist">
+              <div class="num">2</div>
+              <h3>Sjåfører reserverer et vindu.</h3>
+              <p>Verifiserte sjåfører ser plassen din, velger en tid og betaler før de kommer. Du trenger ikke løfte en finger.</p>
+              <div class="meta">Ingen nøkler, ingen kontakt</div>
+            </div>
+            <div class="step silver">
+              <div class="num">3</div>
+              <h3>Utbetaling rett på konto.</h3>
+              <p>Hver fredag, automatisk. NOK til din norske bankkonto, åpne gebyrer, fullt regnskap.</p>
+              <div class="meta">Fredag · 09:00 · NOK</div>
+            </div>
           </div>
-          <div class="step mist">
-            <div class="num">2</div>
-            <h3>Sjåfører reserverer et vindu.</h3>
-            <p>Verifiserte sjåfører ser plassen din, velger en tid og betaler før de kommer. Du trenger ikke løfte en finger.</p>
-            <div class="meta">Ingen nøkler, ingen kontakt</div>
-          </div>
-          <div class="step silver">
-            <div class="num">3</div>
-            <h3>Utbetaling rett på konto.</h3>
-            <p>Hver fredag, automatisk. NOK til din norske bankkonto, åpne gebyrer, fullt regnskap.</p>
-            <div class="meta">Fredag · 09:00 · NOK</div>
-          </div>
-        </div>
+        </details>
       </div>
     </section>
 
@@ -1195,48 +1539,42 @@
         <h2 class="section-title" id="trust-title">Bygget for å fjerne den lille tvilen før den blir stor.</h2>
         <p class="section-lede">Parkno skal føles enkelt, men aldri tilfeldig. Hver reservasjon har tydelig sjåfør, bil, betaling og tidsvindu.</p>
 
-        <div class="trust-grid">
-          <div class="trust-item">
-            <div class="mark">ID</div>
-            <h3>Verifiserte brukere</h3>
-            <p>BankID er planlagt for konto og vertsgodkjenning, med bil og skiltnummer knyttet til reservasjonen.</p>
+        <details class="trust-master">
+          <summary>
+            <span class="trust-master-label">Slik holder vi det trygt</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="trust-grid">
+            <div class="trust-item">
+              <div class="mark mark--img"><img src="assets/bankid.png" alt="BankID" width="34" height="34"></div>
+              <h3>Verifiserte brukere</h3>
+              <p>BankID er planlagt for konto og vertsgodkjenning, med bil og skiltnummer knyttet til reservasjonen.</p>
+            </div>
+            <div class="trust-item">
+              <div class="mark mark--icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="9" cy="7" r="3.2"/>
+                  <path d="M14.5 7h3.2a1.3 1.3 0 0 1 0 2.6h-2.4"/>
+                  <path d="M2.5 20.5c1.6-2.3 4-3.5 6.5-3.5 1.6 0 3 .5 4.3 1.3l5.2-3.1a1.6 1.6 0 0 1 2.1 2.4l-5.3 4.4c-.9.7-2 .9-3.1.6l-3.6-1"/>
+                </svg>
+              </div>
+              <h3>Betalt før ankomst</h3>
+              <p>Sjåføren reserverer et konkret vindu og betaler før plassen brukes. Ingen kontanter, ingen uklar avtale.</p>
+            </div>
           </div>
-          <div class="trust-item">
-            <div class="mark">kr</div>
-            <h3>Betalt før ankomst</h3>
-            <p>Sjåføren reserverer et konkret vindu og betaler før plassen brukes. Ingen kontanter, ingen uklar avtale.</p>
-          </div>
-          <div class="trust-item">
-            <div class="mark">09</div>
-            <h3>Fredagsutbetaling</h3>
-            <p>Inntekten samles og sendes automatisk i NOK hver fredag kl. 09:00, med åpne gebyrer.</p>
-          </div>
-          <div class="trust-item">
-            <div class="mark">1M</div>
-            <h3>Skadedekning</h3>
-            <p>Målet er dekning opptil 1 000 000 kr per reservasjon når forsikringspartner er bekreftet.</p>
-          </div>
-        </div>
+        </details>
 
-        <div class="launch-strip" aria-label="Lanseringsområder i Bergen">
-          <div>
-            <h3>Starter der parkering faktisk er vanskelig.</h3>
-            <p>Første bølge fokuserer på sentrale Bergen-nabolag med høy etterspørsel og korte avstander mellom vert og sjåfør.</p>
-          </div>
-          <div class="zone-list" aria-label="Prioriterte områder">
-            <span>Møhlenpris</span>
-            <span>Sandviken</span>
-            <span>Sentrum</span>
-            <span>Bryggen</span>
-            <span>Bergen Storsenter</span>
-          </div>
-        </div>
       </section>
 
       <section class="faq-panel" aria-labelledby="faq-title">
-        <div class="section-overline">Vanlige spørsmål</div>
-        <h2 class="section-title" id="faq-title">Det du lurer på før du sier ja.</h2>
-        <div class="faq-list">
+        <details class="faq-master">
+          <summary>
+            <div>
+              <div class="section-overline">Vanlige spørsmål</div>
+              <h2 class="section-title" id="faq-title">Det du lurer på før du sier ja.</h2>
+            </div>
+          </summary>
+          <div class="faq-list">
           <details>
             <summary>Må jeg være tilgjengelig når noen parkerer?</summary>
             <p>Nei. Poenget er at sjåføren reserverer et tydelig tidsvindu, betaler før ankomst og ser instruksjonene i appen. Du bestemmer når plassen er ledig.</p>
@@ -1253,44 +1591,9 @@
             <summary>Koster det noe å legge ut plassen?</summary>
             <p>Nei. Modellen er gratis annonsering og 12 % Parkno-gebyr på fullførte reservasjoner. Det gjør terskelen lav for tidlige Bergen-verter.</p>
           </details>
-        </div>
+          </div>
+        </details>
       </section>
-
-      <!-- Quote -->
-      <div class="section">
-        <div class="section-overline">Utleiere sier</div>
-        <div class="quote">
-          <q>Jeg begynte å leie ut innkjørselen da jeg var i pappapermisjon. Et halvt år senere dekker den felleskostnadene i borettslaget — og jeg har ikke gjort noe siden jeg tok bildene.</q>
-          <div class="who">
-            <div class="a">SH</div>
-            <div>
-              <div class="name">Sondre H.</div>
-              <div class="meta">Møhlenpris · utleier siden aug. 2024</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Final CTA -->
-      <div id="host-cta">
-        <div class="final-cta">
-          <div class="blob1"></div><div class="blob2"></div>
-          <div class="inner">
-            <div>
-              <div style="font: 600 11px/1.2 Inter; letter-spacing: 0.10em; text-transform: uppercase; color: rgba(255,255,255,0.55);">Begynn å leie ut</div>
-              <h2>Plassen din kan tjene penger allerede på fredag.</h2>
-              <p>Annonsér på fem minutter. Vi verifiserer innen én time, og første utbetaling kommer påfølgende fredag kl. 09:00.</p>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
-              <button class="btn-mint js-open-register" type="button">
-                Lei ut plassen din
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#23233C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </button>
-              <span style="font: 500 13px/1.4 Inter; color: rgba(255,255,255,0.55);">Gratis å annonsere · 12 % på fullførte reservasjoner</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <section class="contact-card" id="kontakt" aria-labelledby="kontakt-title">
         <div>
@@ -1305,10 +1608,7 @@
       </section>
 
       <footer class="foot">
-        <div>© 2026 Parkno AS · Org.nr 998 877 665 · Bergen, Norge</div>
-        <div class="links">
-          <a href="#kontakt">Personvern</a><a href="#kontakt">Vilkår</a><a href="#trust-title">Dekning og forsikring</a><a href="#kontakt">Hjelp</a><a href="mailto:kontakt@parkno.no?subject=English%20information%20about%20Parkno">English</a>
-        </div>
+        <div>Org.nr 937690908 · Bergen, Norway</div>
       </footer>
     </section>
   </main>
@@ -1422,6 +1722,53 @@
       });
     })();
 
+    // Custom country-code dropdown for the phone field
+    (function initPhoneCountryCode() {
+      document.querySelectorAll('[data-phone]').forEach((root) => {
+        const btn = root.querySelector('.phone-cc-btn');
+        const list = root.querySelector('.phone-cc-list');
+        const flag = root.querySelector('.phone-cc-flag');
+        const prefix = root.querySelector('[data-phone-prefix]');
+        const hidden = root.querySelector('input[name="phoneCode"]');
+        if (!btn || !list || !flag || !prefix || !hidden) return;
+
+        function openList() {
+          list.hidden = false;
+          btn.setAttribute('aria-expanded', 'true');
+        }
+        function closeList() {
+          list.hidden = true;
+          btn.setAttribute('aria-expanded', 'false');
+        }
+        function select(li) {
+          const code = li.getAttribute('data-code');
+          const cc = li.getAttribute('data-cc');
+          flag.src = `https://flagcdn.com/${cc}.svg`;
+          prefix.textContent = code;
+          hidden.value = code;
+          list.querySelectorAll('[aria-selected="true"]').forEach((el) => el.removeAttribute('aria-selected'));
+          li.setAttribute('aria-selected', 'true');
+        }
+
+        btn.addEventListener('click', () => {
+          list.hidden ? openList() : closeList();
+        });
+        list.querySelectorAll('li[role="option"]').forEach((li) => {
+          li.addEventListener('click', () => {
+            select(li);
+            closeList();
+            btn.focus();
+          });
+        });
+        document.addEventListener('click', (event) => {
+          if (!root.contains(event.target)) closeList();
+        });
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && !list.hidden) { closeList(); btn.focus(); }
+        });
+      });
+    })();
+
     // If we landed here via #kontakt (from login/register), scroll + flash
     if (window.location.hash === '#kontakt') {
       window.addEventListener('load', () => {
@@ -1441,29 +1788,73 @@
     });
     const hostForm = document.getElementById('host-intake-form');
     if (hostForm) {
-      hostForm.addEventListener('submit', (event) => {
+      const submitBtn = hostForm.querySelector('button[type="submit"]');
+      const status = document.getElementById('host-form-status');
+
+      function buildPayload(data) {
+        return {
+          role: 'host',
+          source: 'index-hero',
+          first_name: String(data.get('firstName') || '').trim(),
+          last_name: String(data.get('lastName') || '').trim(),
+          email: String(data.get('email') || '').trim(),
+          phone: `${data.get('phoneCode') || ''} ${data.get('phone') || ''}`.trim(),
+          consent: true,
+        };
+      }
+
+      // No silent data loss: on any non-confirmed outcome, hand the user a
+      // prefilled mailto so the lead still reaches us.
+      function mailtoFallback(p) {
+        const lines = [
+          'Hei Parkno,', '',
+          'Jeg vil registrere interesse som tidlig utleier.', '',
+          `Navn: ${p.first_name} ${p.last_name}`,
+          `E-post: ${p.email}`,
+          `Telefon: ${p.phone}`,
+        ];
+        return 'mailto:kontakt@parkno.no?subject='
+          + encodeURIComponent('Tidlig utleierinteresse - Parkno')
+          + '&body=' + encodeURIComponent(lines.join('\n'));
+      }
+
+      function showError(p) {
+        if (!status) return;
+        status.innerHTML = 'Klarte ikke å sende. Prøv igjen, eller '
+          + '<a href="' + mailtoFallback(p) + '">send på e-post</a>.';
+      }
+
+      hostForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (status) status.textContent = '';
         if (!hostForm.reportValidity()) return;
 
-        const data = new FormData(hostForm);
-        const status = document.getElementById('host-form-status');
-        const lines = [
-          'Hei Parkno,',
-          '',
-          'Jeg vil registrere interesse som tidlig utleier.',
-          '',
-          `Navn: ${data.get('name')}`,
-          `E-post: ${data.get('email')}`,
-          `Område: ${data.get('area')}`,
-          `Type plass: ${data.get('space')}`,
-          `Ledighet: ${data.get('availability')}`,
-          '',
-          'Send meg gjerne neste steg.'
-        ];
-        const subject = encodeURIComponent('Tidlig utleierinteresse - Parkno');
-        const body = encodeURIComponent(lines.join('\n'));
-        if (status) status.textContent = 'Klart. E-postutkastet åpnes nå.';
-        window.location.href = `mailto:kontakt@parkno.no?subject=${subject}&body=${body}`;
+        const payload = buildPayload(new FormData(hostForm));
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sender …'; }
+        try {
+          const res = await fetch('/api/lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          let data = {};
+          try { data = await res.json(); } catch (e) { data = {}; }
+          if (res.ok && data && data.ok) {
+            hostForm.hidden = true;
+            if (status) {
+              status.hidden = false;
+              status.textContent = 'Takk! Vi tar kontakt om plassen din. Sjekk e-posten for en bekreftelse.';
+            }
+          } else if (res.status === 422 && data && data.fields) {
+            if (status) status.textContent = 'Fyll ut: ' + data.fields.join(', ') + '.';
+          } else {
+            showError(payload);
+          }
+        } catch (err) {
+          showError(payload);
+        } finally {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send interesse'; }
+        }
       });
     }
   </script>
