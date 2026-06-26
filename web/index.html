@@ -1709,7 +1709,7 @@
       if (!el) return;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block });
-      setTimeout(() => flashSection(id), reduceMotion ? 0 : 750);
+      setTimeout(() => flashSection(id), reduceMotion ? 0 : 375);
     }
 
     // Back-compat alias used by the #kontakt deep-link handler below.
