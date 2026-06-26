@@ -1801,8 +1801,9 @@
         }
         function select(li) {
           const code = li.getAttribute('data-code');
-          const cc = li.getAttribute('data-cc');
-          flag.src = `https://flagcdn.com/${cc}.svg`;
+          // Reuse the option's own inline flag image (no external CDN dependency)
+          const liImg = li.querySelector('img');
+          if (liImg) flag.src = liImg.src;
           prefix.textContent = code;
           hidden.value = code;
           list.querySelectorAll('[aria-selected="true"]').forEach((el) => el.removeAttribute('aria-selected'));
