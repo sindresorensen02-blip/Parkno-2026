@@ -18,7 +18,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://flagcdn.com" crossorigin>
   <link rel="stylesheet" href="colors_and_type.css">
   <link rel="icon" href="assets/parkno-logo-icon.png">
   <script type="application/ld+json">
@@ -782,7 +781,8 @@
       gap: 28px;
       transition: box-shadow 280ms ease, border-color 280ms ease, transform 280ms ease;
     }
-    .contact-card.is-kontakt-flash {
+    .contact-card.is-kontakt-flash,
+    .is-section-flash {
       animation: kontaktFlash 1.7s cubic-bezier(.2,.7,.2,1);
     }
     @keyframes kontaktFlash {
@@ -792,7 +792,8 @@
       100% { transform: scale(1); opacity: 1; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .contact-card.is-kontakt-flash { animation: none; }
+      .contact-card.is-kontakt-flash,
+      .is-section-flash { animation: none; }
     }
     .contact-card .section-overline { display: block; }
     .contact-card h2 {
@@ -1420,7 +1421,7 @@
           <div class="shero-ctas shero-anim shero-d4">
             <a class="shero-btn shero-btn--ghost" href="#how">Slik fungerer det</a>
             <button type="button" class="shero-btn shero-btn--primary js-open-register">
-              Bli utleier
+              Bli Vert
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
           </div>
@@ -1470,23 +1471,23 @@
             <input type="hidden" name="phoneCode" value="+47">
             <div class="phone-cc">
               <button type="button" class="phone-cc-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Velg landskode">
-                <img class="phone-cc-flag" src="https://flagcdn.com/no.svg" alt="" width="22" height="16">
+                <img class="phone-cc-flag" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2022%2016%22%3E%3Cpath%20fill%3D%22%23ba0c2f%22%20d%3D%22M0%200h22v16H0z%22%2F%3E%3Cpath%20d%3D%22M0%208h22M8%200v16%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M0%208h22M8%200v16%22%20stroke%3D%22%2300205b%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16">
                 <svg class="phone-cc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               <ul class="phone-cc-list" role="listbox" aria-label="Landskode" hidden>
-                <li role="option" data-cc="no" data-code="+47"><img src="https://flagcdn.com/no.svg" alt="" width="22" height="16"><span class="name">Norge</span><span class="code">+47</span></li>
-                <li role="option" data-cc="se" data-code="+46"><img src="https://flagcdn.com/se.svg" alt="" width="22" height="16"><span class="name">Sverige</span><span class="code">+46</span></li>
-                <li role="option" data-cc="dk" data-code="+45"><img src="https://flagcdn.com/dk.svg" alt="" width="22" height="16"><span class="name">Danmark</span><span class="code">+45</span></li>
-                <li role="option" data-cc="fi" data-code="+358"><img src="https://flagcdn.com/fi.svg" alt="" width="22" height="16"><span class="name">Finland</span><span class="code">+358</span></li>
-                <li role="option" data-cc="is" data-code="+354"><img src="https://flagcdn.com/is.svg" alt="" width="22" height="16"><span class="name">Island</span><span class="code">+354</span></li>
-                <li role="option" data-cc="gb" data-code="+44"><img src="https://flagcdn.com/gb.svg" alt="" width="22" height="16"><span class="name">Storbritannia</span><span class="code">+44</span></li>
-                <li role="option" data-cc="de" data-code="+49"><img src="https://flagcdn.com/de.svg" alt="" width="22" height="16"><span class="name">Tyskland</span><span class="code">+49</span></li>
-                <li role="option" data-cc="fr" data-code="+33"><img src="https://flagcdn.com/fr.svg" alt="" width="22" height="16"><span class="name">Frankrike</span><span class="code">+33</span></li>
-                <li role="option" data-cc="es" data-code="+34"><img src="https://flagcdn.com/es.svg" alt="" width="22" height="16"><span class="name">Spania</span><span class="code">+34</span></li>
-                <li role="option" data-cc="it" data-code="+39"><img src="https://flagcdn.com/it.svg" alt="" width="22" height="16"><span class="name">Italia</span><span class="code">+39</span></li>
-                <li role="option" data-cc="nl" data-code="+31"><img src="https://flagcdn.com/nl.svg" alt="" width="22" height="16"><span class="name">Nederland</span><span class="code">+31</span></li>
-                <li role="option" data-cc="pl" data-code="+48"><img src="https://flagcdn.com/pl.svg" alt="" width="22" height="16"><span class="name">Polen</span><span class="code">+48</span></li>
-                <li role="option" data-cc="us" data-code="+1"><img src="https://flagcdn.com/us.svg" alt="" width="22" height="16"><span class="name">USA</span><span class="code">+1</span></li>
+                <li role="option" data-cc="no" data-code="+47"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2022%2016%22%3E%3Cpath%20fill%3D%22%23ba0c2f%22%20d%3D%22M0%200h22v16H0z%22%2F%3E%3Cpath%20d%3D%22M0%208h22M8%200v16%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M0%208h22M8%200v16%22%20stroke%3D%22%2300205b%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Norge</span><span class="code">+47</span></li>
+                <li role="option" data-cc="se" data-code="+46"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221000%22%20viewBox%3D%220%200%208%205%22%3E%3Cpath%20fill%3D%22%23005293%22%20d%3D%22M0%200h8v5H0Z%22%2F%3E%3Cpath%20stroke%3D%22%23fecb00%22%20d%3D%22M0%202.5h8M3%200v5%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Sverige</span><span class="code">+46</span></li>
+                <li role="option" data-cc="dk" data-code="+45"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2037%2028%22%3E%3Cpath%20fill%3D%22%23c8102e%22%20d%3D%22M0%200h37v28H0Z%22%2F%3E%3Cpath%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%20d%3D%22M0%2014h37M14%200v28%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Danmark</span><span class="code">+45</span></li>
+                <li role="option" data-cc="fi" data-code="+358"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221800%22%20height%3D%221100%22%20viewBox%3D%220%200%2018%2011%22%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M0%200h18v11H0z%22%2F%3E%3Cpath%20d%3D%22M0%205.5h18M6.5%200v11%22%20stroke%3D%22%23002F6C%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Finland</span><span class="code">+358</span></li>
+                <li role="option" data-cc="is" data-code="+354"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221250%22%20height%3D%22900%22%20viewBox%3D%220%200%2025%2018%22%3E%3Cpath%20d%3D%22M0%200h25v18H0Z%22%20fill%3D%22%2302529C%22%2F%3E%3Cpath%20d%3D%22M0%209h25M9%200v18%22%20stroke-width%3D%224%22%20stroke%3D%22%23FFF%22%2F%3E%3Cpath%20d%3D%22M0%209h25M9%200v18%22%20stroke-width%3D%222%22%20stroke%3D%22%23DC1E35%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Island</span><span class="code">+354</span></li>
+                <li role="option" data-cc="gb" data-code="+44"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2060%2030%22%20width%3D%221200%22%20height%3D%22600%22%3E%3CclipPath%20id%3D%22a%22%3E%3Cpath%20d%3D%22M0%200v30h60V0z%22%2F%3E%3C%2FclipPath%3E%3CclipPath%20id%3D%22b%22%3E%3Cpath%20d%3D%22M30%2015h30v15zv15H0zH0V0zV0h30z%22%2F%3E%3C%2FclipPath%3E%3Cg%20clip-path%3D%22url%28%23a%29%22%3E%3Cpath%20d%3D%22M0%200v30h60V0z%22%20fill%3D%22%23012169%22%2F%3E%3Cpath%20d%3D%22m0%200%2060%2030m0-30L0%2030%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%2F%3E%3Cpath%20d%3D%22m0%200%2060%2030m0-30L0%2030%22%20clip-path%3D%22url%28%23b%29%22%20stroke%3D%22%23C8102E%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M30%200v30M0%2015h60%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2210%22%2F%3E%3Cpath%20d%3D%22M30%200v30M0%2015h60%22%20stroke%3D%22%23C8102E%22%20stroke-width%3D%226%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Storbritannia</span><span class="code">+44</span></li>
+                <li role="option" data-cc="de" data-code="+49"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221000%22%20height%3D%22600%22%20viewBox%3D%220%200%205%203%22%3E%3Cpath%20d%3D%22M0%200h5v3H0z%22%2F%3E%3Cpath%20fill%3D%22%23D00%22%20d%3D%22M0%201h5v2H0z%22%2F%3E%3Cpath%20fill%3D%22%23FFCE00%22%20d%3D%22M0%202h5v1H0z%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Tyskland</span><span class="code">+49</span></li>
+                <li role="option" data-cc="fr" data-code="+33"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22900%22%20height%3D%22600%22%3E%3Cpath%20fill%3D%22%23CE1126%22%20d%3D%22M0%200h900v600H0%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M0%200h600v600H0%22%2F%3E%3Cpath%20fill%3D%22%23002654%22%20d%3D%22M0%200h300v600H0%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Frankrike</span><span class="code">+33</span></li>
+                <li role="option" data-cc="es" data-code="+34"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%203%202%22%3E%3Cpath%20fill%3D%22%23c60b1e%22%20d%3D%22M0%200h3v2H0z%22%2F%3E%3Cpath%20fill%3D%22%23ffc400%22%20d%3D%22M0%20.5h3v1H0z%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Spania</span><span class="code">+34</span></li>
+                <li role="option" data-cc="it" data-code="+39"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221500%22%20height%3D%221000%22%20viewBox%3D%220%200%203%202%22%3E%3Cpath%20fill%3D%22%23009246%22%20d%3D%22M0%200h3v2H0z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M1%200h2v2H1z%22%2F%3E%3Cpath%20fill%3D%22%23ce2b37%22%20d%3D%22M2%200h1v2H2z%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Italia</span><span class="code">+39</span></li>
+                <li role="option" data-cc="nl" data-code="+31"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22900%22%20height%3D%22600%22%20viewBox%3D%220%200%209%206%22%3E%3Cpath%20fill%3D%22%2321468B%22%20d%3D%22M0%200h9v6H0z%22%2F%3E%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M0%200h9v4H0z%22%2F%3E%3Cpath%20fill%3D%22%23AE1C28%22%20d%3D%22M0%200h9v2H0z%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Nederland</span><span class="code">+31</span></li>
+                <li role="option" data-cc="pl" data-code="+48"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22640%22%20height%3D%22400%22%20viewBox%3D%220%200%208%205%22%3E%3Cpath%20fill%3D%22%23dc143c%22%20d%3D%22M0%200h8v5H0z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M0%200h8v2.5H0z%22%2F%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">Polen</span><span class="code">+48</span></li>
+                <li role="option" data-cc="us" data-code="+1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20width%3D%221235%22%20height%3D%22650%22%20viewBox%3D%220%200%207410%203900%22%3E%3Cpath%20fill%3D%22%23b31942%22%20d%3D%22M0%200h7410v3900H0%22%2F%3E%3Cpath%20stroke%3D%22%23FFF%22%20stroke-width%3D%22300%22%20d%3D%22M0%20450h7410m0%20600H0m0%20600h7410m0%20600H0m0%20600h7410m0%20600H0%22%2F%3E%3Cpath%20fill%3D%22%230a3161%22%20d%3D%22M0%200h2964v2100H0%22%2F%3E%3Cg%20fill%3D%22%23FFF%22%3E%3Cg%20id%3D%22d%22%3E%3Cg%20id%3D%22c%22%3E%3Cg%20id%3D%22e%22%3E%3Cg%20id%3D%22b%22%3E%3Cpath%20id%3D%22a%22%20d%3D%22m247%2090%2070.534%20217.082-184.66-134.164h228.253L176.466%20307.082z%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%20y%3D%22420%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%20y%3D%22840%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%20y%3D%221260%22%2F%3E%3C%2Fg%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%20y%3D%221680%22%2F%3E%3C%2Fg%3E%3Cuse%20xlink%3Ahref%3D%22%23b%22%20x%3D%22247%22%20y%3D%22210%22%2F%3E%3C%2Fg%3E%3Cuse%20xlink%3Ahref%3D%22%23c%22%20x%3D%22494%22%2F%3E%3C%2Fg%3E%3Cuse%20xlink%3Ahref%3D%22%23d%22%20x%3D%22988%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23c%22%20x%3D%221976%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23e%22%20x%3D%222470%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="" width="22" height="16"><span class="name">USA</span><span class="code">+1</span></li>
               </ul>
             </div>
             <div class="phone-input">
@@ -1691,29 +1692,29 @@
       el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block });
     }
 
-    function flashKontakt() {
-      const el = document.getElementById('kontakt');
+    // Flash a section briefly to draw the eye after jumping to it.
+    // #kontakt is the .contact-card (uses its own flash class); other sections use .is-section-flash.
+    function flashSection(id) {
+      const el = document.getElementById(id);
       if (!el) return;
-      el.classList.remove('is-kontakt-flash');
+      const cls = id === 'kontakt' ? 'is-kontakt-flash' : 'is-section-flash';
+      el.classList.remove(cls);
       void el.offsetWidth; // restart animation
-      el.classList.add('is-kontakt-flash');
-      setTimeout(() => el.classList.remove('is-kontakt-flash'), 1900);
+      el.classList.add(cls);
+      setTimeout(() => el.classList.remove(cls), 1900);
     }
 
-    function jumpToKontakt() {
-      const el = document.getElementById('kontakt');
+    function jumpToSection(id, block = 'start') {
+      const el = document.getElementById(id);
       if (!el) return;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-      setTimeout(flashKontakt, reduceMotion ? 0 : 750);
+      el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block });
+      setTimeout(() => flashSection(id), reduceMotion ? 0 : 750);
     }
 
-    document.querySelectorAll('.js-kontakt-link').forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        jumpToKontakt();
-      });
-    });
+    // Back-compat alias used by the #kontakt deep-link handler below.
+    // (The Kontakt footer link itself is handled by the shared a[href^="#"] handler.)
+    function jumpToKontakt() { jumpToSection('kontakt', 'center'); }
 
     // "Last ned appen" → Appen kommer snart popup
     (function initAppSoonPopup() {
@@ -1840,9 +1841,13 @@
         const id = link.getAttribute('href').slice(1);
         if (!id) return;
         event.preventDefault();
-        // Footer links center the target on screen; other anchors align to top.
-        const block = link.closest('.foot') ? 'center' : 'start';
-        scrollToId(id, block);
+        const inFooter = !!link.closest('.foot');
+        if (inFooter) {
+          // Footer content links scroll + flash the target the same way Kontakt does.
+          jumpToSection(id, 'center');
+        } else {
+          scrollToId(id, 'start');
+        }
         window.history.pushState(null, '', `#${id}`);
       });
     });
