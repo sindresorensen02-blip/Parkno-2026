@@ -1075,21 +1075,35 @@
       font: 500 15px/1.5 Inter, system-ui, sans-serif;
     }
     .app-soon-card a { color: #00A87A; text-decoration: underline; }
-    .app-soon-ok {
-      width: 100%; height: 52px;
+    .app-soon-actions {
+      display: flex; gap: 10px;
       margin-top: 22px;
+    }
+    .app-soon-ok {
+      flex: 1; height: 52px;
+      margin-top: 0;
       border: 0; border-radius: 999px;
-      background: linear-gradient(135deg, #00EBA7 0%, #0583FF 100%);
-      color: #23233C;
       cursor: pointer;
       font: 700 14px/1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
-      box-shadow: 0 12px 28px rgba(0,235,167,0.28);
-      transition: transform 200ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+      transition: transform 200ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1), background 160ms ease;
     }
-    .app-soon-ok:hover {
+    .app-soon-ok--primary {
+      background: linear-gradient(135deg, #00EBA7 0%, #0583FF 100%);
+      color: #23233C;
+      box-shadow: 0 12px 28px rgba(0,235,167,0.28);
+    }
+    .app-soon-ok--primary:hover {
       transform: translateY(-1px);
       box-shadow: 0 18px 36px rgba(0,235,167,0.34);
+    }
+    .app-soon-ok--ghost {
+      background: rgba(0,0,0,0.06);
+      color: rgba(17,20,22,0.75);
+    }
+    .app-soon-ok--ghost:hover {
+      background: rgba(0,0,0,0.10);
+      transform: translateY(-1px);
     }
     @keyframes appSoonFadeIn {
       from { opacity: 0; }
@@ -1496,8 +1510,22 @@
             </div>
           </span>
         </label>
+        <label>
+          Adresse for plassen
+          <input name="space_address" autocomplete="street-address" placeholder="Gateadresse 12" required>
+        </label>
+        <div class="form-row">
+          <label>
+            Postnummer
+            <input name="postcode" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{4}" maxlength="4" placeholder="5006" required>
+          </label>
+          <label>
+            Poststed
+            <input name="city" autocomplete="address-level2" placeholder="Bergen" required>
+          </label>
+        </div>
         <button type="submit">Send interesse</button>
-        <p class="form-note">Vi lagrer kun navn, e-post og telefon for å ta kontakt om Bergen-lanseringen.</p>
+        <p class="form-note">Vi lagrer navn, e-post, telefon og adressen til plassen for å ta kontakt om Bergen-lanseringen.</p>
         <p class="form-status" id="host-form-status" aria-live="polite"></p>
       </form>
       </div>
@@ -1641,7 +1669,10 @@
       <img class="app-soon-logo" src="assets/parkno-logo-icon.png" alt="Parkno">
       <h2 id="app-soon-title">Appen kommer snart!</h2>
       <p>Vi pusser de siste detaljene. Følg med på <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a> så gir vi beskjed når Parkno-appen lanseres i App Store og Google Play.</p>
-      <button class="app-soon-ok" type="button" id="app-soon-ok">Greit, jeg venter</button>
+      <div class="app-soon-actions">
+        <button class="app-soon-ok app-soon-ok--primary js-open-register" type="button" id="app-soon-host">Bli Vert</button>
+        <button class="app-soon-ok app-soon-ok--ghost" type="button" id="app-soon-ok">Greit, jeg venter</button>
+      </div>
     </div>
   </div>
 
@@ -1858,6 +1889,11 @@
       const status = document.getElementById('host-form-status');
 
       function buildPayload(data) {
+        const street = String(data.get('space_address') || '').trim();
+        const postcode = String(data.get('postcode') || '').trim();
+        const city = String(data.get('city') || '').trim();
+        const fullAddress = [street, [postcode, city].filter(Boolean).join(' ')]
+          .filter(Boolean).join(', ');
         return {
           role: 'host',
           source: 'index-hero',
@@ -1865,6 +1901,7 @@
           last_name: String(data.get('lastName') || '').trim(),
           email: String(data.get('email') || '').trim(),
           phone: `${data.get('phoneCode') || ''} ${data.get('phone') || ''}`.trim(),
+          space_address: fullAddress,
           consent: true,
         };
       }
@@ -1878,6 +1915,7 @@
           `Navn: ${p.first_name} ${p.last_name}`,
           `E-post: ${p.email}`,
           `Telefon: ${p.phone}`,
+          `Adresse: ${p.space_address}`,
         ];
         return 'mailto:kontakt@parkno.no?subject='
           + encodeURIComponent('Tidlig utleierinteresse - Parkno')
