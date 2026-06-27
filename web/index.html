@@ -95,7 +95,7 @@
     }
     .nav-brand {
       display: inline-flex; align-items: center; gap: 8px;
-      font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: #0284FC;
+      font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: #01ADBC;
       padding-right: 10px;
       text-decoration: none;
     }
@@ -510,6 +510,11 @@
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+    /* Postnummer is short, poststed needs more room. Stay side-by-side
+       even on phones (iOS) — they belong together. */
+    .form-row-postal {
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    }
     .host-form label {
       display: grid;
       gap: 8px;
@@ -655,6 +660,16 @@
       font: 800 15px/1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
       box-shadow: 0 14px 30px rgba(0,235,167,0.28);
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    /* Confirmed "sent" state — stays vivid (not greyed) so it reads as
+       success rather than a disabled button. */
+    .host-form button[type="submit"].is-sent {
+      background: #0BBF86;
+      color: #ffffff;
+      box-shadow: 0 14px 30px rgba(11,191,134,0.30);
+      cursor: default;
+      opacity: 1;
     }
     .form-note {
       margin: 0;
@@ -850,7 +865,7 @@
     }
     .foot-brand-row { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
     .foot-logo { width: 40px; height: 40px; object-fit: contain; display: block; }
-    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #0284FC; }
+    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #01ADBC; }
     .foot-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .foot-row {
       width: 100%; margin: 0 auto;
@@ -982,6 +997,10 @@
       .form-row {
         grid-template-columns: 1fr;
       }
+      /* Postnummer + poststed stay paired on phones (iOS) too. */
+      .form-row-postal {
+        grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+      }
       .trust-item { min-height: 0; }
       .launch-strip { padding: 18px; border-radius: 24px; }
       .launch-strip h3 { font-size: 22px; }
@@ -1083,7 +1102,7 @@
       display: block; width: 40px; height: 40px;
       object-fit: contain; object-position: center;
     }
-    .app-soon-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #0284FC; }
+    .app-soon-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #01ADBC; }
     .app-soon-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .app-soon-card h2 {
       margin: 0;
@@ -1162,7 +1181,7 @@
     }
     .shero-wordmark {
       font: 800 56px/1 Inter, system-ui, sans-serif;
-      letter-spacing: -0.04em; color: #0284FC;
+      letter-spacing: -0.04em; color: #01ADBC;
       margin-left: -34px;
     }
     .shero-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
@@ -1291,6 +1310,16 @@
       .shero-inner { grid-template-columns: 1fr; gap: 30px; }
       /* drop the desktop nudge so hero content stays aligned to the column on mobile */
       .shero-left { transform: none; max-width: 100%; }
+      /* The desktop logo is absolutely positioned at top:-200px, which pushes it
+         off-screen on phones (iOS). Bring it back into normal flow at the top. */
+      .shero-brand {
+        position: static;
+        left: auto; top: auto;
+        margin-bottom: 6px;
+        gap: 10px;
+      }
+      .shero-logo { width: 64px; height: 64px; }
+      .shero-wordmark { font-size: 34px; margin-left: -10px; }
     }
     @media (max-width: 640px) {
       .shero-ctas { width: 100%; }
@@ -1533,7 +1562,7 @@
           Adresse for plassen
           <input name="space_address" autocomplete="street-address" placeholder="Gateadresse 12" required>
         </label>
-        <div class="form-row">
+        <div class="form-row form-row-postal">
           <label>
             Postnummer
             <input name="postcode" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{4}" maxlength="4" placeholder="5006" required>
@@ -1991,6 +2020,7 @@
         if (!hostForm.reportValidity()) return;
 
         const payload = buildPayload(new FormData(hostForm));
+        let sent = false;
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sender …'; }
         try {
           const res = await fetch('/api/lead', {
@@ -2001,7 +2031,14 @@
           let data = {};
           try { data = await res.json(); } catch (e) { data = {}; }
           if (res.ok && data && data.ok) {
-            hostForm.hidden = true;
+            sent = true;
+            // Keep the button visible and let it confirm the send,
+            // so it's obvious the interest went through.
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.classList.add('is-sent');
+              submitBtn.textContent = '✓ Interesse sendt';
+            }
             if (status) {
               status.hidden = false;
               status.textContent = 'Takk! Vi tar kontakt om plassen din. Sjekk e-posten for en bekreftelse.';
@@ -2014,7 +2051,9 @@
         } catch (err) {
           showError(payload);
         } finally {
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send interesse'; }
+          // On success the button stays in its "sent" state; only reset it
+          // when the user can/should try again.
+          if (!sent && submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send interesse'; }
         }
       });
     }
