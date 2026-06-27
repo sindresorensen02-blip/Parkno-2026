@@ -12,21 +12,21 @@
   <meta property="og:title" content="Parkno — Innkjørselen din, tjener stille.">
   <meta property="og:description" content="Lei ut parkeringsplassen din når du ikke bruker den. Verifiserte sjåfører, automatiske utbetalinger og rolig administrasjon.">
   <meta property="og:url" content="https://parkno.no/">
-  <meta property="og:image" content="https://parkno.no/assets/parkno-logo-icon.png">
+  <meta property="og:image" content="https://parkno.no/assets/parkno-logo.svg">
   <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" href="colors_and_type.css">
-  <link rel="icon" href="assets/parkno-logo-icon.png">
+  <link rel="icon" href="assets/parkno-pin.svg" type="image/svg+xml">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Parkno",
       "url": "https://parkno.no/",
-      "logo": "https://parkno.no/assets/parkno-logo-icon.png",
+      "logo": "https://parkno.no/assets/parkno-logo.svg",
       "email": "kontakt@parkno.no",
       "address": {
         "@type": "PostalAddress",
@@ -864,9 +864,7 @@
       padding-right: max(clamp(40px, 6vw, 96px), env(safe-area-inset-right));
     }
     .foot-brand-row { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
-    .foot-logo { width: 40px; height: 40px; object-fit: contain; display: block; }
-    .foot-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #01ADBC; }
-    .foot-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
+    .foot-logo { height: 57px; width: auto; object-fit: contain; display: block; }
     .foot-row {
       width: 100%; margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
@@ -1070,8 +1068,9 @@
       position: relative;
       width: 100%; max-width: 420px;
       border-radius: 28px;
-      background: #ffffff;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 6px 16px rgba(0,0,0,0.08);
+      background: #0E1726;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 6px 16px rgba(0,0,0,0.30);
       text-align: left;
       overflow: hidden;
       font: 600 16px/1 Inter, system-ui, sans-serif;
@@ -1088,47 +1087,47 @@
     .app-soon-close {
       position: absolute; top: 14px; right: 14px;
       width: 36px; height: 36px; border-radius: 999px;
-      border: 0; background: rgba(0,0,0,0.06); color: rgba(17,20,22,0.55);
+      border: 0; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.60);
       font: 500 22px/1 Inter, system-ui, sans-serif;
       cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
       transition: background 160ms ease;
     }
-    .app-soon-close:hover { background: rgba(0,0,0,0.10); }
+    .app-soon-close:hover { background: rgba(255,255,255,0.14); }
     .app-soon-brand {
       display: inline-flex; align-items: center; gap: 12px;
     }
     .app-soon-logo {
-      display: block; width: 40px; height: 40px;
-      object-fit: contain; object-position: center;
+      display: block; height: 68px; width: auto;
+      object-fit: contain; object-position: left center;
     }
     .app-soon-wordmark { font: 800 24px/1 Inter, system-ui, sans-serif; letter-spacing: -0.03em; color: #01ADBC; }
     .app-soon-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .app-soon-card h2 {
       margin: 0;
-      color: #111416;
+      color: #ffffff;
       font: 600 26px/1.1 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
     }
     .app-soon-card p {
       margin: 12px 0 0;
-      color: rgba(17,20,22,0.65);
+      color: rgba(255,255,255,0.72);
       font: 600 15px/1.5 Inter, system-ui, sans-serif;
       letter-spacing: -0.01em;
     }
-    .app-soon-card a { color: #00A87A; text-decoration: underline; }
+    .app-soon-card a { color: #00D57C; text-decoration: underline; }
     .app-soon-actions {
       display: flex; gap: 10px;
       margin-top: 22px;
     }
     .app-soon-actions .shero-btn { flex: 1; }
     .app-soon-ok--ghost {
-      background: rgba(0,0,0,0.16);
-      color: rgba(17,20,22,0.85);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.90);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.20), 0 2px 6px rgba(0,0,0,0.16);
     }
     .app-soon-ok--ghost:hover {
-      background: rgba(0,0,0,0.22);
+      background: rgba(255,255,255,0.16);
       transform: translateY(-2px);
     }
     @keyframes appSoonFadeIn {
@@ -1420,15 +1419,9 @@
       animation: appSoonRise 320ms cubic-bezier(.2,.7,.2,1);
     }
     .register-floating-logo {
-      width: 72px; height: 72px;
+      height: 83px; width: auto;
       object-fit: contain;
     }
-    .register-floating-wordmark {
-      font: 800 40px/1 Inter, system-ui, sans-serif;
-      letter-spacing: -0.04em; color: #01ADBC;
-      margin-left: -10px;
-    }
-    .register-floating-wordmark .pl { color: #00D57C; }
     .register-overlay[hidden] { display: none; }
     /* While a modal is open, freeze the page behind it. Needed because iOS
        Safari ignores overflow:hidden on body — only position:fixed holds. */
@@ -1583,8 +1576,7 @@
     <!-- Tidlig tilgang for utleiere — modal bak «Registrer»-knappen -->
     <div class="register-overlay" id="register-overlay" role="dialog" aria-modal="true" aria-labelledby="host-intake-title" hidden>
       <div class="register-floating-brand">
-        <img class="register-floating-logo" src="assets/parkno-logo-clean.png" alt="" width="120" height="120">
-        <span class="register-floating-wordmark">park<span class="pl">no</span></span>
+        <img class="register-floating-logo" src="assets/parkno-logo.svg" alt="Parkno">
       </div>
       <div class="register-card">
         <button class="register-close" type="button" aria-label="Lukk" id="register-close">×</button>
@@ -1779,8 +1771,7 @@
       <footer class="foot">
         <div class="foot-row">
           <a class="foot-brand-row" href="#hjem" aria-label="Parkno – til toppen">
-            <img class="foot-logo" src="assets/parkno-logo-clean.png" alt="">
-            <span class="foot-wordmark">park<span class="pl">no</span></span>
+            <img class="foot-logo" src="assets/parkno-logo.svg" alt="Parkno">
           </a>
 
           <nav class="foot-links" aria-label="Innhold">
@@ -1803,8 +1794,7 @@
       <div class="app-soon-header">
         <button class="app-soon-close" type="button" aria-label="Lukk" id="app-soon-close">×</button>
         <div class="app-soon-brand">
-          <img class="app-soon-logo" src="assets/parkno-logo-clean.png" alt="">
-          <span class="app-soon-wordmark">park<span class="pl">no</span></span>
+          <img class="app-soon-logo" src="assets/parkno-logo.svg" alt="Parkno">
         </div>
       </div>
       <div class="app-soon-body">
