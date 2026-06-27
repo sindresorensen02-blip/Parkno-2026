@@ -1,10 +1,12 @@
 ﻿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Modal, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Modal, TextInput, ActivityIndicator, RefreshControl, Keyboard } from 'react-native';
 import { TouchableOpacity, Pressable } from '../components/haptics';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
+import SearchBar from '../components/SearchBar';
+import { useSearch } from '../context/SearchContext';
 import * as Location from 'expo-location';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +18,13 @@ import { formatDistanceKm } from '../lib/geo';
 const geocoder = createExpoGeocoder(Location.geocodeAsync);
 
 const SPOTS = BERGEN_SPOTS;
+
+// The two card photos used on the inntekt/host page. Spots have no photos of
+// their own yet, so the list alternates these two — every other card.
+const CARD_PHOTOS = [
+  'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=400',
+  'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?w=400',
+];
 
 
 const FILTERS = [
@@ -63,9 +72,14 @@ export default function WelcomeScreen({ navigation, route }) {
   const [sortBy, setSortBy] = useState('distance');
   const [showSortModal, setShowSortModal] = useState(false);
   const [spots, setSpots] = useState(SPOTS);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Query is shared with the map's bar via context so it survives open/close.
+  const { query: searchQuery, setQuery: setSearchQuery } = useSearch();
   const [refreshing, setRefreshing] = useState(false);
   const searchRef = useRef(null);
+  // Keyboard height drives how much of the list is *visible* (not how much is
+  // loaded) — all listings are always rendered and scrollable. While the keyboard
+  // is up the scroll area shrinks to ~3 cards; down, it shows ~5.
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const fetchSpots = () => {
     setRefreshing(true);
@@ -104,6 +118,18 @@ export default function WelcomeScreen({ navigation, route }) {
       return () => clearTimeout(t);
     }
   }, [route?.params?.focusSearch]);
+
+  // Track the keyboard so we can shrink the scroll area to it (≈3 cards visible
+  // while typing) without ever limiting which listings are loaded.
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates?.height ?? 0);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+    return () => { show.remove(); hide.remove(); };
+  }, []);
 
   useEffect(() => {
     return navigation.getParent()?.addListener('tabPress', () => {
@@ -155,6 +181,7 @@ export default function WelcomeScreen({ navigation, route }) {
     return list;
   }, [searchResult, activeFilters, sortBy, searchQuery]);
 
+
   const [ratingTarget, setRatingTarget]   = useState(null);
   const [ratingValue, setRatingValue]     = useState(0);
   const [ratingComment, setRatingComment] = useState('');
@@ -201,84 +228,43 @@ export default function WelcomeScreen({ navigation, route }) {
     setRatingComment('');
   };
 
-  const activeSortLabel = SORT_OPTIONS.find(o => o.id === sortBy)?.label ?? 'Nærmest';
   const hasFilters = activeFilters.size > 0;
 
   return (
     <View style={styles.root}>
-      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#2B394C' }]} />
+      {/* Dark scrim — dims the map showing through behind this transparent-modal
+          screen so the white text/cards stay readable while it reads as a
+          layover floating on top of the map. */}
+      <LinearGradient
+        colors={['rgba(11,11,15,0.62)', 'rgba(0,0,0,0.55)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+
+      {/* The single search bar, now an editable input on the list. It sits in the
+          exact spot the map's bar occupied and shares its query via context, so
+          it reads as the same bar — just with a back arrow and a live field. */}
+      <View style={[styles.searchOverlay, { top: insets.top + 12 }]}>
+        <SearchBar
+          ref={searchRef}
+          mode="list"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onBack={() => navigation.goBack()}
+        />
+      </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 76 }]}
+        // Pad the bottom by the keyboard height while it's up, so every card can
+        // still scroll into the (shorter) visible area above the keyboard.
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 76, paddingBottom: insets.bottom + 76 + keyboardHeight }]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchSpots} tintColor="#4E96F0" colors={['#4E96F0']} />}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
-              <Icon name="arrow-left" size={20} color="#FFFFFF" strokeWidth={2} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.heartBtn} onPress={() => navigation.push('Lagret')}>
-              <Icon name="heart" size={18} color="#fff" strokeWidth={2.2} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.push('Inboks')}>
-              <Icon name="bell" size={18} color="#FFFFFF" />
-              <View style={styles.bellDot} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Search bar */}
-        <TouchableOpacity
-          style={styles.searchBar}
-          activeOpacity={0.9}
-          onPress={() => searchRef.current?.focus()}
-        >
-          <View style={styles.searchPin}>
-            <Icon name="map-pin" size={15} color="#fff" />
-          </View>
-          <View style={styles.searchText}>
-            <Text style={styles.searchLabel}>Hvor skal du?</Text>
-            <TextInput keyboardAppearance="dark"
-              ref={searchRef}
-              style={styles.searchValue}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Adresse eller område..."
-              placeholderTextColor="#BCC5CB"
-              autoCorrect={false}
-              autoCapitalize="none"
-              returnKeyType="search"
-            />
-          </View>
-          {searchQuery.length > 0 ? (
-            <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={8}>
-              <Icon name="x" size={18} color="#98B6D8" strokeWidth={2} />
-            </TouchableOpacity>
-          ) : (
-            <Icon name="search" size={18} color="#98B6D8" />
-          )}
-        </TouchableOpacity>
-
-        {/* Filter dropdown */}
-        <View style={styles.filtersWrapper}>
-          <TouchableOpacity
-            onPress={() => setShowSortModal(true)}
-            style={[styles.filterDropdown, hasFilters && styles.filterDropdownActive]}
-            activeOpacity={0.85}
-          >
-            <Icon name="filter" size={15} color={hasFilters ? '#fff' : '#98B6D8'} strokeWidth={2} />
-            <Text style={[styles.filterDropdownText, hasFilters && styles.filterDropdownTextActive]}>
-              {hasFilters ? `${activeFilters.size} filter aktive` : 'Filtrer og sorter'}
-            </Text>
-            <Icon name="chevron-down" size={16} color={hasFilters ? '#fff' : '#98B6D8'} strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-
         {/* Search status banner */}
         {searching && (
           <View style={[styles.searchBanner, styles.searchBannerInfo]}>
@@ -306,16 +292,23 @@ export default function WelcomeScreen({ navigation, route }) {
         {/* Section heading */}
         <View style={styles.sectionRow}>
           <Text style={styles.sectionLabel}>{visibleSpots.length} plasser</Text>
-          <TouchableOpacity onPress={() => setShowSortModal(true)} style={styles.sortPill} activeOpacity={0.7} hitSlop={6}>
-            <Text style={styles.sortPillText}>{activeSortLabel}</Text>
-            <Icon name="chevron-down" size={13} color="#98B6D8" strokeWidth={2.2} />
+          <TouchableOpacity onPress={() => setShowSortModal(true)} style={styles.filterIconBtn} activeOpacity={0.7} hitSlop={10}>
+            <Icon name="filter" size={20} color={hasFilters ? '#4E96F0' : '#FFFFFF'} strokeWidth={2} />
+            {hasFilters && <View style={styles.filterIconDot} />}
+            <Icon name="chevron-down" size={16} color={hasFilters ? '#4E96F0' : '#98B6D8'} strokeWidth={2.4} />
           </TouchableOpacity>
         </View>
 
-        {/* Spot cards */}
+        {/* Spot cards — all listings render; the keyboard just shrinks how many
+            are visible at once. */}
         {visibleSpots.length > 0 ? (
-          visibleSpots.map((spot) => (
-            <SpotCard key={spot.id} spot={spot} onPress={() => navigation.push('LiveSpot', { spot })} />
+          visibleSpots.map((spot, i) => (
+            <SpotCard
+              key={spot.id}
+              spot={spot}
+              photoUrl={spot.photoUrl ?? CARD_PHOTOS[i % CARD_PHOTOS.length]}
+              onPress={() => navigation.push('LiveSpot', { spot })}
+            />
           ))
         ) : (
           <View style={styles.emptyState}>
@@ -328,9 +321,10 @@ export default function WelcomeScreen({ navigation, route }) {
         )}
       </ScrollView>
 
-      {/* Sort / filter modal */}
+      {/* Sort / filter modal — no dim overlay; the list already sits on a dimmed
+          layover over the map, so a second scrim would double up. */}
       <Modal visible={showSortModal} transparent animationType="slide" onRequestClose={() => setShowSortModal(false)}>
-        <Pressable style={styles.modalOverlay} onPress={() => setShowSortModal(false)}>
+        <Pressable style={styles.modalOverlayClear} onPress={() => setShowSortModal(false)}>
           <Pressable style={[styles.modalSheet, { paddingBottom: insets.bottom + 20 }]}>
             <View style={styles.modalHandle} />
             <Text style={styles.modalTitle}>Sorter og filtrer</Text>
@@ -422,91 +416,80 @@ export default function WelcomeScreen({ navigation, route }) {
   );
 }
 
-function SpotCard({ spot, onPress }) {
+// Renter-facing spot card — same rich layout as the host/inntekt card
+// (HostSpotCard): left 60% info, right 40% photo well, left-edge scrim, and a
+// forward arrow on the seam. Renter content: availability, area · distance,
+// price. `photoUrl` is the card image (the list alternates the two inntekt
+// photos); if it's null the well falls back to the parkno logo.
+function SpotCard({ spot, photoUrl, onPress }) {
+  const meta = [
+    spot.area,
+    spot.distanceFromSearchKm != null
+      ? `${formatDistanceKm(spot.distanceFromSearchKm)} fra søk`
+      : (spot.distance && spot.distance),
+  ].filter(Boolean).join(' · ');
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.88} style={styles.spotCard}>
-      <View style={[StyleSheet.absoluteFillObject, { borderRadius: 22, backgroundColor: '#3A4C68' }]} />
-      <View style={styles.spotInner}>
-        <View style={styles.spotRow}>
-          <View style={styles.spotLeft}>
-            <View style={styles.statusRow}>
-              <View style={styles.statusDot} />
-              <Text style={styles.untilText}>{spot.until}</Text>
-            </View>
-            <Text style={styles.addressText} numberOfLines={1}>{spot.address}</Text>
-            <Text style={styles.metaText}>{[
-              spot.area,
-              spot.distanceFromSearchKm != null
-                ? `${formatDistanceKm(spot.distanceFromSearchKm)} fra søk`
-                : (spot.distance && spot.distance),
-            ].filter(Boolean).join(' · ')}</Text>
-            <View style={styles.tagRow}>
-              {spot.tags.slice(0, 3).map((tag) => (
-                <View key={tag} style={styles.tag}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
-              {spot.tags.length > 3 && (
-                <View style={styles.tag}>
-                  <Text style={styles.tagText}>+{spot.tags.length - 3}</Text>
-                </View>
-              )}
-            </View>
+      {/* Left info */}
+      <View style={styles.spotInfo}>
+        <View style={styles.statusRow}>
+          <View style={[styles.dotGlow, { backgroundColor: spot.available ? 'rgba(23,230,161,0.18)' : 'rgba(217,164,65,0.18)' }]}>
+            <View style={[styles.statusDot, { backgroundColor: spot.available ? '#17E6A1' : '#D9A441' }]} />
           </View>
-          <View style={styles.spotRight}>
-            <View style={styles.priceRow}>
-              <Text style={styles.priceNum}>{spot.price}</Text>
-              <Text style={styles.priceUnit}>kr/t</Text>
-            </View>
-            <View style={styles.arrowBtn}>
-              <Icon name="arrow-right" size={14} color="#fff" strokeWidth={2.5} />
-            </View>
-          </View>
+          <Text style={styles.untilText} numberOfLines={1}>{spot.until ?? (spot.available ? 'Ledig nå' : 'Opptatt')}</Text>
         </View>
+
+        <View>
+          <Text style={styles.addressText} numberOfLines={1}>{spot.address}</Text>
+          <Text style={styles.metaText} numberOfLines={1}>{meta}</Text>
+        </View>
+
+        <View style={styles.priceRow}>
+          <Text style={styles.priceNum}>{spot.price}</Text>
+          <Text style={styles.priceUnit}> kr/t</Text>
+        </View>
+      </View>
+
+      {/* Right photo well — falls back to the parkno logo (no spot photos yet) */}
+      <View style={styles.photoWell}>
+        {photoUrl ? (
+          <Image source={{ uri: photoUrl }} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+        ) : (
+          <View style={styles.photoEmpty}>
+            <Image source={require('../../assets/parkno-icon-opaque.png')} style={styles.photoLogo} resizeMode="contain" />
+          </View>
+        )}
+        {/* left-edge scrim so the seam reads */}
+        <LinearGradient
+          colors={['#3A4C68', 'rgba(58,76,104,0)']}
+          start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
+          style={styles.photoScrim}
+        />
+      </View>
+
+      {/* Forward arrow on the seam */}
+      <View style={styles.seamArrowWrap} pointerEvents="none">
+        <LinearGradient colors={['#4E96F0', '#5EA2F5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.seamArrow}>
+          <Icon name="arrow-right" size={16} color="#fff" strokeWidth={2.2} />
+        </LinearGradient>
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, backgroundColor: 'transparent' },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20 },
 
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  headerText: { flex: 1 },
-  logo: { width: 44, height: 44, borderRadius: 12 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
-  heartBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center', shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 3 },
-  bellBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
-  bellDot: { position: 'absolute', top: 9, right: 11, width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444', borderWidth: 1.5, borderColor: '#2B394C' },
   greeting: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase' },
   headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36 },
 
-  searchBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingHorizontal: 14, paddingVertical: 12,
-    borderRadius: 18, backgroundColor: '#3A4C68',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 12,
-    shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.06, shadowRadius: 16, elevation: 3,
-  },
-  searchPin: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center' },
-  searchText: { flex: 1, minWidth: 0 },
-  searchLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase' },
-  searchValue: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14, padding: 0 },
+  // Pinned search bar — overlaps the map's bar position so it reads as the same
+  // bar, but here it's editable (back arrow + live input).
+  searchOverlay: { position: 'absolute', left: 16, right: 16, zIndex: 10 },
 
-  filtersWrapper: { marginBottom: 18 },
-  filterDropdown: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingHorizontal: 14, height: 44, borderRadius: 14,
-    backgroundColor: '#3A4C68',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
-  },
-  filterDropdownActive: { backgroundColor: '#4E96F0', borderColor: '#4E96F0' },
-  filterDropdownText: { flex: 1, fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#98B6D8', letterSpacing: -0.13 },
-  filterDropdownTextActive: { color: '#fff' },
   filterGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8, marginBottom: 4 },
   filterChip: { height: 34, paddingHorizontal: 14, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(17,20,22,0.08)' },
   filterChipActive: { backgroundColor: '#4E96F0', borderColor: '#4E96F0' },
@@ -520,29 +503,37 @@ const styles = StyleSheet.create({
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
   sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase' },
-  sortPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.07)' },
-  sortPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 12, color: '#98B6D8', letterSpacing: -0.12 },
+  filterIconBtn: { height: 40, flexDirection: 'row', alignItems: 'center', gap: 3, paddingLeft: 8 },
+  filterIconDot: { position: 'absolute', top: 6, left: 24, width: 8, height: 8, borderRadius: 4, backgroundColor: '#4E96F0', borderWidth: 1.5, borderColor: '#2B394C' },
 
-  spotCard: { borderRadius: 22, marginBottom: 8, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.18, shadowRadius: 12, elevation: 2 },
-  spotInner: { padding: 14 },
-  spotRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  spotLeft: { flex: 1, minWidth: 0 },
-  spotRight: { alignItems: 'flex-end', gap: 6 },
+  // Rich spot card — mirrors HostSpotCard (the inntekt/host listing card).
+  spotCard: {
+    height: 126, borderRadius: 28, overflow: 'hidden', flexDirection: 'row',
+    backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    marginBottom: 14,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.22, shadowRadius: 26, elevation: 6,
+  },
+  spotInfo: { width: '60%', paddingVertical: 15, paddingHorizontal: 16, justifyContent: 'space-between' },
 
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4E96F0' },
-  untilText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
-  addressText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32, marginTop: 4 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  dotGlow: { width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
+  statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#17E6A1' },
+  untilText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase', flexShrink: 1 },
+  addressText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.2 },
   metaText: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
-  tagRow: { flexDirection: 'row', gap: 5, marginTop: 8 },
-  tag: { height: 22, paddingHorizontal: 8, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: '#50607A' },
-  tagText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: -0.1 },
+  priceRow: { flexDirection: 'row', alignItems: 'baseline' },
+  priceNum: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF' },
+  priceUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: '#98B6D8' },
 
-  priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 2 },
-  priceNum: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.36 },
-  priceUnit: { fontFamily: 'System', fontWeight: '600', fontSize: 11, color: 'rgba(255,255,255,0.75)' },
-  arrowBtn: { width: 32, height: 32, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
+  // Right photo well + fallback logo + seam scrim
+  photoWell: { width: '40%', backgroundColor: '#2F3D52' },
+  photoEmpty: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' },
+  photoLogo: { width: 46, height: 46, opacity: 0.85 },
+  photoScrim: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 40 },
+
+  seamArrowWrap: { position: 'absolute', bottom: 14, left: '60%', marginLeft: -17 },
+  seamArrow: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 6 },
 
   emptyState: { alignItems: 'center', paddingVertical: 48 },
   emptyText: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#98B6D8', marginTop: 12, marginBottom: 16 },
@@ -564,6 +555,7 @@ const styles = StyleSheet.create({
   ratingSkipText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#98B6D8' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.42)', justifyContent: 'flex-end' },
+  modalOverlayClear: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
   modalSheet: { backgroundColor: '#3A4C68', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 12 },
   modalHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#50607A', alignSelf: 'center', marginBottom: 20 },
   modalTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36, marginBottom: 20 },

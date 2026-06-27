@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   blob3: { width: 200, height: 200, backgroundColor: '#6FB1F7', top: '40%', right: -60, opacity: 0.18 },
 
   logoRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 32 },
-  logoImage: { width: 48, height: 48 },
+  logoImage: { width: 48, height: 48, tintColor: '#fff' },
   brandName: { fontFamily: 'System', fontWeight: '800', fontSize: 24, color: '#FFFFFF', letterSpacing: -0.48 },
 
   card: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 28, padding: 22, shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.1, shadowRadius: 32, elevation: 8 },

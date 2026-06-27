@@ -210,8 +210,6 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity style={styles.logoutBtn} activeOpacity={0.85} onPress={signOut}>
           <Text style={styles.logoutText}>Logg ut</Text>
         </TouchableOpacity>
-
-        <Text style={styles.version}>Parkno · v1.0.0</Text>
       </ScrollView>
     </View>
   );
@@ -309,15 +307,13 @@ const styles = StyleSheet.create({
   sectionCard: { backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden', shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 },
 
   row: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  rowIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
+  rowIconWrap: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   rowText: { flex: 1 },
   rowLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
   rowHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 1 },
   rowBalance: { fontFamily: 'System', fontWeight: '800', fontSize: 15, color: '#4E96F0', letterSpacing: -0.2 },
   rowDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 66 },
 
-  logoutBtn: { height: 52, borderRadius: 999, backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
-  logoutText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#DC2626', letterSpacing: -0.15 },
-
-  version: { fontFamily: 'System', fontWeight: '500', fontSize: 11, color: '#6E809B', textAlign: 'center', marginBottom: 8 },
+  logoutBtn: { alignSelf: 'center', width: '50%', height: 44, borderRadius: 999, backgroundColor: 'rgba(220,38,38,0.75)', alignItems: 'center', justifyContent: 'center', marginTop: 4, marginBottom: 16 },
+  logoutText: { fontFamily: 'System', fontWeight: '700', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15 },
 });

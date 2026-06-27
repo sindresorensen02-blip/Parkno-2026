@@ -13,13 +13,6 @@ const PLANS = [
   { id: 'yearly',  label: 'Årlig',     price: 399, per: 'år',  note: 'Kun 33 kr/mnd',       save: 'Spar 32%' },
 ];
 
-const BENEFITS = [
-  { icon: 'zap',    title: 'Null avgift',    text: 'Ingen bookinggebyr' },
-  { icon: 'star',   title: 'Prioritert',     text: 'Reserver først' },
-  { icon: 'bell',   title: 'Smarte varsler', text: 'Ledig plass nær deg' },
-  { icon: 'shield', title: 'VIP-support',    text: 'Hopp foran i køen' },
-];
-
 export default function PremiumScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { isPremium, setIsPremium } = usePremium();
@@ -44,7 +37,7 @@ export default function PremiumScreen({ navigation }) {
             <Icon name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Premium</Text>
-          <View style={styles.backBtn} />
+          <View style={styles.headerSpacer} />
         </View>
 
         {/* Hero */}
@@ -72,21 +65,6 @@ export default function PremiumScreen({ navigation }) {
               <Text style={styles.trialPillText}>7 dager gratis · ingen betaling nå</Text>
             </View>
           )}
-        </View>
-
-        {/* Benefits — 2×2 grid */}
-        <View style={styles.benefits}>
-          {BENEFITS.map((b) => (
-            <View key={b.title} style={styles.benefitCell}>
-              <View style={styles.benefitIcon}>
-                <Icon name={b.icon} size={15} color="#4E96F0" strokeWidth={2} />
-              </View>
-              <View style={styles.benefitText}>
-                <Text style={styles.benefitTitle}>{b.title}</Text>
-                <Text style={styles.benefitHint} numberOfLines={1}>{b.text}</Text>
-              </View>
-            </View>
-          ))}
         </View>
 
         {/* Plans / active state — flexes to fill remaining space */}
@@ -167,11 +145,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20 },
 
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  headerSpacer: { width: 40, height: 40 },
   headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
   hero: {
-    borderRadius: 24, padding: 20, marginBottom: 14, overflow: 'hidden',
+    borderRadius: 24, padding: 20, marginTop: 12, marginBottom: 14, overflow: 'hidden',
     shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 8,
   },
   heroOrbA: { position: 'absolute', width: 180, height: 180, borderRadius: 90, backgroundColor: 'rgba(255,255,255,0.13)', top: -80, right: -50 },
@@ -182,16 +161,6 @@ const styles = StyleSheet.create({
   heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12.5, color: 'rgba(255,255,255,0.82)', lineHeight: 18, marginTop: 6 },
   trialPill: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', marginTop: 12, paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
   trialPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 11.5, color: '#fff', letterSpacing: -0.1 },
-
-  benefits: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14, marginHorizontal: -5 },
-  benefitCell: {
-    width: '50%', flexDirection: 'row', alignItems: 'center', gap: 9,
-    paddingHorizontal: 5, paddingVertical: 7,
-  },
-  benefitIcon: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(124,58,237,0.1)', alignItems: 'center', justifyContent: 'center' },
-  benefitText: { flex: 1 },
-  benefitTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 13, color: '#FFFFFF', letterSpacing: -0.13 },
-  benefitHint: { fontFamily: 'System', fontWeight: '400', fontSize: 11, color: '#98B6D8', marginTop: 1 },
 
   middle: { flex: 1, justifyContent: 'center' },
   sectionLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },

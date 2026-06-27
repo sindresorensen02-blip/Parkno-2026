@@ -30,3 +30,6 @@ Thumbs.db
 
 # Generated
 graphify-out/
+
+# Web scraping scratch data
+.firecrawl/

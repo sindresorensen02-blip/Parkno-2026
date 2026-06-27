@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parkno — Listing Card Mockups</title>
+<style>
+  :root{
+    --bgApp:#2B394C; --surface1:#3A4C68; --surface3:#50607A;
+    --border:rgba(255,255,255,0.08); --borderStrong:rgba(255,255,255,0.14);
+    --textPrimary:#FFFFFF; --textSecondary:#98B6D8; --textTertiary:#6E809B;
+    --accent:#5EA2F5; --success:#17E6A1; --warning:#D9A441; --danger:#E2675E;
+    --grad:linear-gradient(135deg,#4E96F0,#5EA2F5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  body{background:var(--bgApp);color:var(--textPrimary);padding:32px 20px 80px;-webkit-font-smoothing:antialiased;}
+  h1{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;text-align:center;}
+  .sub{color:var(--textSecondary);font-size:13px;text-align:center;margin-bottom:36px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:40px;max-width:1320px;margin:0 auto;}
+  .col{display:flex;flex-direction:column;gap:14px;}
+  .label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--textSecondary);}
+  .note{font-size:11px;color:var(--textTertiary);line-height:1.5;margin-top:-6px;}
+
+  /* shared card chrome */
+  .card{border-radius:28px;border:1px solid var(--border);overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,0.24);background:var(--surface1);cursor:pointer;
+    transition:transform .12s ease;}
+  .card:active{transform:scale(0.985);}
+
+  /* photo placeholder util */
+  .photo{background:linear-gradient(160deg,#41557a,#2f3f5c);position:relative;display:flex;align-items:center;justify-content:center;}
+  .photo svg{opacity:0.45;}
+  .scrim-b{position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgba(0,0,0,0.55));}
+  .scrim-l{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(0,0,0,0.18));}
+
+  .heart{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:999px;
+    background:rgba(20,28,40,0.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;
+    background:rgba(20,28,40,0.6);backdrop-filter:blur(8px);font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#fff;}
+  .dot{width:6px;height:6px;border-radius:3px;background:var(--success);box-shadow:0 0 6px var(--success);}
+  .ribbon{position:absolute;top:12px;left:0;background:var(--grad);color:#fff;font-size:10px;font-weight:800;
+    letter-spacing:0.4px;padding:5px 12px 5px 10px;border-radius:0 999px 999px 0;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+
+  .addr{font-size:16px;font-weight:700;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .meta{font-size:12px;font-weight:500;color:var(--textSecondary);margin-top:2px;}
+  .overline{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--textSecondary);}
+  .tags{display:flex;gap:5px;flex-wrap:wrap;}
+  .tag{height:22px;display:flex;align-items:center;padding:0 9px;border-radius:999px;background:var(--surface3);
+    font-size:10px;font-weight:700;color:var(--textSecondary);}
+  .price{display:flex;align-items:baseline;gap:2px;}
+  .price b{font-size:20px;font-weight:800;letter-spacing:-0.4px;}
+  .price span{font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);}
+  .rating{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;}
+  .rating .star{color:#F5C24E;}
+  .rating .cnt{color:var(--textSecondary);font-weight:500;}
+  .score{background:var(--accent);color:#fff;font-size:12px;font-weight:800;padding:3px 7px;border-radius:8px;}
+  .arrow{width:32px;height:32px;border-radius:999px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+  .arrow.ghost{background:rgba(255,255,255,0.14);}
+  .actions{display:flex;gap:8px;margin-top:12px;}
+  .btn{flex:1;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:6px;
+    font-size:13px;font-weight:700;background:rgba(255,255,255,0.07);color:var(--textPrimary);border:1px solid var(--border);}
+  .btn.primary{background:var(--grad);border:none;}
+  .row{display:flex;align-items:center;justify-content:space-between;}
+  .fade{color:var(--textTertiary);}
+  .urg{color:var(--warning);font-size:11px;font-weight:700;}
+  .strike{color:var(--textTertiary);text-decoration:line-through;font-size:13px;font-weight:600;}
+</style>
+</head>
+<body>
+<h1>Parkno — Listing Card Styles</h1>
+<p class="sub">Eight patterns from top apps, rendered in your Waymo-dark theme. Same data on every card.</p>
+
+<div class="grid">
+
+  <!-- 1. AIRBNB: top photo + inline rating -->
+  <div class="col">
+    <span class="label">1 · Airbnb — Top photo, inline rating</span>
+    <div class="card">
+      <div class="photo" style="height:160px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div class="heart">♥</div>
+        <div style="position:absolute;bottom:12px;left:12px;"><span class="pill"><span class="dot"></span>Ledig til 20:00</span></div>
+      </div>
+      <div style="padding:14px;">
+        <div class="row"><div class="addr">Lars Hilles gate 24</div><div class="rating"><span class="star">★</span>4.9</div></div>
+        <div class="meta">Sentrum · 0.4 km fra søk</div>
+        <div class="tags" style="margin-top:10px;"><div class="tag">Tak over</div><div class="tag">Elbil lading</div><div class="tag">Belyst</div></div>
+        <div class="row" style="margin-top:12px;"><div class="price"><b>45</b><span>kr/t</span></div><div class="arrow">→</div></div>
+      </div>
+    </div>
+    <p class="note">Photo sells. Rating top-right by title. Price + forward arrow on bottom row.</p>
+  </div>
+
+  <!-- 2. BOOKING: side photo, dense, score chip -->
+  <div class="col">
+    <span class="label">2 · Booking.com — Right photo, dense, score chip</span>
+    <div class="card" style="display:flex;height:130px;">
+      <div style="flex:1;padding:14px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;">
+        <div>
+          <div class="row"><div class="addr">Lars Hilles gate 24</div><div class="score">9.2</div></div>
+          <div class="meta">Sentrum · 0.4 km fra søk</div>
+        </div>
+        <div class="row">
+          <div class="price"><b>45</b><span>kr/t</span></div>
+          <div class="urg">2 plasser igjen</div>
+        </div>
+      </div>
+      <div class="photo" style="width:40%;">
+        <div class="scrim-l"></div>
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div class="heart">♥</div>
+      </div>
+    </div>
+    <p class="note">Your right-40% layout. Score chip + scarcity line drive fast scanning.</p>
+  </div>
+
+  <!-- 3. UBER: banner + single fact row -->
+  <div class="col">
+    <span class="label">3 · Uber — Banner + single fact row</span>
+    <div class="card">
+      <div class="photo" style="height:150px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div class="heart">♥</div>
+      </div>
+      <div style="padding:14px;">
+        <div class="addr">Lars Hilles gate 24</div>
+        <div class="meta"><span class="star" style="color:#F5C24E;">★</span> 4.9 · 0.4 km · Ledig til 20:00 · 45 kr/t</div>
+      </div>
+    </div>
+    <p class="note">Minimal chrome. One pill-separated fact row carries everything.</p>
+  </div>
+
+  <!-- 4. ZILLOW: overlaid status pill + price first -->
+  <div class="col">
+    <span class="label">4 · Zillow — Status pill overlay, price-first</span>
+    <div class="card">
+      <div class="photo" style="height:155px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div style="position:absolute;top:12px;left:12px;"><span class="pill" style="background:rgba(23,230,161,0.9);color:#06281d;"><span style="width:6px;height:6px;border-radius:3px;background:#06281d;"></span>Ledig nå</span></div>
+        <div class="heart">♥</div>
+      </div>
+      <div style="padding:14px;">
+        <div class="row"><div class="price"><b style="font-size:24px;">45</b><span>kr/t</span></div><div class="rating"><span class="star">★</span>4.9 <span class="cnt">(212)</span></div></div>
+        <div class="addr" style="font-weight:600;margin-top:6px;">Lars Hilles gate 24</div>
+        <div class="meta">Sentrum · 0.4 km · Tak over · Elbil</div>
+      </div>
+    </div>
+    <p class="note">Big price leads. Availability as colored overlay pill. Address de-emphasized.</p>
+  </div>
+
+  <!-- 5. DOORDASH: corner ribbon + rating count -->
+  <div class="col">
+    <span class="label">5 · DoorDash — Promo ribbon + rating count</span>
+    <div class="card">
+      <div class="photo" style="height:150px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div class="ribbon">Featured</div>
+        <div class="heart">♥</div>
+      </div>
+      <div style="padding:14px;">
+        <div class="addr">Lars Hilles gate 24</div>
+        <div class="meta" style="margin-top:4px;"><span class="star" style="color:#F5C24E;">★</span> 4.9 (212) · 0.4 km · <b style="color:#fff;">45 kr/t</b></div>
+      </div>
+    </div>
+    <p class="note">Corner ribbon for premium/featured hosts. Review count builds trust.</p>
+  </div>
+
+  <!-- 6. GOOGLE MAPS: right thumb + action row -->
+  <div class="col">
+    <span class="label">6 · Google Maps — Thumb + action row</span>
+    <div class="card" style="padding:14px;">
+      <div style="display:flex;gap:12px;">
+        <div style="flex:1;min-width:0;">
+          <div class="addr">Lars Hilles gate 24</div>
+          <div class="meta"><span class="star" style="color:#F5C24E;">★</span> 4.9 (212)</div>
+          <div class="meta">Sentrum · 45 kr/t · Ledig til 20:00</div>
+        </div>
+        <div class="photo" style="width:88px;height:72px;border-radius:14px;flex-shrink:0;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="btn primary">Reservér</div>
+        <div class="btn">♥ Lagre</div>
+        <div class="btn">Veibeskrivelse</div>
+      </div>
+    </div>
+    <p class="note">Small thumb + explicit action row. Ties directly into your booking flow.</p>
+  </div>
+
+  <!-- 7. INSTAGRAM/TINDER: full-bleed + bottom scrim -->
+  <div class="col">
+    <span class="label">7 · Tinder/IG — Full-bleed, bottom gradient</span>
+    <div class="card">
+      <div class="photo" style="height:230px;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+        <div class="heart">♥</div>
+        <div style="position:absolute;top:12px;left:12px;"><span class="pill"><span class="dot"></span>Ledig til 20:00</span></div>
+        <div class="scrim-b"></div>
+        <div style="position:absolute;bottom:14px;left:16px;right:16px;">
+          <div class="row">
+            <div>
+              <div class="addr" style="font-size:18px;">Lars Hilles gate 24</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px;">Sentrum · 0.4 km · ★ 4.9</div>
+            </div>
+            <div class="price"><b style="font-size:22px;">45</b><span>kr/t</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Premium-spot variant. Everything floats over the photo. High-end, low density.</p>
+  </div>
+
+  <!-- 8. AMAZON/BOOKING hybrid: left image, strike price -->
+  <div class="col">
+    <span class="label">8 · Amazon — Left photo, scarcity, deal price</span>
+    <div class="card" style="display:flex;height:128px;">
+      <div class="photo" style="width:38%;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 19l-9-13-9 13z"/><circle cx="12" cy="10" r="1.5"/></svg>
+      </div>
+      <div style="flex:1;padding:14px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;">
+        <div>
+          <div class="addr">Lars Hilles gate 24</div>
+          <div class="meta"><span class="star" style="color:#F5C24E;">★</span> 4.9 (212) · 0.4 km</div>
+        </div>
+        <div class="row">
+          <div class="price"><b style="color:var(--success);">45</b><span>kr/t</span> &nbsp;<span class="strike">60</span></div>
+          <div class="urg">Kun 2 igjen</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Conversion machine: deal price in green, strikethrough, scarcity line.</p>
+  </div>
+
+</div>
+</body>
+</html>

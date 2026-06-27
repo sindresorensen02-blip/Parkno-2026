@@ -212,7 +212,7 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#3A4C68', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.32 },
 
   avatarSection: { alignItems: 'center', marginBottom: 28 },
@@ -227,7 +227,7 @@ const s = StyleSheet.create({
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginLeft: 56 },
 
   fieldWrap: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
-  fieldIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.07)', alignItems: 'center', justifyContent: 'center' },
+  fieldIcon: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   fieldBody: { flex: 1 },
   fieldLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 10, color: '#98B6D8', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 3 },
   fieldInput: { fontFamily: 'System', fontWeight: '600', fontSize: 15, color: '#FFFFFF', letterSpacing: -0.15, padding: 0 },
@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   readOnlyText: { fontFamily: 'System', fontWeight: '700', fontSize: 10, color: '#98B6D8', letterSpacing: 0.4 },
 
   secRow: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  secIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#50607A', alignItems: 'center', justifyContent: 'center' },
+  secIcon: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   secText: { flex: 1 },
   secLabel: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#FFFFFF', letterSpacing: -0.14 },
   secHint: { fontFamily: 'System', fontWeight: '400', fontSize: 12, color: '#98B6D8', marginTop: 1 },

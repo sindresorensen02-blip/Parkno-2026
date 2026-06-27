@@ -52,11 +52,15 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { PremiumProvider } from './src/context/PremiumContext';
 import { BalanceProvider } from './src/context/BalanceContext';
 import { ActiveBookingProvider } from './src/context/ActiveBookingContext';
+import { SearchProvider } from './src/context/SearchContext';
 import SaldoScreen from './src/screens/SaldoScreen';
 import AktivParkeringScreen from './src/screens/AktivParkeringScreen';
 import PremiumScreen from './src/screens/PremiumScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import AktivitetScreen from './src/screens/AktivitetScreen';
+import MeldingerScreen from './src/screens/MeldingerScreen';
+import MeldingScreen from './src/screens/MeldingScreen';
+import BelonningerScreen from './src/screens/BelonningerScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -103,6 +107,9 @@ const WWrappedSaldo                  = wrap(SaldoScreen);
 const WWrappedAktivParkering         = wrap(AktivParkeringScreen);
 const WWrappedPremium                = wrap(PremiumScreen);
 const WWrappedAktivitet              = wrap(AktivitetScreen);
+const WWrappedMeldinger              = wrap(MeldingerScreen);
+const WWrappedMelding                = wrap(MeldingScreen);
+const WWrappedBelonninger            = wrap(BelonningerScreen);
 
 // Each tab is its own independent stack. Routes are owned by exactly one tab
 // to avoid ambiguous `navigation.navigate(name)` resolution. Cross-tab jumps
@@ -112,24 +119,28 @@ function HjemStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: '#2B394C' } }}>
       <Stack.Screen name="HjemRoot"         component={WWrappedHjem} />
-      <Stack.Screen name="Welcome"          component={WWrappedWelcome} />
+      <Stack.Screen name="Welcome"          component={WWrappedWelcome} options={{ presentation: 'transparentModal', animation: 'fade', contentStyle: { backgroundColor: 'transparent' } }} />
       <Stack.Screen name="LiveSpot"         component={WWrappedLiveSpot} />
       <Stack.Screen name="Lagret"           component={WWrappedLagret} />
       <Stack.Screen name="Inboks"           component={WWrappedInboks} />
-      <Stack.Screen name="Host"             component={WWrappedHost} />
-      <Stack.Screen name="LeiUt"            component={WWrappedLeiUt} />
-      <Stack.Screen name="RedigerPlass"     component={WWrappedRedigerPlass} />
       <Stack.Screen name="BetalingPaakrevd" component={WWrappedBetalingPaakrevd} options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', contentStyle: { backgroundColor: 'transparent' } }} />
       <Stack.Screen name="AktivParkering"   component={WWrappedAktivParkering} />
     </Stack.Navigator>
   );
 }
 
-// Activity tab — the user's reservation history / activity feed.
+// Activity tab — the user's reservation history / activity feed, plus the
+// host/utleier flow (earnings, listings) which is launched from here.
 function AktivitetStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: '#2B394C' } }}>
       <Stack.Screen name="AktivitetRoot" component={WWrappedAktivitet} />
+      <Stack.Screen name="Host"          component={WWrappedHost} />
+      <Stack.Screen name="LeiUt"         component={WWrappedLeiUt} />
+      <Stack.Screen name="RedigerPlass"  component={WWrappedRedigerPlass} />
+      <Stack.Screen name="Meldinger"     component={WWrappedMeldinger} />
+      <Stack.Screen name="Melding"       component={WWrappedMelding} />
+      <Stack.Screen name="Belonninger"   component={WWrappedBelonninger} />
     </Stack.Navigator>
   );
 }
@@ -280,7 +291,9 @@ export default function App() {
         <PremiumProvider>
           <BalanceProvider>
             <ActiveBookingProvider>
-              <RootNavigator />
+              <SearchProvider>
+                <RootNavigator />
+              </SearchProvider>
             </ActiveBookingProvider>
           </BalanceProvider>
         </PremiumProvider>

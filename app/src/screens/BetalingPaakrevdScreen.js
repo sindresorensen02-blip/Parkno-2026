@@ -1,10 +1,11 @@
-﻿import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator, Image } from 'react-native';
+﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator, Image, Animated, PanResponder, Dimensions } from 'react-native';
 import { TouchableOpacity } from '../components/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle, Path } from 'react-native-svg';
 import Icon from '../components/Icon';
-import DurationSlider from '../components/DurationSlider';
+import WheelPicker from '../components/WheelPicker';
 import ReservationSuccess from '../components/ReservationSuccess';
 import { useBalance } from '../context/BalanceContext';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +20,24 @@ function formatDuration(mins) {
   const h = Math.floor(mins / 60);
   const rem = mins % 60;
   return rem ? `${h} t ${rem} min` : `${h} t`;
+}
+
+// Wheel-picker step + the full list of clock times for a single day, in
+// `minutes since midnight`. Each option is { value, label: "HH:MM" }.
+const TIME_STEP = 15;
+function clockLabel(mins) {
+  const m = ((mins % 1440) + 1440) % 1440;
+  return `${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
+}
+const TIME_OPTIONS = Array.from(
+  { length: (24 * 60) / TIME_STEP },
+  (_, i) => ({ value: i * TIME_STEP, label: clockLabel(i * TIME_STEP) }),
+);
+// Round a Date's wall-clock time up to the next TIME_STEP boundary.
+function nowRoundedToStep() {
+  const d = new Date();
+  const mins = d.getHours() * 60 + d.getMinutes();
+  return Math.ceil(mins / TIME_STEP) * TIME_STEP % 1440;
 }
 
 // Brand palette (mirrors colors_and_type.css)
@@ -85,37 +104,49 @@ const METHODS = [
   },
 ];
 
-// Brand logos for each payment method (drawn with brand colours — no image
-// assets needed). Styles live in the `s` StyleSheet at the bottom of the file.
+// Payment-method logos. All badges share the same 24px height as the Apple Pay
+// badge so they line up as a consistent row. Brand marks are drawn as inline SVG
+// (official Mastercard symbol, Vipps + Klarna wordmarks) — no image assets needed.
+
+// Official Mastercard symbol: two interlocking circles (red + amber) with the
+// blended overlap in the middle.
+function MastercardMark() {
+  return (
+    <View style={[s.brandBadge, { backgroundColor: '#FFFFFF' }]}>
+      <Svg width={26} height={16} viewBox="0 0 36 22">
+        <Circle cx={13} cy={11} r={11} fill="#EB001B" />
+        <Circle cx={23} cy={11} r={11} fill="#F79E1B" />
+        <Path d="M18 2.2a11 11 0 0 0 0 17.6 11 11 0 0 0 0-17.6Z" fill="#FF5F00" />
+      </Svg>
+    </View>
+  );
+}
+
+// Vipps wordmark: white "vipps" on the brand orange.
+function VippsMark() {
+  return (
+    <View style={[s.brandBadge, { backgroundColor: '#FF5B24' }]}>
+      <Text style={s.vippsWordmark}>vipps</Text>
+    </View>
+  );
+}
+
+// Klarna wordmark: black "Klarna" on the brand pink.
+function KlarnaMark() {
+  return (
+    <View style={[s.brandBadge, { backgroundColor: '#FFB3C7' }]}>
+      <Text style={s.klarnaWordmark}>Klarna</Text>
+    </View>
+  );
+}
+
 function MethodLogo({ method }) {
   if (method.isApplePay) {
     return <View style={s.applePayBadge}><Text style={s.applePayBadgeText}>{'\uF8FF'} Pay</Text></View>;
   }
-  if (method.id === 'vipps') {
-    return (
-      <View style={[s.brandBadge, { backgroundColor: '#FF5B24' }]}>
-        <Text style={s.brandTextWhite}>V</Text>
-      </View>
-    );
-  }
-  if (method.id === 'card') {
-    // Mastercard mark — two overlapping circles
-    return (
-      <View style={[s.brandBadge, { backgroundColor: '#FFFFFF' }]}>
-        <View style={s.mcWrap}>
-          <View style={[s.mcCircle, { backgroundColor: '#EB001B' }]} />
-          <View style={[s.mcCircle, { backgroundColor: '#F79E1B', marginLeft: -7, opacity: 0.9 }]} />
-        </View>
-      </View>
-    );
-  }
-  if (method.id === 'klarna') {
-    return (
-      <View style={[s.brandBadge, { backgroundColor: '#FFB3C7' }]}>
-        <Text style={s.brandTextDark}>K</Text>
-      </View>
-    );
-  }
+  if (method.id === 'vipps')  return <VippsMark />;
+  if (method.id === 'card')   return <MastercardMark />;
+  if (method.id === 'klarna') return <KlarnaMark />;
   return (
     <View style={[s.payMethodIcon, { backgroundColor: method.accentSoft }]}>
       <Icon name={method.icon} size={16} color={method.accent} strokeWidth={2.2} />
@@ -129,7 +160,17 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
   const { user } = useAuth();
   const { isPremium, toggle: togglePremium } = usePremium();
 
-  const [duration, setDuration] = useState(60); // minutes — chosen via the slider
+  // Start & end are clock times (minutes since midnight) chosen on the two
+  // wheel pickers. Default: start at the next possible 15-min mark, end 3 hours
+  // ahead of that.
+  const initialStart = useMemo(() => nowRoundedToStep(), []);
+  const [startMin, setStartMin] = useState(initialStart);
+  const [endMin, setEndMin] = useState((initialStart + 180) % 1440);
+  // Whether the user has actually picked a start time on the wheel. While false,
+  // the reservation begins at the *exact current minute* (not the rounded wheel
+  // value) so the live timer starts right now. The wheel still shows the rounded
+  // default because its options only land on 15-min steps.
+  const [startTouched, setStartTouched] = useState(false);
   const [selected, setSelected] = useState('applepay');
   const [processing, setProcessing] = useState(false);
   const [methodsOpen, setMethodsOpen] = useState(false);
@@ -140,17 +181,42 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
   const { balance, spend, refund } = useBalance();
   const { setDemoBooking } = useActiveBooking();
 
-  // Start time is fixed at mount; the slider duration drives everything else.
-  const start = useMemo(() => new Date(), []);
+  // Duration is the gap between the two picked clock times. If the end time is
+  // Anchor both times to a concrete Date relative to mount. When the user hasn't
+  // touched the start wheel, the reservation starts at the exact current minute
+  // (seconds zeroed) so the live countdown begins now; the end stays anchored to
+  // the clock time shown on the end wheel. Once they pick a start time, honour
+  // that 15-min clock value instead.
+  const mountDay = useMemo(() => new Date(), []);
+  const start = useMemo(() => {
+    const d = new Date(mountDay);
+    if (startTouched) {
+      d.setHours(Math.floor(startMin / 60), startMin % 60, 0, 0);
+    } else {
+      d.setSeconds(0, 0); // exact current minute
+    }
+    return d;
+  }, [mountDay, startMin, startTouched]);
+
+  const endsAt = useMemo(() => {
+    const d = new Date(start);
+    d.setHours(Math.floor(endMin / 60), endMin % 60, 0, 0);
+    // End is a clock time; if it lands at/before the start it's the next day.
+    if (d.getTime() <= start.getTime()) d.setDate(d.getDate() + 1);
+    return d;
+  }, [start, endMin]);
+
+  // Duration is the real elapsed window between the concrete start and end.
+  const duration = Math.round((endsAt.getTime() - start.getTime()) / 60_000);
+
   const hasSummary = pricePerHour != null;
   const hours = duration / 60;
   const subtotal = Math.round((pricePerHour ?? 0) * hours);
   const standardFee = Math.round(subtotal * BOOKING_FEE_RATE);
   const bookingFee = isPremium ? 0 : standardFee;
   const total = subtotal + bookingFee;
-  const endsAt = new Date(start.getTime() + duration * 60_000);
-  const startStr = `${pad2(start.getHours())}:${pad2(start.getMinutes())}`;
-  const endStr = `${pad2(endsAt.getHours())}:${pad2(endsAt.getMinutes())}`;
+  const startStr = clockLabel(startMin);
+  const endStr = clockLabel(endMin);
   const durationStr = formatDuration(duration);
   const durationMins = duration;
   const startsAtIso = start.toISOString();
@@ -291,19 +357,58 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
     return 'Betal med kort';
   })();
 
+  // Swipe-to-dismiss. The sheet rides on translateY; the PanResponder is attached
+  // to the grabber/header (not the ScrollView) so it never fights inner scrolling.
+  // Drag down past a threshold (or flick fast) → slide off-screen and go back;
+  // otherwise spring back to rest.
+  const SCREEN_H = Dimensions.get('window').height;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const dismiss = () => {
+    Animated.timing(translateY, {
+      toValue: SCREEN_H,
+      duration: 220,
+      useNativeDriver: true,
+    }).start(() => navigation.goBack());
+  };
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, g) => g.dy > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+      onPanResponderMove: (_, g) => {
+        if (g.dy > 0) translateY.setValue(g.dy); // down only
+      },
+      onPanResponderRelease: (_, g) => {
+        if (g.dy > 110 || g.vy > 0.8) {
+          dismiss();
+        } else {
+          Animated.spring(translateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            bounciness: 4,
+          }).start();
+        }
+      },
+    }),
+  ).current;
+
   return (
     <View style={s.root}>
       {/* Tap-to-dismiss backdrop — the screen behind (map) shows through the top */}
       <TouchableOpacity style={s.backdrop} activeOpacity={1} onPress={() => navigation.goBack()} />
 
-      {/* Bottom sheet — covers ~55% of the screen, Waymo-style */}
-      <View style={s.sheet}>
-        <View style={s.grabber} />
+      {/* Bottom sheet — covers ~55% of the screen, Waymo-style. Rides on
+          translateY so it can be swiped down to dismiss. */}
+      <Animated.View style={[s.sheet, { transform: [{ translateY }] }]}>
+        {/* Drag handle zone — owns the swipe-to-dismiss gesture. */}
+        <View style={s.grabZone} {...panResponder.panHandlers}>
+          <View style={s.grabber} />
+        </View>
 
         <ScrollView
           style={s.sheetScroll}
           contentContainerStyle={[s.content, { paddingTop: 4, paddingBottom: 12 }]}
           showsVerticalScrollIndicator={false}
+          bounces={false}
+          overScrollMode="never"
         >
         {/* Header */}
         <View style={s.headerRow}>
@@ -334,26 +439,43 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
                 <Text style={s.durationPillText}>{durationStr}</Text>
               </View>
             </View>
-
-            <View style={s.summaryTimeRow}>
-              <Text style={s.summaryTimeText}>{startStr}</Text>
-              <View style={s.timeArrow}>
-                <Icon name="chevron-right" size={14} color={C.charcoal} strokeWidth={2.4} />
-              </View>
-              <Text style={s.summaryTimeText}>{endStr}</Text>
-            </View>
-
           </View>
         )}
 
-        {/* Duration — pick how long to park (drives the total) */}
+        {/* Duration — pick start & end clock times on the two wheel pickers.
+            The gap between them drives the total. */}
         {hasSummary && (
           <View style={s.durationCard}>
-            <View style={s.durationHeader}>
-              <Text style={s.durationLabel}>Hvor lenge?</Text>
-              <Text style={s.durationValue}>{durationStr}</Text>
+            <View style={s.wheelRow}>
+              <View style={s.wheelCol}>
+                <Text style={s.wheelLabel}>Fra</Text>
+                <WheelPicker
+                  items={TIME_OPTIONS}
+                  value={startMin}
+                  visible={3}
+                  onChange={(v) => {
+                    setStartMin(v);
+                    setStartTouched(true); // honour the picked clock time from now on
+                    // Keep the end at least one step ahead of the new start.
+                    if (((endMin - v + 1440) % 1440 || 1440) < TIME_STEP) {
+                      setEndMin((v + 60) % 1440);
+                    }
+                  }}
+                />
+              </View>
+              <View style={s.wheelArrow}>
+                <Icon name="chevron-right" size={18} color={C.charcoal} strokeWidth={2.4} />
+              </View>
+              <View style={s.wheelCol}>
+                <Text style={s.wheelLabel}>Til</Text>
+                <WheelPicker
+                  items={TIME_OPTIONS}
+                  value={endMin}
+                  visible={3}
+                  onChange={setEndMin}
+                />
+              </View>
             </View>
-            <DurationSlider value={duration} min={30} max={480} step={30} onChange={setDuration} />
           </View>
         )}
 
@@ -376,7 +498,6 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               style={[StyleSheet.absoluteFillObject, { borderRadius: 18 }]}
             />
-            <View style={s.premiumUpsellOrb} />
             <Image
               source={require('../../assets/parkno-logo.png')}
               style={s.premiumUpsellLogo}
@@ -389,9 +510,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
               </Text>
               <Text style={s.premiumUpsellSub}>Slipp bookingavgiften · 49 kr/mnd</Text>
             </View>
-            <View style={s.premiumUpsellCta}>
-              <Icon name="arrow-right" size={14} color="#FFFFFF" strokeWidth={2.4} />
-            </View>
+            <Icon name="chevron-right" size={20} color="#FFFFFF" strokeWidth={2.4} />
           </TouchableOpacity>
         )}
 
@@ -654,7 +773,7 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
           )}
         </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
       {/* Three-stage reservation animation. Mounts immediately on success,
           plays anticipation → reveal → celebration, then onComplete fires and
@@ -676,10 +795,11 @@ export default function BetalingPaakrevdScreen({ navigation, route }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
 
-  // Bottom-sheet shell (Waymo-style) — covers ~55% from the bottom
+  // Bottom-sheet shell (Waymo-style) — tall enough that the whole page (summary,
+  // upsell, the two time wheels) fits without the inner ScrollView scrolling.
   backdrop: { flex: 1 },
   sheet: {
-    height: '55%',
+    height: '57%',
     backgroundColor: '#2B394C',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -688,15 +808,19 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: -8 },
     shadowOpacity: 0.30, shadowRadius: 24, elevation: 16,
   },
+  // Full-width drag zone so the swipe-to-dismiss gesture has a generous target.
+  grabZone: {
+    alignItems: 'center',
+    paddingTop: 8, paddingBottom: 6,
+  },
   grabber: {
     width: 40, height: 5, borderRadius: 3,
     backgroundColor: 'rgba(255,255,255,0.22)',
-    alignSelf: 'center', marginTop: 8, marginBottom: 6,
   },
   sheetScroll: { flex: 1 },
   footer: {
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 14,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.06)',
   },
@@ -735,7 +859,7 @@ const s = StyleSheet.create({
     bottom: -90, left: -40,
   },
   summaryLogo: {
-    width: 40, height: 40,
+    width: 40, height: 40, tintColor: '#fff',
   },
 
   summaryHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -754,25 +878,26 @@ const s = StyleSheet.create({
   },
   durationPillText: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: C.charcoal, letterSpacing: -0.1 },
 
-  summaryTimeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, marginBottom: 2, marginLeft: 52 },
-  summaryTimeText: { fontFamily: 'System', fontWeight: '800', fontSize: 20, color: C.charcoal, letterSpacing: -0.4 },
-  timeArrow: {
-    width: 24, height: 24,
-    alignItems: 'center', justifyContent: 'center',
-  },
-
-  summaryDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.10)', marginVertical: 9 },
-
-  // Duration slider card
+  // Duration picker block — no card chrome, just the wheels.
   durationCard: {
-    backgroundColor: '#3A4C68', borderRadius: 18,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
-    paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10,
-    marginBottom: 16,
+    paddingHorizontal: 4, paddingTop: 2, paddingBottom: 2,
+    marginBottom: 4,
   },
-  durationHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 },
-  durationLabel: { fontFamily: 'System', fontWeight: '700', fontSize: 11, color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase' },
-  durationValue: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.34 },
+
+  // Two side-by-side wheel pickers (start | end)
+  wheelRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  wheelCol: { flex: 1, alignItems: 'center' },
+  wheelLabel: {
+    fontFamily: 'System', fontWeight: '700', fontSize: 10,
+    color: '#98B6D8', letterSpacing: 1, textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  // The arrow between the wheels — nudged down so it lines up with the centered
+  // (selected) row of each wheel rather than the "Fra/Til" labels above them.
+  wheelArrow: {
+    width: 24, alignItems: 'center', justifyContent: 'center',
+    marginTop: 14,
+  },
   priceLine: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 2 },
   priceLineLabel: { fontFamily: 'System', fontWeight: '500', fontSize: 13, color: C.muted },
   priceLineValue: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: C.charcoal },
@@ -819,15 +944,9 @@ const s = StyleSheet.create({
   premiumUpsell: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 14, paddingVertical: 11,
-    borderRadius: 18, marginBottom: 4, overflow: 'hidden',
+    borderRadius: 18, marginTop: 8, marginBottom: 8, overflow: 'hidden',
     shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.32, shadowRadius: 18, elevation: 6,
-  },
-  premiumUpsellOrb: {
-    position: 'absolute',
-    width: 160, height: 160, borderRadius: 80,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    top: -80, right: -40,
   },
   premiumUpsellIcon: {
     width: 38, height: 38, borderRadius: 12,
@@ -851,13 +970,6 @@ const s = StyleSheet.create({
     fontFamily: 'System', fontWeight: '500', fontSize: 11,
     color: 'rgba(255,255,255,0.78)', marginTop: 3,
   },
-  premiumUpsellCta: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: '#fff',
-    alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.18, shadowRadius: 6, elevation: 3,
-  },
-
   sectionHead: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     marginBottom: 10, paddingLeft: 4,
@@ -976,18 +1088,16 @@ const s = StyleSheet.create({
   breakdownValue: { fontFamily: 'System', fontWeight: '600', fontSize: 13, color: '#FFFFFF' },
 
   applePayBadge: {
-    backgroundColor: '#FFFFFF', borderRadius: 6,
-    paddingHorizontal: 7, paddingVertical: 3,
+    width: 50, height: 24, backgroundColor: '#FFFFFF', borderRadius: 6,
     alignItems: 'center', justifyContent: 'center',
   },
   applePayBadgeText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#000000', letterSpacing: -0.2 },
 
-  // Brand logos (Vipps / Mastercard / Klarna)
-  brandBadge: { width: 30, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  brandTextWhite: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#FFFFFF' },
-  brandTextDark: { fontFamily: 'System', fontWeight: '800', fontSize: 16, color: '#17120F' },
-  mcWrap: { flexDirection: 'row', alignItems: 'center' },
-  mcCircle: { width: 13, height: 13, borderRadius: 6.5 },
+  // Brand logos (Vipps / Mastercard / Klarna) — identical 50×24 box to Apple Pay,
+  // so all four badges line up at the same height and width.
+  brandBadge: { width: 50, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
+  vippsWordmark: { fontFamily: 'System', fontWeight: '800', fontSize: 13, color: '#FFFFFF', letterSpacing: -0.3 },
+  klarnaWordmark: { fontFamily: 'System', fontWeight: '800', fontSize: 12, color: '#0A0B09', letterSpacing: -0.2 },
 
   // Method picker revealed on tap
   payPicker: {

@@ -32,9 +32,6 @@ export default function HostScreen({ navigation }) {
     setLoadingE(false);
   }, [user]);
 
-  const initials = (profile?.full_name ?? 'U')
-    .split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-
   const firstName = profile?.full_name?.split(' ')[0] ?? 'deg';
 
   return (
@@ -42,19 +39,18 @@ export default function HostScreen({ navigation }) {
       <LinearGradient colors={['#2B394C', '#2B394C']} style={StyleSheet.absoluteFillObject} />
 
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 120 }]}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 4, paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile hero */}
+        {/* Header: back button left, name · Utleier right */}
         <View style={styles.hero}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <Icon name="arrow-left" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
           <View style={styles.heroText}>
             <Text style={styles.heroName}>{firstName}</Text>
             <Text style={styles.heroSub}>Utleier</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.getParent()?.navigate('Profil')} activeOpacity={0.85} style={styles.avatarWrap}>
-            <LinearGradient colors={['#4E96F0', '#6FB1F7']} style={[StyleSheet.absoluteFillObject, { borderRadius: 40 }]} />
-            <Text style={styles.avatarText}>{initials}</Text>
-          </TouchableOpacity>
         </View>
 
         {SPOTS.length === 0 && !loadingE ? (
@@ -84,8 +80,7 @@ export default function HostScreen({ navigation }) {
         )}
 
         {/* My spots */}
-        <View style={styles.dividerBand} />
-        <Text style={styles.spotsTitle}>Mine spots</Text>
+        <Text style={styles.spotsTitle}>Mine plasser</Text>
         <Text style={styles.spotsSub}>
           {STATIC_SPOTS.filter(sp => sp.status === 'active').length} aktive · {formatKr(STATIC_SPOTS.reduce((sum, sp) => sum + sp.weekly, 0))} denne uken
         </Text>
@@ -118,10 +113,9 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: 20 },
 
-  hero: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 22, paddingHorizontal: 2 },
-  avatarWrap: { width: 52, height: 52, borderRadius: 26, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.08)' },
-  avatarText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', zIndex: 1 },
-  heroText: { flex: 1 },
+  hero: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2, paddingHorizontal: 2 },
+  backBtn: { width: 40, height: 40, alignItems: 'flex-start', justifyContent: 'center' },
+  heroText: { alignItems: 'flex-end' },
   heroName: { fontFamily: 'System', fontWeight: '800', fontSize: 18, color: '#FFFFFF', letterSpacing: -0.36 },
   heroSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12, color: '#98B6D8', marginTop: 2 },
 
@@ -134,8 +128,7 @@ const styles = StyleSheet.create({
   onboardIconWrap: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
   onboardRowText: { fontFamily: 'System', fontWeight: '600', fontSize: 14, color: '#fff', flex: 1 },
 
-  dividerBand: { height: 7, borderRadius: 999, backgroundColor: 'rgba(152,182,216,0.16)', marginHorizontal: -20, marginTop: 24, marginBottom: 20 },
-  spotsTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 23, color: '#FFFFFF', letterSpacing: -0.5 },
+  spotsTitle: { fontFamily: 'System', fontWeight: '800', fontSize: 23, color: '#FFFFFF', letterSpacing: -0.5, marginTop: 24 },
   spotsSub: { fontFamily: 'System', fontWeight: '500', fontSize: 12.5, color: '#98B6D8', marginTop: 2, marginBottom: 16 },
 
   cta: { height: 56, borderRadius: 18, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, shadowColor: '#4E96F0', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 6 },

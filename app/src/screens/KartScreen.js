@@ -5,6 +5,8 @@ import MapView, { Marker } from 'react-native-maps';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
+import SearchBar from '../components/SearchBar';
+import { useSearch } from '../context/SearchContext';
 import { usePremium } from '../context/PremiumContext';
 import { useActiveBooking } from '../context/ActiveBookingContext';
 import { supabase } from '../lib/supabase';
@@ -74,6 +76,7 @@ export default function KartScreen({ navigation, route }) {
     aktivParkering: inKartStack ? 'KartAktivParkering'   : 'AktivParkering',
   };
   const insets = useSafeAreaInsets();
+  const { query } = useSearch();
   const { isPremium } = usePremium();
   // Single source of truth for the user's current session — covers both real
   // reservations and "demo" bookings made by reserving a placeholder spot.
@@ -304,21 +307,14 @@ export default function KartScreen({ navigation, route }) {
                 <Icon name="arrow-left" size={18} color="#FFFFFF" strokeWidth={2} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity
-              style={[styles.searchBar, { flex: 1 }]}
-              activeOpacity={0.85}
-              onPress={() => navigation.push('Welcome', { focusSearch: true })}
-            >
-              <View style={styles.searchIconWrap}>
-                <Icon name="search" size={18} color="#5EA2F5" strokeWidth={2.2} />
-              </View>
-              <Text style={styles.searchValue}>Hvor vil du parkere?</Text>
-              {loading ? (
-                <ActivityIndicator size="small" color="#98B6D8" />
-              ) : (
-                <Icon name="arrow-right" size={16} color="#6E809B" strokeWidth={2.2} />
-              )}
-            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <SearchBar
+                mode="map"
+                loading={loading}
+                placeholder={query?.trim() ? query : 'Hvor vil du parkere?'}
+                onPress={() => navigation.push('Welcome', { focusSearch: true })}
+              />
+            </View>
           </View>
         )}
       </View>
@@ -389,21 +385,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#5EA2F5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
   },
-  searchBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingHorizontal: 14, paddingVertical: 13,
-    borderRadius: 18, backgroundColor: '#3A4C68',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
-    shadowColor: '#000000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.18, shadowRadius: 14, elevation: 4,
-  },
   searchPin: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#4E96F0', alignItems: 'center', justifyContent: 'center' },
-  searchIconWrap: {
-    width: 34, height: 34, borderRadius: 17,
-    backgroundColor: 'rgba(94,162,245,0.14)',
-    borderWidth: 1, borderColor: 'rgba(94,162,245,0.32)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  searchValue: { flex: 1, fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.2 },
 
   filterScroll: { marginTop: 8 },
   filterContent: { gap: 6, paddingRight: 4 },
@@ -429,42 +411,49 @@ const styles = StyleSheet.create({
   pin3dWrap: {
     alignItems: 'center',
   },
+  // No box-shadow on the chip itself: the logo is a transparent teardrop, so a
+  // box-shadow would cast a square halo around it that fans out onto neighbouring
+  // pins. Grounding comes entirely from the tight tip ellipse (pin3dShadow).
   pin3d: {
     width: 42, height: 42,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#0F2138',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.32,
-    shadowRadius: 7,
-    elevation: 7,
   },
   pin3dSelected: {
     width: 52, height: 52,
-    shadowOpacity: 0.42,
-    shadowRadius: 9,
-    elevation: 9,
   },
   pin3dHighlight: {
     position: 'absolute', top: 2, left: 6, right: 6, height: 12,
     borderRadius: 10,
     backgroundColor: 'transparent',
   },
-  pin3dLogo: { width: 42, height: 42 },
+  // Drop shadow on the Image follows the teardrop's alpha silhouette (iOS), so it
+  // hugs the pin shape instead of boxing it. Offset straight down + tight radius
+  // so it stays under the pin and never reaches a neighbour.
+  pin3dLogo: {
+    width: 42, height: 42,
+    shadowColor: '#0F2138', shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.30, shadowRadius: 4,
+  },
   pin3dLogoSelected: { width: 52, height: 52 },
-  // Soft floor shadow beneath the pin. Drawn as a flat dark ellipse (not a native
-  // shadow) because react-native-maps snapshots markers to a bitmap, which strips
-  // shadowOpacity/elevation — a real View is captured, so the pin reads grounded.
+  // Soft floor shadow cast by the pin's *tip*. The parkno logo is a teardrop that
+  // touches the ground at a single point, so the shadow is a small, tight ellipse
+  // directly under that point — not a wide disc under the whole chip. Drawn as a
+  // flat dark View (not a native shadow) because react-native-maps snapshots
+  // markers to a bitmap, which strips shadowOpacity/elevation.
+  //
+  // Kept deliberately narrow (≈14px, well inside the 42px pin width) so it can
+  // never spill sideways onto a neighbouring pin; draw order (zIndex by latitude)
+  // keeps it behind the pin below it too.
   pin3dShadow: {
     position: 'absolute',
-    bottom: 3, alignSelf: 'center',
-    width: 16, height: 5, borderRadius: 3,
-    backgroundColor: 'rgba(6,14,26,0.42)',
-    transform: [{ scaleX: 1.5 }],
+    bottom: 1, alignSelf: 'center',
+    width: 14, height: 4, borderRadius: 2,
+    backgroundColor: 'rgba(6,14,26,0.38)',
   },
   pin3dShadowSelected: {
-    bottom: 2,
-    width: 20, height: 6, borderRadius: 3,
-    backgroundColor: 'rgba(6,14,26,0.50)',
+    bottom: 0,
+    width: 17, height: 5, borderRadius: 2.5,
+    backgroundColor: 'rgba(6,14,26,0.46)',
   },
   pin3dPrice: {
     marginTop: 6, paddingHorizontal: 8, paddingVertical: 3,
