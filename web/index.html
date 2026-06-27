@@ -1172,19 +1172,13 @@
     .shero-left { position: relative; display: flex; flex-direction: column; gap: 26px; max-width: 760px; transform: translate(-30px, 10px); }
     .shero-brand {
       position: absolute; left: -34px; top: -200px;
-      display: inline-flex; align-items: center; gap: 14px;
+      display: inline-flex; align-items: center;
     }
     .shero-logo {
-      width: 168px; height: 168px;
+      height: 220px; width: auto;
       display: block; object-fit: contain; object-position: left center;
       filter: drop-shadow(0 14px 26px rgba(17,33,31,0.18));
     }
-    .shero-wordmark {
-      font: 800 56px/1 Inter, system-ui, sans-serif;
-      letter-spacing: -0.04em; color: #01ADBC;
-      margin-left: -34px;
-    }
-    .shero-wordmark .pl { color: #00D57C; -webkit-text-stroke: 0; }
     .shero-badge {
       align-self: flex-start;
       display: inline-flex; align-items: center; gap: 8px;
@@ -1316,10 +1310,8 @@
         position: static;
         left: auto; top: auto;
         margin-bottom: 6px;
-        gap: 10px;
       }
-      .shero-logo { width: 64px; height: 64px; }
-      .shero-wordmark { font-size: 34px; margin-left: -10px; }
+      .shero-logo { height: 76px; width: auto; }
     }
     @media (max-width: 640px) {
       .shero-ctas { width: 100%; }
@@ -1553,8 +1545,7 @@
         <!-- left column -->
         <div class="shero-left">
           <div class="shero-brand shero-anim shero-d1">
-            <img class="shero-logo" src="assets/parkno-logo-icon.png" alt="" width="96" height="96">
-            <span class="shero-wordmark">park<span class="pl">no</span></span>
+            <img class="shero-logo" src="assets/parkno-logo.svg" alt="Parkno">
           </div>
 
           <h1 class="shero-title shero-anim shero-d2" id="shero-title">
