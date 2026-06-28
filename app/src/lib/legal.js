@@ -19,18 +19,8 @@ function buildConsentMeta(now = new Date()) {
   };
 }
 
-// The authoritative audit rows inserted into public.consents after signUp.
-function consentRows(userId, now = new Date()) {
-  const accepted_at = now.toISOString();
-  return [
-    { user_id: userId, kind: 'terms',   version: CURRENT_TERMS_VERSION,   accepted_at },
-    { user_id: userId, kind: 'privacy', version: CURRENT_PRIVACY_VERSION, accepted_at },
-  ];
-}
-
 module.exports = {
   CURRENT_TERMS_VERSION,
   CURRENT_PRIVACY_VERSION,
   buildConsentMeta,
-  consentRows,
 };

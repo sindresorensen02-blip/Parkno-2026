@@ -6,7 +6,6 @@ const {
   CURRENT_TERMS_VERSION,
   CURRENT_PRIVACY_VERSION,
   buildConsentMeta,
-  consentRows,
 } = require('../src/lib/legal.js');
 
 test('versions are date-form strings', () => {
@@ -25,26 +24,4 @@ test('buildConsentMeta carries policy versions for the trigger', () => {
   const meta = buildConsentMeta(new Date('2026-06-28T10:00:00.000Z'));
   assert.equal(meta.terms_version, CURRENT_TERMS_VERSION);
   assert.equal(meta.privacy_version, CURRENT_PRIVACY_VERSION);
-});
-
-test('consentRows produces one terms + one privacy row for the user', () => {
-  const now = new Date('2026-06-28T10:00:00.000Z');
-  const rows = consentRows('user-123', now);
-  assert.equal(rows.length, 2);
-
-  const terms = rows.find(r => r.kind === 'terms');
-  const privacy = rows.find(r => r.kind === 'privacy');
-
-  assert.deepEqual(terms, {
-    user_id: 'user-123',
-    kind: 'terms',
-    version: CURRENT_TERMS_VERSION,
-    accepted_at: '2026-06-28T10:00:00.000Z',
-  });
-  assert.deepEqual(privacy, {
-    user_id: 'user-123',
-    kind: 'privacy',
-    version: CURRENT_PRIVACY_VERSION,
-    accepted_at: '2026-06-28T10:00:00.000Z',
-  });
 });

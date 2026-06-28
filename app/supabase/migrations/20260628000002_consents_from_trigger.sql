@@ -12,7 +12,8 @@
 -- ─────────────────────────────────────────────
 
 create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer as $$
+returns trigger language plpgsql security definer
+set search_path = public, pg_temp as $$
 declare
   v_terms_at   timestamptz := case when new.raw_user_meta_data ? 'terms_accepted_at'
                                    then (new.raw_user_meta_data->>'terms_accepted_at')::timestamptz end;
