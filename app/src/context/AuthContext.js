@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { buildConsentMeta, consentRows } from '../lib/legal';
 
 const AuthContext = createContext(null);
 
@@ -31,8 +32,25 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = (email, password, fullName, role = 'sjåfør') =>
-    supabase.auth.signUp({ email, password, options: { data: { full_name: fullName, role } } });
+  const signUp = async (email, password, fullName, role = 'sjåfør', accepted = false) => {
+    const data = { full_name: fullName, role };
+    if (accepted) Object.assign(data, buildConsentMeta());
+
+    const result = await supabase.auth.signUp({ email, password, options: { data } });
+
+    // Write the authoritative consent audit rows under the new user's session.
+    // Non-fatal: the profile-level timestamps (set by the handle_new_user
+    // trigger) already record consent, so a failure here must not fail signup
+    // and orphan the created auth user.
+    if (accepted && result.data?.user && !result.error) {
+      const { error: consentErr } = await supabase
+        .from('consents')
+        .insert(consentRows(result.data.user.id));
+      if (consentErr) console.warn('consents insert failed:', consentErr.message);
+    }
+
+    return result;
+  };
 
   const signIn = (email, password) =>
     supabase.auth.signInWithPassword({ email, password });
