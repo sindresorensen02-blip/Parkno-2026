@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { startVippsLogin } from '../lib/vippsAuth';
 
 // ── Background ──────────────────────────────────────────────────────────────
 // Drop a Parkno hero photo in here to use it as the full-bleed login backdrop —
@@ -51,10 +52,21 @@ export default function AuthScreen() {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
+  const [vippsLoading, setVippsLoading] = useState(false);
   const [error, setError]       = useState('');
   const [success, setSuccess]   = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [consentChecked, setConsentChecked] = useState(false);
+
+  const onVippsLogin = async () => {
+    setError('');
+    setVippsLoading(true);
+    const { error: err, cancelled } = await startVippsLogin();
+    setVippsLoading(false);
+    if (cancelled) return;
+    if (err) setError(err);
+    // On success the AuthContext onAuthStateChange handles routing.
+  };
 
   const openForm = (nextMode) => {
     setMode(nextMode);
@@ -127,6 +139,12 @@ export default function AuthScreen() {
 
           {/* Login-method stack */}
           <View style={styles.stack}>
+            <TouchableOpacity style={styles.vippsBtn} activeOpacity={0.85} onPress={onVippsLogin} disabled={vippsLoading}>
+              {vippsLoading
+                ? <ActivityIndicator color="#fff" />
+                : <Text style={styles.vippsText}>Logg inn med Vipps</Text>}
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.bankidBtn} activeOpacity={0.85}>
               <Image source={require('../../assets/bankid-round.png')} style={styles.bankidLogo} resizeMode="contain" />
               <Text style={styles.bankidText}>Logg inn med BankID</Text>
@@ -340,6 +358,8 @@ const styles = StyleSheet.create({
   heroTagline: { fontFamily: 'System', fontWeight: '600', fontSize: 17, lineHeight: 25, color: 'rgba(255,255,255,0.82)', textAlign: 'center', marginTop: 14 },
 
   stack: { gap: 12 },
+  vippsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 56, borderRadius: 999, backgroundColor: '#FF5B24' },
+  vippsText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.15 },
   bankidBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 56, borderRadius: 999, backgroundColor: '#39134C' },
   bankidLogo: { width: 30, height: 30 },
   bankidText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.15 },
