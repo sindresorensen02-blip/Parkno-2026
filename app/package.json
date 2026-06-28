@@ -9,7 +9,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "node --test __tests__/search.test.js"
+    "test": "node --test __tests__/search.test.js __tests__/legal.test.js"
   },
   "dependencies": {
     "@expo-google-fonts/hanken-grotesk": "^0.4.3",
