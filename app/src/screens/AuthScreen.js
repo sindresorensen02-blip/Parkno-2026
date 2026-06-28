@@ -60,6 +60,7 @@ export default function AuthScreen() {
     setMode(nextMode);
     setError('');
     setSuccess('');
+    setConsentChecked(false);
     setView('form');
   };
 
@@ -294,7 +295,7 @@ export default function AuthScreen() {
             <TouchableOpacity
               style={styles.signupBar}
               activeOpacity={0.85}
-              onPress={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setSuccess(''); }}
+              onPress={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setSuccess(''); setConsentChecked(false); }}
             >
               <View style={styles.signupTextWrap}>
                 <Text style={styles.signupLabel}>
