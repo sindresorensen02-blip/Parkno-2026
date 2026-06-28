@@ -177,7 +177,7 @@ export default function AuthScreen() {
                   <TextInput keyboardAppearance="dark"
                     style={styles.input}
                     placeholder="Julia Metlicka"
-                    placeholderTextColor="#6E809B"
+                    placeholderTextColor="#9DB2CE"
                     value={fullName}
                     onChangeText={setFullName}
                     autoCapitalize="words"
@@ -190,7 +190,7 @@ export default function AuthScreen() {
                 <TextInput keyboardAppearance="dark"
                   style={styles.input}
                   placeholder="deg@eksempel.no"
-                  placeholderTextColor="#6E809B"
+                  placeholderTextColor="#9DB2CE"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -203,7 +203,7 @@ export default function AuthScreen() {
                 <TextInput keyboardAppearance="dark"
                   style={styles.input}
                   placeholder="••••••••"
-                  placeholderTextColor="#6E809B"
+                  placeholderTextColor="#9DB2CE"
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
@@ -251,6 +251,21 @@ export default function AuthScreen() {
                     <Text style={styles.forgotText}>Glemt passord?</Text>
                   </TouchableOpacity>
                 </View>
+              )}
+
+              {mode === 'login' && (
+                <>
+                  <View style={styles.dividerRow}>
+                    <View style={styles.dividerLine} />
+                    <Text style={styles.dividerText}>eller</Text>
+                    <View style={styles.dividerLine} />
+                  </View>
+
+                  <TouchableOpacity style={styles.bankidBtnForm} activeOpacity={0.85}>
+                    <Image source={require('../../assets/bankid-round.png')} style={styles.bankidLogo} resizeMode="contain" />
+                    <Text style={styles.bankidText}>Logg inn med BankID</Text>
+                  </TouchableOpacity>
+                </>
               )}
             </View>
 
@@ -364,6 +379,12 @@ const styles = StyleSheet.create({
 
   submitBtn: { height: 52, borderRadius: 999, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginTop: 4, marginBottom: 12, shadowColor: '#3DC98A', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 16, elevation: 6 },
   submitText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.16 },
+
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, marginBottom: 12 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.18)' },
+  dividerText: { fontFamily: 'System', fontWeight: '600', fontSize: 12, color: 'rgba(255,255,255,0.6)', letterSpacing: 0.4 },
+
+  bankidBtnForm: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 52, borderRadius: 999, backgroundColor: '#39134C', marginBottom: 14 },
 
   loginFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
   rememberRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },

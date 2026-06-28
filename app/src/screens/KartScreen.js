@@ -255,7 +255,7 @@ export default function KartScreen({ navigation, route }) {
                   selected?.id === spot.id && { backgroundColor: 'transparent' },
                 ]} />
                 <Image
-                  source={require('../../assets/parkno-logo.png')}
+                  source={require('../../assets/parkno-pin.png')}
                   style={[
                     styles.pin3dLogo,
                     selected?.id === spot.id && styles.pin3dLogoSelected,

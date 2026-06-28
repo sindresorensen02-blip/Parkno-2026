@@ -28,7 +28,7 @@ const SearchBar = React.forwardRef(function SearchBar(
       <Icon name="arrow-left" size={18} color="#5EA2F5" strokeWidth={2.2} />
     </TouchableOpacity>
   ) : (
-    <View style={s.iconWrap}>
+    <View style={s.searchIcon}>
       <Icon name="search" size={18} color="#5EA2F5" strokeWidth={2.2} />
     </View>
   );
@@ -91,6 +91,12 @@ const s = StyleSheet.create({
     width: 34, height: 34, borderRadius: 17,
     backgroundColor: 'rgba(94,162,245,0.14)',
     borderWidth: 1, borderColor: 'rgba(94,162,245,0.32)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  // Map-mode search glyph: no circular chip — bare icon, same footprint so the
+  // bar's layout matches the back-arrow state.
+  searchIcon: {
+    width: 34, height: 34,
     alignItems: 'center', justifyContent: 'center',
   },
   value: { flex: 1, minWidth: 0, fontFamily: 'System', fontWeight: '600', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.2, padding: 0 },
