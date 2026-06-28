@@ -142,7 +142,12 @@ export default function AuthScreen() {
             <TouchableOpacity style={styles.vippsBtn} activeOpacity={0.85} onPress={onVippsLogin} disabled={vippsLoading}>
               {vippsLoading
                 ? <ActivityIndicator color="#fff" />
-                : <Text style={styles.vippsText}>Logg inn med Vipps</Text>}
+                : (
+                  <>
+                    <Image source={require('../../assets/vipps-logo.png')} style={styles.vippsLogo} resizeMode="contain" />
+                    <Text style={styles.vippsText}>Logg inn med Vipps</Text>
+                  </>
+                )}
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.bankidBtn} activeOpacity={0.85}>
@@ -360,6 +365,7 @@ const styles = StyleSheet.create({
   stack: { gap: 12 },
   vippsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 56, borderRadius: 999, backgroundColor: '#FF5B24' },
   vippsText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.15 },
+  vippsLogo: { width: 26, height: 26 },
   bankidBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 56, borderRadius: 999, backgroundColor: '#39134C' },
   bankidLogo: { width: 30, height: 30 },
   bankidText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.15 },
