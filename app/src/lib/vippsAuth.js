@@ -39,7 +39,13 @@ export async function startVippsLogin() {
   if (res.status === 401) return { error: 'Kunne ikke verifisere Vipps-kontoen din.' };
   if (!res.ok) return { error: 'Kunne ikke logge inn med Vipps. Prøv igjen.' };
 
-  const { access_token, refresh_token } = await res.json();
+  let body;
+  try {
+    body = await res.json();
+  } catch {
+    return { error: 'Kunne ikke logge inn med Vipps. Prøv igjen.' };
+  }
+  const { access_token, refresh_token } = body;
   const { error } = await supabase.auth.setSession({ access_token, refresh_token });
   if (error) return { error: 'Kunne ikke opprette økt. Prøv igjen.' };
   return {};
