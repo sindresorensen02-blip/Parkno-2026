@@ -54,6 +54,7 @@ export default function AuthScreen() {
   const [error, setError]       = useState('');
   const [success, setSuccess]   = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const openForm = (nextMode) => {
     setMode(nextMode);
@@ -67,11 +68,15 @@ export default function AuthScreen() {
     setSuccess('');
     if (!email || !password) { setError('Fyll inn e-post og passord.'); return; }
     if (mode === 'register' && !fullName) { setError('Fyll inn fullt navn.'); return; }
+    if (mode === 'register' && !consentChecked) {
+      setError('Du må godta vilkårene og personvernreglene for å opprette konto.');
+      return;
+    }
 
     setLoading(true);
     const { data, error: err } = mode === 'login'
       ? await signIn(email, password)
-      : await signUp(email, password, fullName, role);
+      : await signUp(email, password, fullName, role, consentChecked);
 
     setLoading(false);
     if (err) { setError(err.message); return; }
@@ -213,6 +218,22 @@ export default function AuthScreen() {
               {/* Error / Success */}
               {!!error   && <Text style={styles.errorText}>{error}</Text>}
               {!!success && <Text style={styles.successText}>{success}</Text>}
+
+              {mode === 'register' && (
+                <TouchableOpacity
+                  style={styles.consentRow}
+                  activeOpacity={0.7}
+                  onPress={() => setConsentChecked(v => !v)}
+                >
+                  <View style={[styles.checkbox, consentChecked && styles.checkboxActive]}>
+                    {consentChecked && <Text style={styles.checkmark}>✓</Text>}
+                  </View>
+                  <Text style={styles.consentText}>
+                    Jeg godtar <Text style={styles.legalLink}>vilkårene</Text> og{' '}
+                    <Text style={styles.legalLink}>personvernreglene</Text>.
+                  </Text>
+                </TouchableOpacity>
+              )}
 
               {/* Submit */}
               <TouchableOpacity style={styles.submitBtn} activeOpacity={0.85} onPress={submit} disabled={loading}>
@@ -388,6 +409,8 @@ const styles = StyleSheet.create({
 
   loginFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
   rememberRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  consentRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 14, paddingRight: 4 },
+  consentText: { flex: 1, fontFamily: 'System', fontWeight: '500', fontSize: 13, color: 'rgba(255,255,255,0.78)', lineHeight: 19 },
   checkbox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5, borderColor: '#6E809B', alignItems: 'center', justifyContent: 'center' },
   checkboxActive: { backgroundColor: '#5EA2F5', borderColor: '#5EA2F5' },
   checkmark: { fontSize: 12, color: '#fff', fontWeight: 'bold' },
