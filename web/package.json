@@ -1,0 +1,13 @@
+{
+  "name": "parkno",
+  "version": "1.0.0",
+  "description": "Parkno - Park and share parking spaces in Bergen",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'",
+    "test": "echo 'No tests configured'"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
