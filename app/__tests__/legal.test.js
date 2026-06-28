@@ -21,6 +21,12 @@ test('buildConsentMeta returns ISO timestamps for both policies', () => {
   assert.equal(meta.privacy_accepted_at, '2026-06-28T10:00:00.000Z');
 });
 
+test('buildConsentMeta carries policy versions for the trigger', () => {
+  const meta = buildConsentMeta(new Date('2026-06-28T10:00:00.000Z'));
+  assert.equal(meta.terms_version, CURRENT_TERMS_VERSION);
+  assert.equal(meta.privacy_version, CURRENT_PRIVACY_VERSION);
+});
+
 test('consentRows produces one terms + one privacy row for the user', () => {
   const now = new Date('2026-06-28T10:00:00.000Z');
   const rows = consentRows('user-123', now);
