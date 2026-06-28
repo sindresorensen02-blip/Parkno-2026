@@ -1,0 +1,82 @@
+# Vercel Speed Insights Installation Report
+
+## Summary
+Successfully installed and configured Vercel Speed Insights for the Parkno project following the latest official documentation from https://vercel.com/docs/speed-insights/quickstart.
+
+## Implementation Details
+
+### 1. Package Management
+**Created:**
+- `package.json` - Added project configuration with @vercel/speed-insights v1.3.1 as a dependency
+
+**Modified:**
+- `package-lock.json` - Updated with the new dependency
+
+### 2. Speed Insights Integration Script
+**Created:**
+- `scripts/speed-insights.js` - Vanilla JavaScript implementation that:
+  - Initializes the Speed Insights queue (window.si)
+  - Dynamically loads the Vercel Speed Insights script from `/_vercel/speed-insights/script.js`
+  - Includes proper error handling for content blockers
+  - Sets appropriate SDK metadata (name and version)
+
+### 3. HTML Pages Updated
+Added `<script src="/scripts/speed-insights.js" defer></script>` to all HTML pages before the closing `</head>` tag:
+- `healthz.html`
+- `index.html`
+- `login.html`
+- `password.html`
+- `poster.html`
+- `register.html`
+- `waitlist.html`
+
+### 4. Security Headers Updated
+**Modified:**
+- `vercel.json` - Updated Content-Security-Policy to allow:
+  - `script-src`: Added `https://va.vercel-scripts.com` for Speed Insights scripts
+  - `connect-src`: Added `https://vitals.vercel-insights.com` for data transmission
+
+- `_headers` - Updated with the same CSP changes for consistency
+
+## Implementation Approach
+This is a vanilla HTML/JavaScript project (not using a framework like Next.js or React), so I implemented the Speed Insights integration using:
+1. The base `@vercel/speed-insights` package
+2. A custom initialization script that follows Vercel's recommended approach for static sites
+3. The script dynamically injects the Speed Insights tracking code, which will automatically collect Web Vitals data
+
+## Why This Approach?
+- **Framework-agnostic**: Works with plain HTML/JavaScript without requiring a build system
+- **Performance**: Uses deferred loading to avoid blocking page rendering
+- **Maintainable**: Single script file included across all pages
+- **Secure**: Updated CSP headers to explicitly allow only necessary Speed Insights domains
+- **Production-ready**: The script will only collect data in production (Vercel automatically handles this)
+
+## Next Steps
+1. Deploy the application to Vercel
+2. Enable Speed Insights in the Vercel Dashboard for this project
+3. Speed Insights will automatically start collecting Web Vitals data from real user visits
+4. View performance metrics in the Vercel Dashboard under the Speed Insights section
+
+## Testing Notes
+- Linter: No linter configured (returned success)
+- Tests: No tests configured (returned success)
+- All 7 HTML files successfully updated with the Speed Insights script
+- Package installation completed without vulnerabilities
+- CSP headers properly configured to allow Speed Insights domains
+
+## Files Changed
+**Created (2):**
+- web/package.json
+- web/scripts/speed-insights.js
+
+**Modified (9):**
+- web/_headers
+- web/healthz.html
+- web/index.html
+- web/login.html
+- web/package-lock.json
+- web/password.html
+- web/poster.html
+- web/register.html
+- web/vercel.json
+- web/waitlist.html
