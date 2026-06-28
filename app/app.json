@@ -64,7 +64,8 @@
         {
           "photosPermission": "Parkno trenger tilgang til bilder for å la deg sette profilbilde."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

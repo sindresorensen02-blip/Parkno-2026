@@ -156,8 +156,10 @@ export default function AuthScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.emailBtn} activeOpacity={0.85} onPress={() => openForm('login')}>
-              <Icon name="mail" size={20} color="#15233A" strokeWidth={2} />
-              <Text style={styles.emailText}>Fortsett med e-post</Text>
+              <BlurView intensity={30} tint="dark" style={styles.emailBlur}>
+                <Icon name="mail" size={20} color="#FFFFFF" strokeWidth={2} />
+                <Text style={styles.emailText}>Fortsett med e-post</Text>
+              </BlurView>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.registerLink} activeOpacity={0.7} onPress={() => openForm('register')}>
@@ -370,8 +372,9 @@ const styles = StyleSheet.create({
   bankidLogo: { width: 30, height: 30 },
   bankidText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#fff', letterSpacing: -0.15 },
 
-  emailBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 56, borderRadius: 999, backgroundColor: '#FFFFFF' },
-  emailText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#15233A', letterSpacing: -0.15 },
+  emailBtn: { height: 56, borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.28)' },
+  emailBlur: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  emailText: { fontFamily: 'System', fontWeight: '700', fontSize: 16, color: '#FFFFFF', letterSpacing: -0.15 },
 
   registerLink: { alignItems: 'center', paddingVertical: 10, marginTop: 2 },
   registerText: { fontFamily: 'System', fontWeight: '500', fontSize: 14, color: 'rgba(255,255,255,0.72)' },
