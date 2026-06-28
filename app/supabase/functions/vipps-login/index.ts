@@ -13,6 +13,11 @@ const admin = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
 );
 
+const anon = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_ANON_KEY')!,
+);
+
 // STUB SEAM: in stub mode return the fixed identity; otherwise exchange the
 // code with Vipps for real userinfo. Real branch is intentionally minimal —
 // it is filled in at merchant-onboarding cutover.
@@ -70,25 +75,27 @@ function makeDb() {
 async function issueSession(email: string) {
   const { data, error } = await admin.auth.admin.generateLink({ type: 'magiclink', email });
   if (error) throw error;
-  const tokenHash = data.properties!.hashed_token;
-  const { data: verified, error: vErr } = await admin.auth.verifyOtp({
+  if (!data.properties) throw new Error('generateLink returned no properties');
+  const tokenHash = data.properties.hashed_token;
+  const { data: verified, error: vErr } = await anon.auth.verifyOtp({
     type: 'magiclink',
     token_hash: tokenHash,
   });
   if (vErr) throw vErr;
+  if (!verified.session) throw new Error('verifyOtp returned no session');
   return {
-    access_token: verified.session!.access_token,
-    refresh_token: verified.session!.refresh_token,
+    access_token: verified.session.access_token,
+    refresh_token: verified.session.refresh_token,
   };
 }
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: { 'Content-Type': 'application/json' } });
   }
   try {
     const { code } = await req.json();
-    if (!code) return new Response(JSON.stringify({ error: 'missing code' }), { status: 400 });
+    if (!code) return new Response(JSON.stringify({ error: 'missing code' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
     const userinfo = await getVippsUserinfo(code);
     const db = makeDb();
@@ -96,11 +103,13 @@ Deno.serve(async (req) => {
 
     // Update profile: link identity + verify phone. Profile row exists via the
     // handle_new_user trigger when the user was just created.
-    await admin.from('profiles').update({
+    const { data: updatedRows, error: updateErr } = await admin.from('profiles').update({
       vipps_sub: userinfo.sub,
       phone: userinfo.phone_number,
       phone_verified_at: new Date().toISOString(),
-    }).eq('id', userId);
+    }).eq('id', userId).select('id');
+    if (updateErr) throw updateErr;
+    if (!updatedRows || updatedRows.length === 0) throw new Error('profile row missing for user ' + userId);
 
     const session = await issueSession(userinfo.email);
     return new Response(JSON.stringify(session), {
@@ -108,9 +117,9 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     if (err instanceof VippsEmailUnverified) {
-      return new Response(JSON.stringify({ error: 'vipps_email_unverified' }), { status: 401 });
+      return new Response(JSON.stringify({ error: 'vipps_email_unverified' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
     console.error('vipps-login error:', err);
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
+    return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 });
