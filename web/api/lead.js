@@ -101,6 +101,118 @@ function esc(s) {
   return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 }
 
+// Registration confirmation email sent to the customer (Norwegian welcome mail).
+function welcomeEmailHtml(firstName) {
+  const name = esc(firstName || '');
+  return `<!DOCTYPE html>
+<html lang="nb" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Velkommen til Parkno</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    a { color: #0489FC; }
+
+    @media only screen and (max-width: 620px) {
+      .container { width: 100% !important; }
+      .px { padding-left: 24px !important; padding-right: 24px !important; }
+      .py { padding-top: 28px !important; padding-bottom: 28px !important; }
+      .h1 { font-size: 24px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#eef2f5;">
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#eef2f5; opacity:0;">
+    Din plass, Dine penger &ndash; nå er du i gang.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef2f5;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px;">
+
+          <tr>
+            <td bgcolor="#0489FC" style="background-color:#0489FC; background-image:linear-gradient(135deg, #0489FC 0%, #11B7BA 52%, #00D57C 100%); border-radius:18px 18px 0 0; padding:40px 40px 34px 40px; text-align:center;" class="px">
+              <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:30px; font-weight:800; letter-spacing:-0.5px; color:#ffffff; line-height:1;">Parkno</div>
+              <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:14px; font-weight:500; color:#ffffff; opacity:0.92; margin-top:8px;">Din plass, Dine penger.</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td bgcolor="#ffffff" style="background-color:#ffffff; padding:40px; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;" class="px py">
+
+              <h1 class="h1" style="margin:0 0 20px 0; font-size:26px; line-height:1.25; font-weight:700; color:#111827;">Hei ${name}, velkommen til Parkno!</h1>
+
+              <p style="margin:0 0 18px 0; font-size:16px; line-height:1.6; color:#374151;">
+                Takk for at du registrerte deg &ndash; vi er glade for å ha deg med fra starten.
+              </p>
+
+              <p style="margin:0 0 24px 0; font-size:16px; line-height:1.6; color:#374151;">
+                Parkno gjør det enkelt å leie ut parkeringsplassen din når den står ledig, eller finne en plass når du selv trenger det. Trygt, enkelt og direkte mellom folk i nabolaget.
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px 0;">
+                <tr>
+                  <td style="padding:16px 18px; background-color:#f5f9fb; border-radius:12px;">
+                    <p style="margin:0 0 6px 0; font-size:15px; line-height:1.5; color:#374151;">
+                      <span style="color:#00D57C; font-weight:700;">&#8226;</span>&nbsp;
+                      <strong style="color:#111827;">Som vert</strong> &ndash; leier du ut plassen din og tjener penger på den.
+                    </p>
+                    <p style="margin:0; font-size:15px; line-height:1.5; color:#374151;">
+                      <span style="color:#0489FC; font-weight:700;">&#8226;</span>&nbsp;
+                      <strong style="color:#111827;">Som sjåfør</strong> &ndash; finner og booker du parkering raskt og uten stress.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 18px 0; font-size:16px; line-height:1.6; color:#374151;">
+                Vi kommer til hele Norge, og du er blant de aller første som er med. Har du spørsmål eller gode innspill? Bare svar på denne e-posten, eller ta kontakt på <a href="mailto:kontakt@parkno.no" style="color:#0489FC; text-decoration:none;">kontakt@parkno.no</a> &ndash; vi hører gjerne fra deg.
+              </p>
+
+              <p style="margin:0; font-size:16px; line-height:1.6; color:#374151;">
+                Vi sees på Parkno!<br>
+                <strong style="color:#111827;">Sindre</strong><br>
+                <span style="color:#6b7280; font-size:14px;">Parkno</span>
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color:#ffffff; border-radius:0 0 18px 18px; padding:0 40px 32px 40px;" class="px">
+              <div style="border-top:1px solid #eceff2; padding-top:24px; text-align:center; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                <p style="margin:0 0 6px 0; font-size:13px; line-height:1.5; color:#9aa4b0;">
+                  <strong style="color:#6b7280;">Parkno</strong> &middot; Bergen, Norge<br>
+                  <a href="mailto:kontakt@parkno.no" style="color:#9aa4b0; text-decoration:none;">kontakt@parkno.no</a>
+                </p>
+                <p style="margin:0; font-size:12px; line-height:1.5; color:#b6bec8;">
+                  Du mottar denne e-posten fordi du registrerte deg hos Parkno.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
@@ -228,15 +340,8 @@ module.exports = async function handler(req, res) {
   await sendEmail(
     env,
     lead.email,
-    'Takk for registreringen hos Parkno',
-    `<div style="font-family:Inter,system-ui,sans-serif;font-size:15px;color:#111416;line-height:1.5">
-       <p>Hei ${esc(lead.first_name)},</p>
-       <p>Takk! Vi har mottatt registreringen din som <b>${isDriver ? 'sjåfør' : 'utleier'}</b> i Bergen.
-       Vi tar kontakt for verifisering og neste steg så snart som mulig.</p>
-       <p>Spørsmål? Svar på denne e-posten eller skriv til
-       <a href="mailto:kontakt@parkno.no">kontakt@parkno.no</a>.</p>
-       <p style="color:#7B8589">— Parkno</p>
-     </div>`
+    'Velkommen til Parkno',
+    welcomeEmailHtml(lead.first_name)
   );
 
   return res.status(200).json({ ok: true });
